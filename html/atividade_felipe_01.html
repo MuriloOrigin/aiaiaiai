@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Booster de Cartas</title>
+
+    <style>
+        body {
+            background: #101018;
+            color: white;
+            text-align: center;
+            font-family: Arial;
+        }
+
+        h1 {
+            color: #f7e602;
+        }
+
+        button {
+            padding: 15px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #cartas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .carta {
+            width: 145px;
+            height: 205px;
+            background: #29293b;
+            border: 3px solid #777;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .carta img {
+            width: 100%;
+            height: 155px;
+            object-fit: cover;
+        }
+
+        .verso {
+            font-size: 40px;
+            color: #bd72ff;
+        }
+
+        .especial {
+            border: 3px solid gold;
+            box-shadow: 0 0 12px gold;
+        }
+
+        .armadilha {
+            border: 3px solid red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎴 BOOSTER DE CARTAS</h1>
+
+    <p>Abra seu pacote com 7 cartas!</p>
+
+    <button onclick="abrirBooster()">ABRIR BOOSTER</button>
+
+    <div id="cartas"></div>
+
+    <h2 id="resultado">Boa sorte!</h2>
+
+    <script src="{{ url_for('static', filename='atividade_felipe_01.js') }}"></script>
+
+</body>
+</html>
