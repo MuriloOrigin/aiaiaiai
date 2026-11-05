@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booster do Senac</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}">
+</head>
+
+<body>
+
+    <h1>BOOSTER DO SENAC</h1>
+
+    <p>Abra o seu pacote e descubra quais cartas conseguiu!</p>
+
+    <div class="booster">
+        <span>BOOSTER</span>
+        <strong>7 CARTAS</strong>
+        <span>?</span>
+    </div>
+
+    <button onclick="abrirBooster()">ABRIR BOOSTER</button>
+
+    <div id="cartas"></div>
+
+    <h2 id="resultado">Boa sorte!</h2>
+
+    <script src="{{ url_for('static', filename='trabalho_felipe.js') }}"></script>
+
+</body>
+
+</html>
