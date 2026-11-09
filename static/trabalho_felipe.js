@@ -126,6 +126,11 @@ function abrirBooster() {
                     <small>${carta.raridade}</small>
                 `;
 
+                if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
+                    let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
+                    somTartarugas.play();
+                }
+
             } else if (carta.tipo === "armadilha") {
                 div.classList.add("armadilha");
 
