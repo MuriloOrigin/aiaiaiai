@@ -53,7 +53,6 @@ button:hover {
     margin: 30px auto;
 }
 
-/* ESTRUTURA GERAL DA CARTA (IGUAL À DA IMAGEM) */
 .carta {
     width: 160px;
     height: 230px;
@@ -75,7 +74,6 @@ button:hover {
     transform: scale(1.05);
 }
 
-/* IMAGEM OU VÍDEO NO TOPO DA CARTA */
 .carta img, .carta video {
     width: 100%;
     height: 155px;
@@ -89,7 +87,6 @@ button:hover {
     margin: auto;
 }
 
-/* CAIXA ESCURA INFERIOR PARA O NOME E RARIDADE */
 .carta strong {
     font-size: 13px;
     color: #ffffff;
@@ -110,51 +107,57 @@ button:hover {
     text-shadow: 1px 1px 2px black;
 }
 
-/* ESTILOS DE CADA RARIDADE (COM O FUNDO ESCURO NA BASE) */
+/* FUNDOS DA CAIXA INFERIOR A COMBINAR COM CADA RARIDADE */
 
 .nojo {
     border-color: #8cff00;
     box-shadow: 0 0 18px #8cff00;
+    background: #18260b;
 }
-.nojo strong, .nojo small { background: #253311; width: 100%; padding: 2px 0; }
+.nojo strong, .nojo small { background: #18260b; width: 100%; padding: 2px 0; }
 
 .epica {
     border-color: #9b30ff;
     box-shadow: 0 0 18px #9b30ff;
+    background: #220b2b;
 }
-.epica strong, .epica small { background: #281133; width: 100%; padding: 2px 0; }
+.epica strong, .epica small { background: #220b2b; width: 100%; padding: 2px 0; }
 
 .ultra-rara {
     border-color: #00e5ff;
     box-shadow: 0 0 18px #00e5ff;
+    background: #0b2226;
 }
-.ultra-rara strong, .ultra-rara small { background: #112d33; width: 100%; padding: 2px 0; }
+.ultra-rara strong, .ultra-rara small { background: #0b2226; width: 100%; padding: 2px 0; }
 
 .lendaria {
     border-color: #ffae00;
     box-shadow: 0 0 18px #ffae00;
+    background: #2b210b;
 }
-.lendaria strong, .lendaria small { background: #332611; width: 100%; padding: 2px 0; }
+.lendaria strong, .lendaria small { background: #2b210b; width: 100%; padding: 2px 0; }
 
 .primordial {
     border-color: #ff3030;
     box-shadow: 0 0 18px #ff3030;
+    background: #2b0b0b;
 }
-.primordial strong, .primordial small { background: #331111; width: 100%; padding: 2px 0; }
+.primordial strong, .primordial small { background: #2b0b0b; width: 100%; padding: 2px 0; }
 
 .secreta {
     border-color: #ffffff;
     box-shadow: 0 0 20px #ffffff;
+    background: #1a1a1a;
 }
-.secreta strong, .secreta small { background: #222222; width: 100%; padding: 2px 0; }
+.secreta strong, .secreta small { background: #1a1a1a; width: 100%; padding: 2px 0; }
 
 .especial-hexa {
     border-color: #00ff88;
     box-shadow: 0 0 18px #00ff88;
 }
-.especial-hexa strong, .especial-hexa small { background: #113322; width: 100%; padding: 2px 0; }
+.especial-hexa strong, .especial-hexa small { background: #0b2b1d; width: 100%; padding: 2px 0; }
+.especial-hexa { background: #0b2b1d; }
 
-/* EFEITO RGB ANIMADO PARA O GUSTAVO DANCEPOT */
 @keyframes rgbGlow {
     0% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
     33% { border-color: #00ff00; box-shadow: 0 0 20px #00ff00; }
@@ -164,25 +167,29 @@ button:hover {
 
 .dance-potranca {
     animation: rgbGlow 3s infinite linear;
+    background: #1b0b2b;
 }
-.dance-potranca strong, .dance-potranca small { background: #20112b; width: 100%; padding: 2px 0; }
+.dance-potranca strong, .dance-potranca small { background: #1b0b2b; width: 100%; padding: 2px 0; }
 
 .peso {
     border-color: #ffe600;
     box-shadow: 0 0 18px #ffe600;
+    background: #2b260b;
 }
-.peso strong, .peso small { background: #332e11; width: 100%; padding: 2px 0; }
+.peso strong, .peso small { background: #2b260b; width: 100%; padding: 2px 0; }
 
 .armadilha {
     border: 4px solid red;
     box-shadow: 0 0 18px red;
-    background: #331111;
+    background: #2b0b0b;
 }
+.armadilha strong, .armadilha small { background: #2b0b0b; width: 100%; padding: 2px 0; }
 
 .comum {
     border: 4px solid #777;
-    background: #222;
+    background: #1a1a1a;
 }
+.comum strong, .comum small { background: #1a1a1a; width: 100%; padding: 2px 0; }
 
 #resultado {
     color: #00e5ff;
