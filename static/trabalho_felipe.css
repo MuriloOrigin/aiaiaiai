@@ -1,145 +1,194 @@
-body {
-    background: #101018;
-    color: white;
-    text-align: center;
-    font-family: Arial, sans-serif;
+const cartas = [
+    {
+        nome: "Gustavo Dancepot",
+        imagem: "gustavodancepot.mp4",
+        raridade: "DANCE POTRANCA",
+        classe: "dance-potranca",
+        chance: 0.3
+    },
+    {
+        nome: "Elefantebe",
+        imagem: "elefantebe.jpg",
+        raridade: "PESO",
+        classe: "peso",
+        chance: 1.0
+    },
+    {
+        nome: "Gustavo Tartarugas Ninjas",
+        imagem: "gustavo tartarugas ninjas.jpg",
+        raridade: "SECRETA",
+        classe: "secreta",
+        chance: 0.5
+    },
+    {
+        nome: "Muryllo Apanhando",
+        imagem: "muryllo apanhando.jpg",
+        raridade: "ULTRA RARA",
+        classe: "ultra-rara",
+        chance: 1.5
+    },
+    {
+        nome: "Muryllo Skibidi",
+        imagem: "muryllo skibidi.jpg",
+        raridade: "EPICA",
+        classe: "epica",
+        chance: 2
+    },
+    {
+        nome: "O Inicio",
+        imagem: "O inicio.jpg",
+        raridade: "PRIMORDIAL",
+        classe: "primordial",
+        chance: 0.8
+    },
+    {
+        nome: "Resenha Call",
+        imagem: "resenha call.jpg",
+        raridade: "LENDARIA",
+        classe: "lendaria",
+        chance: 1
+    },
+    {
+        nome: "Xorume Muryllo",
+        imagem: "xorume muryllo.jpg",
+        raridade: "NOJO",
+        classe: "nojo",
+        chance: 3
+    },
+    {
+        nome: "Juliano",
+        imagem: "juliano.jpg",
+        raridade: "ESPECIAL HEXA",
+        classe: "especial-hexa",
+        chance: 0.4
+    },
+    {
+        nome: "Felipe",
+        imagem: "felipe.jpg",
+        raridade: "ESPECIAL HEXA",
+        classe: "especial-hexa",
+        chance: 0.4
+    },
+    {
+        nome: "Daniel",
+        imagem: "daniel.jpg",
+        raridade: "ESPECIAL HEXA",
+        classe: "especial-hexa",
+        chance: 0.4
+    }
+];
+
+let jogoTravado = false;
+
+function sortearCarta() {
+    let numero = Math.random() * 100;
+    let acumulado = 0;
+
+    for (let carta of cartas) {
+        acumulado += carta.chance;
+        if (numero < acumulado) {
+            return carta;
+        }
+    }
+
+    if (numero < 12) {
+        return {
+            nome: "PERDEU OTARIO!",
+            tipo: "armadilha"
+        };
+    }
+
+    return {
+        nome: "CARTA PAIA",
+        tipo: "comum"
+    };
 }
 
-h1 {
-    color: #fffb02;
-    margin-top: 30px;
-}
+function abrirBooster() {
+    const area = document.getElementById("cartas");
+    area.innerHTML = "";
 
-.booster {
-    width: 180px;
-    height: 230px;
-    margin: 30px auto;
-    background: linear-gradient(135deg, #1f233a, #111422);
-    border: 3px solid #e9e3e3;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #00e5ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    font-size: 25px;
-}
+    let especiais = 0;
+    let reveladas = 0;
+    jogoTravado = false;
 
-.booster strong {
-    color: gold;
-}
+    document.getElementById("resultado").textContent = "Revele as suas 7 cartas!";
 
-button {
-    padding: 15px 30px;
-    background: #2b62d1;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
+    for (let i = 0; i < 7; i++) {
+        let carta = sortearCarta();
+        let div = document.createElement("div");
 
-button:hover {
-    background: #1e4596;
-}
+        div.className = "carta";
+        div.innerHTML = `
+            <div class="verso">?</div>
+            <strong>CARTA ${i + 1}</strong>
+        `;
 
-#cartas {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin: 30px auto;
-}
+        div.onclick = function () {
+            if (jogoTravado || div.dataset.aberta) return;
 
-.carta {
-    width: 145px;
-    height: 215px;
-    background: #29293b;
-    border: 3px solid #777;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    transition: transform 0.3s;
-}
+            div.dataset.aberta = "sim";
+            reveladas++;
 
-.carta:hover {
-    transform: scale(1.05);
-}
+            if (carta.raridade) {
+                especiais++;
+                div.classList.add(carta.classe);
 
-.carta img {
-    width: 100%;
-    height: 155px;
-    object-fit: cover;
-}
+                if (carta.imagem.endsWith('.mp4')) {
+                    div.innerHTML = `
+                        <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>
+                        <strong>${carta.nome}</strong>
+                        <small>${carta.raridade}</small>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <img src="/static/${encodeURIComponent(carta.imagem)}">
+                        <strong>${carta.nome}</strong>
+                        <small>${carta.raridade}</small>
+                    `;
+                }
 
-.verso {
-    font-size: 45px;
-    color: #00e5ff;
-}
+                if (carta.imagem === "gustavodancepot.mp4") {
+                    let somDance = new Audio('/static/dancepotranca.mp3');
+                    somDance.play();
+                } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
+                    let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
+                    somTartarugas.play();
+                }
 
-.carta strong {
-    font-size: 13px;
-    padding: 5px;
-}
+            } else if (carta.tipo === "armadilha") {
+                div.classList.add("armadilha");
 
-.carta small {
-    font-size: 11px;
-    font-weight: bold;
-    padding-bottom: 5px;
-}
+                div.innerHTML = `
+                    <strong>PERDEU!</strong>
+                    <small>OTARIO!</small>
+                `;
 
-.nojo {
-    border: 3px solid #8cff00;
-    box-shadow: 0 0 15px #8cff00;
-}
+                let somPerdeu = new Audio('/static/perdeu.mp3');
+                somPerdeu.play();
 
-.epica {
-    border: 3px solid #d400ffc4;
-    box-shadow: 0 0 15px #d400ffc4;
-}
+                jogoTravado = true;
 
-.ultra-rara {
-    border: 3px solid #00e5ff;
-    box-shadow: 0 0 15px #00e5ff;
-}
+                document.getElementById("resultado").textContent = 
+                    "Tirou a armadilha e perdeu! Clique em 'Abrir Booster' para tentar novamente.";
 
-.lendaria {
-    border: 3px solid #ffae00;
-    box-shadow: 0 0 18px #ffae00;
-}
+                return;
 
-.primordial {
-    border: 3px solid #ff3030;
-    box-shadow: 0 0 20px #ff3030;
-}
+            } else {
+                div.classList.add("comum");
 
-.secreta {
-    border: 3px solid white;
-    box-shadow: 0 0 20px white;
-    background: linear-gradient(135deg, #181818, #333333);
-}
+                div.innerHTML = `
+                    <strong>CARTA PAIA</strong>
+                    <small>COMUM</small>
+                `;
+            }
 
-.especial-hexa {
-    border: 3px solid #00ff88;
-    box-shadow: 0 0 20px #00ff88;
-}
+            if (reveladas === 7) {
+                document.getElementById("resultado").textContent =
+                    `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)!`;
+            }
+        };
 
-.armadilha {
-    border: 3px solid red;
-    box-shadow: 0 0 15px red;
-}
-
-.comum {
-    border: 3px solid #777;
-}
-
-#resultado {
-    color: #00e5ff;
-    margin: 25px;
+        area.appendChild(div);
+    }
 }

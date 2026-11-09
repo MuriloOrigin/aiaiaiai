@@ -1,5 +1,19 @@
 const cartas = [
     {
+        nome: "Gustavo Dancepot",
+        imagem: "gustavodancepot.mp4",
+        raridade: "DANCE POTRANCA",
+        classe: "dance-potranca",
+        chance: 0.3
+    },
+    {
+        nome: "Elefantebe",
+        imagem: "elefantebe.jpg",
+        raridade: "PESO",
+        classe: "peso",
+        chance: 1.0
+    },
+    {
         nome: "Gustavo Tartarugas Ninjas",
         imagem: "gustavo tartarugas ninjas.jpg",
         raridade: "SECRETA",
@@ -120,13 +134,24 @@ function abrirBooster() {
                 especiais++;
                 div.classList.add(carta.classe);
 
-                div.innerHTML = `
-                    <img src="/static/${encodeURIComponent(carta.imagem)}">
-                    <strong>${carta.nome}</strong>
-                    <small>${carta.raridade}</small>
-                `;
+                if (carta.imagem.endsWith('.mp4')) {
+                    div.innerHTML = `
+                        <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width:100%; height:155px; object-fit:cover;"></video>
+                        <strong>${carta.nome}</strong>
+                        <small>${carta.raridade}</small>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <img src="/static/${encodeURIComponent(carta.imagem)}">
+                        <strong>${carta.nome}</strong>
+                        <small>${carta.raridade}</small>
+                    `;
+                }
 
-                if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
+                if (carta.imagem === "gustavodancepot.mp4") {
+                    let somDance = new Audio('/static/dancepotranca.mp3');
+                    somDance.play();
+                } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
                     let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
                     somTartarugas.play();
                 }
@@ -139,31 +164,4 @@ function abrirBooster() {
                     <small>OTARIO!</small>
                 `;
 
-                let somPerdeu = new Audio('/static/perdeu.mp3');
-                somPerdeu.play();
-
-                jogoTravado = true;
-
-                document.getElementById("resultado").textContent = 
-                    "Tirou a armadilha e perdeu! Clique em 'Abrir Booster' para tentar novamente.";
-
-                return;
-
-            } else {
-                div.classList.add("comum");
-
-                div.innerHTML = `
-                    <strong>CARTA PAIA</strong>
-                    <small>COMUM</small>
-                `;
-            }
-
-            if (reveladas === 7) {
-                document.getElementById("resultado").textContent =
-                    `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)!`;
-            }
-        };
-
-        area.appendChild(div);
-    }
-}
+                let somPerdeu = new Audio('/static/perdeu.
