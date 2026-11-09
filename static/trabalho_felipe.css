@@ -99,9 +99,11 @@ button:hover {
     box-shadow: 0 0 15px #8cff00;
 }
 
+/* ÉPICA AGORA EM ROXO */
 .epica {
-    border: 3px solid #e51aec;
-    box-shadow: 0 0 15px #e51aec;
+    border: 3px solid #9b30ff;
+    box-shadow: 0 0 15px #9b30ff;
+    background: linear-gradient(135deg, #22112b, #3c154a);
 }
 
 .ultra-rara {
@@ -130,6 +132,7 @@ button:hover {
     box-shadow: 0 0 20px #00ff88;
 }
 
+/* EFEITO RGB ANIMADO PARA O GUSTAVO DANCEPOT */
 @keyframes rgbGlow {
     0% {
         border-color: #ff0000;
@@ -151,4 +154,25 @@ button:hover {
 
 .dance-potranca {
     animation: rgbGlow 3s infinite linear;
-    background: linear-gradient(135deg, #111, #3
+    background: linear-gradient(135deg, #111, #333);
+}
+
+.peso {
+    border: 3px solid #ffe600;
+    box-shadow: 0 0 18px #ffe600;
+    background: linear-gradient(135deg, #2b2711, #4a4315);
+}
+
+.armadilha {
+    border: 3px solid red;
+    box-shadow: 0 0 15px red;
+}
+
+.comum {
+    border: 3px solid #777;
+}
+
+#resultado {
+    color: #00e5ff;
+    margin: 25px;
+}

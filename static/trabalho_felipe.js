@@ -7,7 +7,7 @@ const cartas = [
         chance: 0.3
     },
     {
-        nome: "Elefante Berinjeludo",
+        nome: "Elefante Africano",
         imagem: "elefantebe.jpg",
         raridade: "PESO",
         classe: "peso",
@@ -91,6 +91,7 @@ function sortearCarta() {
         }
     }
 
+    // Armadilha configurada para 5% de chance
     if (numero < 5) {
         return {
             nome: "PERDEU OTARIO!",
