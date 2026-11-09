@@ -136,7 +136,7 @@ function abrirBooster() {
 
                 if (carta.imagem.endsWith('.mp4')) {
                     div.innerHTML = `
-                        <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width:100%; height:155px; object-fit:cover;"></video>
+                        <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>
                         <strong>${carta.nome}</strong>
                         <small>${carta.raridade}</small>
                     `;
@@ -164,4 +164,31 @@ function abrirBooster() {
                     <small>OTARIO!</small>
                 `;
 
-                let somPerdeu = new Audio('/static/perdeu.
+                let somPerdeu = new Audio('/static/perdeu.mp3');
+                somPerdeu.play();
+
+                jogoTravado = true;
+
+                document.getElementById("resultado").textContent = 
+                    "Tirou a armadilha e perdeu! Clique em 'Abrir Booster' para tentar novamente.";
+
+                return;
+
+            } else {
+                div.classList.add("comum");
+
+                div.innerHTML = `
+                    <strong>CARTA PAIA</strong>
+                    <small>COMUM</small>
+                `;
+            }
+
+            if (reveladas === 7) {
+                document.getElementById("resultado").textContent =
+                    `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)!`;
+            }
+        };
+
+        area.appendChild(div);
+    }
+}
