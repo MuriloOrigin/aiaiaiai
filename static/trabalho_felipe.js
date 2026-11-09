@@ -91,7 +91,8 @@ function sortearCarta() {
         }
     }
 
-    if (numero < 12) {
+    // Alterado para 5 para a armadilha ser mais difícil de sair
+    if (numero < 5) {
         return {
             nome: "PERDEU OTARIO!",
             tipo: "armadilha"
