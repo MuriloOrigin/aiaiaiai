@@ -80,7 +80,7 @@ const cartas = [
 
 let jogoTravado = false;
 let cartasGeradas = [];
-let colecaoGlobal = {}; // Guarda o histórico de todas as cartas apanhadas entre boosters
+let colecaoGlobal = {};
 
 function sortearCarta() {
     let numero = Math.random() * 100;
@@ -110,7 +110,6 @@ function atualizarContadorVisual(reveladas, especiais) {
     document.getElementById("contador-abertas").textContent = `${reveladas}/7`;
     document.getElementById("contador-especiais").textContent = especiais;
     
-    // Atualiza a lista da coleção na tela
     const listaDiv = document.getElementById("lista-colecao");
     listaDiv.innerHTML = "";
 
@@ -129,9 +128,10 @@ function atualizarContadorVisual(reveladas, especiais) {
 }
 
 function revelarCartaNoElemento(div, carta) {
+    if (div.dataset.aberta === "sim") return;
+    
     div.dataset.aberta = "sim";
 
-    // Regista a carta na coleção global (mesmo após reiniciar o booster)
     let nomeCarta = carta.nome;
     colecaoGlobal[nomeCarta] = (colecaoGlobal[nomeCarta] || 0) + 1;
 
@@ -182,7 +182,6 @@ function revelarCartaNoElemento(div, carta) {
         `;
     }
 
-    // Atualiza o painel lateral com a nova contagem
     verificarFimDoBooster();
 }
 
@@ -194,16 +193,6 @@ function abrirBooster() {
     jogoTravado = false;
 
     document.getElementById("resultado").textContent = "Revele as suas 7 cartas!";
-    
-    // Reseta apenas as cartas abertas do booster atual (a coleção global acumula)
-    const divsCartas = document.querySelectorAll(".carta");
-    let reveladas = 0;
-    let especiais = 0;
-    divsCartas.forEach(d => {
-        if (d.dataset.aberta === "sim" && !d.classList.contains("comum") && !d.classList.contains("armadilha")) {
-            especiais++;
-        }
-    });
     atualizarContadorVisual(0, 0);
 
     for (let i = 0; i < 7; i++) {
@@ -248,7 +237,7 @@ function verificarFimDoBooster() {
     }
 }
 
-// Controlo via Teclado (Barra de Espaço)
+// Controlo via Teclado (Barra de Espaço) com funcionamento garantido
 document.addEventListener("keydown", function(event) {
     if (event.code === "Space" || event.key === " ") {
         event.preventDefault();
