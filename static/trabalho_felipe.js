@@ -1,6 +1,6 @@
 const cartas = [
     {
-        nome: "Gustavo Dancepot",
+        nome: "Gustavo Dance Potranca",
         imagem: "gustavodancepot.mp4",
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
@@ -9,8 +9,8 @@ const cartas = [
     {
         nome: "Elefante Africano",
         imagem: "elefantebe.jpg",
-        raridade: "PESO",
-        classe: "peso",
+        raridade: "TRANSFICANO",
+        classe: "TRANSFICANO",
         chance: 1.0
     },
     {
