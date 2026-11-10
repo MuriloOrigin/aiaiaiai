@@ -79,7 +79,7 @@ const cartas = [
 ];
 
 let jogoTravado = false;
-let cartasGeradas = []; // Guarda as cartas do booster atual
+let cartasGeradas = [];
 
 function sortearCarta() {
     let numero = Math.random() * 100;
@@ -105,7 +105,6 @@ function sortearCarta() {
     };
 }
 
-// Função que revela uma carta específica no elemento HTML dela
 function revelarCartaNoElemento(div, carta) {
     div.dataset.aberta = "sim";
 
@@ -177,7 +176,6 @@ function abrirBooster() {
             <strong>CARTA ${i + 1}</strong>
         `;
 
-        // Permitir clicar individualmente com o rato
         div.onclick = function () {
             if (jogoTravado || div.dataset.aberta) return;
             revelarCartaNoElemento(div, carta);
@@ -188,7 +186,6 @@ function abrirBooster() {
     }
 }
 
-// Verifica quantas cartas especiais já foram abertas
 function verificarFimDoBooster() {
     const divsCartas = document.querySelectorAll(".carta");
     let reveladas = 0;
@@ -212,24 +209,21 @@ function verificarFimDoBooster() {
 // Controlo via Teclado (Barra de Espaço)
 document.addEventListener("keydown", function(event) {
     if (event.code === "Space" || event.key === " ") {
-        event.preventDefault(); // Impede a página de descer
+        event.preventDefault();
 
         const divsCartas = document.querySelectorAll(".carta");
 
-        // Se ainda não abriu booster nenhum, abre o primeiro
         if (divsCartas.length === 0) {
             abrirBooster();
             return;
         }
 
-        // Se o jogo travou (armadilha) ou todas já foram abertas, reinicia o booster
         let todasAbertas = Array.from(divsCartas).every(d => d.dataset.aberta === "sim");
         if (jogoTravado || todasAbertas) {
             abrirBooster();
             return;
         }
 
-        // Caso contrário, encontra a próxima carta fechada e abre-a
         for (let i = 0; i < divsCartas.length; i++) {
             if (!divsCartas[i].dataset.aberta) {
                 revelarCartaNoElemento(divsCartas[i], cartasGeradas[i]);
