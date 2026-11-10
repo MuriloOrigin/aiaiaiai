@@ -79,6 +79,7 @@ const cartas = [
 ];
 
 let jogoTravado = false;
+let cartasGeradas = []; // Guarda as cartas do booster atual
 
 function sortearCarta() {
     let numero = Math.random() * 100;
@@ -104,91 +105,137 @@ function sortearCarta() {
     };
 }
 
+// Função que revela uma carta específica no elemento HTML dela
+function revelarCartaNoElemento(div, carta) {
+    div.dataset.aberta = "sim";
+
+    if (carta.raridade) {
+        div.classList.add(carta.classe);
+
+        if (carta.imagem.endsWith('.mp4')) {
+            div.innerHTML = `
+                <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>
+                <strong>${carta.nome}</strong>
+                <small>${carta.raridade}</small>
+            `;
+        } else {
+            div.innerHTML = `
+                <img src="/static/${encodeURIComponent(carta.imagem)}">
+                <strong>${carta.nome}</strong>
+                <small>${carta.raridade}</small>
+            `;
+        }
+
+        if (carta.imagem === "gustavodancepot.mp4") {
+            let somDance = new Audio('/static/dancepotranca.mp3');
+            somDance.play();
+        } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
+            let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
+            somTartarugas.play();
+        }
+
+    } else if (carta.tipo === "armadilha") {
+        div.classList.add("armadilha");
+        div.innerHTML = `
+            <strong>PERDEU!</strong>
+            <small>OTARIO!</small>
+        `;
+
+        let somPerdeu = new Audio('/static/perdeu.mp3');
+        somPerdeu.play();
+
+        jogoTravado = true;
+        document.getElementById("resultado").textContent = 
+            "Tirou a armadilha e perdeu! Prima espaço para tentar novamente.";
+
+    } else {
+        div.classList.add("comum");
+        div.innerHTML = `
+            <strong>CARTA PAIA</strong>
+            <small>COMUM</small>
+        `;
+    }
+}
+
 function abrirBooster() {
     const area = document.getElementById("cartas");
     area.innerHTML = "";
 
-    let especiais = 0;
-    let reveladas = 0;
+    cartasGeradas = [];
     jogoTravado = false;
 
     document.getElementById("resultado").textContent = "Revele as suas 7 cartas!";
 
     for (let i = 0; i < 7; i++) {
         let carta = sortearCarta();
-        let div = document.createElement("div");
+        cartasGeradas.push(carta);
 
+        let div = document.createElement("div");
         div.className = "carta";
         div.innerHTML = `
             <div class="verso">?</div>
             <strong>CARTA ${i + 1}</strong>
         `;
 
+        // Permitir clicar individualmente com o rato
         div.onclick = function () {
             if (jogoTravado || div.dataset.aberta) return;
-
-            div.dataset.aberta = "sim";
-            reveladas++;
-
-            if (carta.raridade) {
-                especiais++;
-                div.classList.add(carta.classe);
-
-                if (carta.imagem.endsWith('.mp4')) {
-                    div.innerHTML = `
-                        <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>
-                        <strong>${carta.nome}</strong>
-                        <small>${carta.raridade}</small>
-                    `;
-                } else {
-                    div.innerHTML = `
-                        <img src="/static/${encodeURIComponent(carta.imagem)}">
-                        <strong>${carta.nome}</strong>
-                        <small>${carta.raridade}</small>
-                    `;
-                }
-
-                if (carta.imagem === "gustavodancepot.mp4") {
-                    let somDance = new Audio('/static/dancepotranca.mp3');
-                    somDance.play();
-                } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
-                    let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
-                    somTartarugas.play();
-                }
-
-            } else if (carta.tipo === "armadilha") {
-                div.classList.add("armadilha");
-
-                div.innerHTML = `
-                    <strong>PERDEU!</strong>
-                    <small>OTARIO!</small>
-                `;
-
-                let somPerdeu = new Audio('/static/perdeu.mp3');
-                somPerdeu.play();
-
-                jogoTravado = true;
-
-                document.getElementById("resultado").textContent = 
-                    "Tirou a armadilha e perdeu! Clique em 'Abrir Booster' para tentar novamente.";
-
-                return;
-
-            } else {
-                div.classList.add("comum");
-
-                div.innerHTML = `
-                    <strong>CARTA PAIA</strong>
-                    <small>COMUM</small>
-                `;
-            }
-
-            if (reveladas === 7) {
-                document.getElementById("resultado").textContent =
-                    `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)!`;
-            }
+            revelarCartaNoElemento(div, carta);
+            verificarFimDoBooster();
         };
 
         area.appendChild(div);
     }
 }
+
+// Verifica quantas cartas especiais já foram abertas
+function verificarFimDoBooster() {
+    const divsCartas = document.querySelectorAll(".carta");
+    let reveladas = 0;
+    let especiais = 0;
+
+    divsCartas.forEach(d => {
+        if (d.dataset.aberta === "sim") {
+            reveladas++;
+            if (!d.classList.contains("comum") && !d.classList.contains("armadilha")) {
+                especiais++;
+            }
+        }
+    });
+
+    if (reveladas === 7 && !jogoTravado) {
+        document.getElementById("resultado").textContent =
+            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Prima espaço para abrir outro.`;
+    }
+}
+
+// Controlo via Teclado (Barra de Espaço)
+document.addEventListener("keydown", function(event) {
+    if (event.code === "Space" || event.key === " ") {
+        event.preventDefault(); // Impede a página de descer
+
+        const divsCartas = document.querySelectorAll(".carta");
+
+        // Se ainda não abriu booster nenhum, abre o primeiro
+        if (divsCartas.length === 0) {
+            abrirBooster();
+            return;
+        }
+
+        // Se o jogo travou (armadilha) ou todas já foram abertas, reinicia o booster
+        let todasAbertas = Array.from(divsCartas).every(d => d.dataset.aberta === "sim");
+        if (jogoTravado || todasAbertas) {
+            abrirBooster();
+            return;
+        }
+
+        // Caso contrário, encontra a próxima carta fechada e abre-a
+        for (let i = 0; i < divsCartas.length; i++) {
+            if (!divsCartas[i].dataset.aberta) {
+                revelarCartaNoElemento(divsCartas[i], cartasGeradas[i]);
+                verificarFimDoBooster();
+                break;
+            }
+        }
+    }
+});
