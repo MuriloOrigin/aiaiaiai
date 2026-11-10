@@ -105,6 +105,11 @@ function sortearCarta() {
     };
 }
 
+function atualizarContadorVisual(reveladas, especiais) {
+    document.getElementById("contador-abertas").textContent = `${reveladas}/7`;
+    document.getElementById("contador-especiais").textContent = especiais;
+}
+
 function revelarCartaNoElemento(div, carta) {
     div.dataset.aberta = "sim";
 
@@ -145,7 +150,7 @@ function revelarCartaNoElemento(div, carta) {
 
         jogoTravado = true;
         document.getElementById("resultado").textContent = 
-            "Tirou a armadilha e perdeu! Prima espaço para tentar novamente.";
+            "Tirou a armadilha e perdeu! Clique espaço para abrir outro booster.";
 
     } else {
         div.classList.add("comum");
@@ -164,92 +169,6 @@ function abrirBooster() {
     jogoTravado = false;
 
     document.getElementById("resultado").textContent = "Revele as suas 7 cartas!";
-
-    for (let i = 0; i < 7; i++) {
-        let carta = sortearCarta();
-        cartasGeradas.push(carta);
-
-        let div = document.createElement("div");
-        div.className = "carta";
-        div.innerHTML = `
-            <div class="verso">?</div>
-            <strong>CARTA ${i + 1}</strong>
-        `;
-
-        div.onclick = function () {
-            if (jogoTravado || div.dataset.aberta) return;
-            revelarCartaNoElemento(div, carta);
-            verificarFimDoBooster();
-        };
-
-        area.appendChild(div);
-    }
-}
-
-function verificarFimDoBooster() {
-    const divsCartas = document.querySelectorAll(".carta");
-    let reveladas = 0;
-    let especiais = 0;
-
-    divsCartas.forEach(d => {
-        if (d.dataset.aberta === "sim") {
-            reveladas++;
-            if (!d.classList.contains("comum") && !d.classList.contains("armadilha")) {
-                especiais++;
-            }
-        }
-    });
-
-    if (reveladas === 7 && !jogoTravado) {
-        document.getElementById("resultado").textContent =
-            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Prima espaço para abrir outro.`;
-    }
-}
-
-// Controlo via Teclado (Barra de Espaço)
-document.addEventListener("keydown", function(event) {
-    if (event.code === "Space" || event.key === " ") {
-        event.preventDefault();
-
-        const divsCartas = document.querySelectorAll(".carta");
-
-        if (divsCartas.length === 0) {
-            abrirBooster();
-            return;
-        }
-
-        let todasAbertas = Array.from(divsCartas).every(d => d.dataset.aberta === "sim");
-        if (jogoTravado || todasAbertas) {
-            abrirBooster();
-            return;
-        }
-
-        for (let i = 0; i < divsCartas.length; i++) {
-            if (!divsCartas[i].dataset.aberta) {
-                revelarCartaNoElemento(divsCartas[i], cartasGeradas[i]);
-                verificarFimDoBooster();
-                break;
-            }
-        }
-    }
-});
-
-// Função para atualizar os valores visuais do contador lateral
-function atualizarContadorVisual(reveladas, especiais) {
-    document.getElementById("contador-abertas").textContent = `${reveladas}/7`;
-    document.getElementById("contador-especiais").textContent = especiais;
-}
-
-function abrirBooster() {
-    const area = document.getElementById("cartas");
-    area.innerHTML = "";
-
-    cartasGeradas = [];
-    jogoTravado = false;
-
-    document.getElementById("resultado").textContent = "Revele as suas 7 cartas!";
-    
-    // Reseta o contador lateral para o novo booster
     atualizarContadorVisual(0, 0);
 
     for (let i = 0; i < 7; i++) {
@@ -287,11 +206,38 @@ function verificarFimDoBooster() {
         }
     });
 
-    // Atualiza o contador na lateral em tempo real
     atualizarContadorVisual(reveladas, especiais);
 
     if (reveladas === 7 && !jogoTravado) {
         document.getElementById("resultado").textContent =
-            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Prima espaço para abrir outro.`;
+            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Clique espaço para abrir outro booster.`;
     }
 }
+
+// Controlo via Teclado (Barra de Espaço)
+document.addEventListener("keydown", function(event) {
+    if (event.code === "Space" || event.key === " ") {
+        event.preventDefault();
+
+        const divsCartas = document.querySelectorAll(".carta");
+
+        if (divsCartas.length === 0) {
+            abrirBooster();
+            return;
+        }
+
+        let todasAbertas = Array.from(divsCartas).every(d => d.dataset.aberta === "sim");
+        if (jogoTravado || todasAbertas) {
+            abrirBooster();
+            return;
+        }
+
+        for (let i = 0; i < divsCartas.length; i++) {
+            if (!divsCartas[i].dataset.aberta) {
+                revelarCartaNoElemento(divsCartas[i], cartasGeradas[i]);
+                verificarFimDoBooster();
+                break;
+            }
+        }
+    }
+});

@@ -10,6 +10,40 @@ h1 {
     margin-top: 30px;
 }
 
+/* CONTADOR LATERAL FIXO À DIREITA */
+#contador-lateral {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: #1f233a;
+    border: 2px solid #00e5ff;
+    border-radius: 12px;
+    padding: 15px 20px;
+    width: 180px;
+    text-align: left;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    z-index: 1000;
+}
+
+#contador-lateral h3 {
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    color: #fffb02;
+    text-align: center;
+}
+
+#contador-lateral p {
+    margin: 5px 0;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#contador-lateral span {
+    font-weight: bold;
+    color: #00e5ff;
+}
+
 .booster {
     width: 180px;
     height: 230px;
@@ -51,6 +85,7 @@ button:hover {
     justify-content: center;
     gap: 15px;
     margin: 30px auto;
+    max-width: 900px;
 }
 
 .carta {
@@ -107,56 +142,56 @@ button:hover {
     text-shadow: 1px 1px 2px black;
 }
 
-/* ESTILOS E FUNDOS DAS CARTAS */
+/* ESTILOS E FUNDOS UNIFICADOS COM FORÇAGEM (!important) */
 
 .nojo {
-    border-color: #8cff00;
-    box-shadow: 0 0 18px #8cff00;
-    background: #18260b;
+    border-color: #8cff00 !important;
+    box-shadow: 0 0 18px #8cff00 !important;
+    background: #18260b !important;
 }
-.nojo strong, .nojo small { background: #18260b; width: 100%; padding: 2px 0; }
+.nojo strong, .nojo small { background: #18260b !important; width: 100%; padding: 2px 0; }
 
 .epica {
-    border-color: #9b30ff;
-    box-shadow: 0 0 18px #9b30ff;
-    background: #220b2b;
+    border-color: #9b30ff !important;
+    box-shadow: 0 0 18px #9b30ff !important;
+    background: #220b2b !important;
 }
-.epica strong, .epica small { background: #220b2b; width: 100%; padding: 2px 0; }
+.epica strong, .epica small { background: #220b2b !important; width: 100%; padding: 2px 0; }
 
 .ultra-rara {
-    border-color: #00e5ff;
-    box-shadow: 0 0 18px #00e5ff;
-    background: #0b2226;
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 18px #00e5ff !important;
+    background: #0b2226 !important;
 }
-.ultra-rara strong, .ultra-rara small { background: #0b2226; width: 100%; padding: 2px 0; }
+.ultra-rara strong, .ultra-rara small { background: #0b2226 !important; width: 100%; padding: 2px 0; }
 
 .lendaria {
-    border-color: #ffae00;
-    box-shadow: 0 0 18px #ffae00;
-    background: #2b210b;
+    border-color: #ffae00 !important;
+    box-shadow: 0 0 18px #ffae00 !important;
+    background: #2b210b !important;
 }
-.lendaria strong, .lendaria small { background: #2b210b; width: 100%; padding: 2px 0; }
+.lendaria strong, .lendaria small { background: #2b210b !important; width: 100%; padding: 2px 0; }
 
 .primordial {
-    border-color: #ff3030;
-    box-shadow: 0 0 18px #ff3030;
-    background: #2b0b0b;
+    border-color: #ff3030 !important;
+    box-shadow: 0 0 18px #ff3030 !important;
+    background: #2b0b0b !important;
 }
-.primordial strong, .primordial small { background: #2b0b0b; width: 100%; padding: 2px 0; }
+.primordial strong, .primordial small { background: #2b0b0b !important; width: 100%; padding: 2px 0; }
 
 .secreta {
-    border-color: #ffffff;
-    box-shadow: 0 0 20px #ffffff;
-    background: #1a1a1a;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 20px #ffffff !important;
+    background: #1a1a1a !important;
 }
-.secreta strong, .secreta small { background: #1a1a1a; width: 100%; padding: 2px 0; }
+.secreta strong, .secreta small { background: #1a1a1a !important; width: 100%; padding: 2px 0; }
 
 .especial-hexa {
-    border-color: #00ff88;
-    box-shadow: 0 0 18px #00ff88;
-    background: #0b2b1d;
+    border-color: #00ff88 !important;
+    box-shadow: 0 0 18px #00ff88 !important;
+    background: #0b2b1d !important;
 }
-.especial-hexa strong, .especial-hexa small { background: #0b2b1d; width: 100%; padding: 2px 0; }
+.especial-hexa strong, .especial-hexa small { background: #0b2b1d !important; width: 100%; padding: 2px 0; }
 
 @keyframes rgbGlow {
     0% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
@@ -167,24 +202,23 @@ button:hover {
 
 .dance-potranca {
     animation: rgbGlow 3s infinite linear;
-    background: #1b0b2b;
+    background: #1b0b2b !important;
 }
-.dance-potranca strong, .dance-potranca small { background: #1b0b2b; width: 100%; padding: 2px 0; }
+.dance-potranca strong, .dance-potranca small { background: #1b0b2b !important; width: 100%; padding: 2px 0; }
 
-/* CLASSE TRANSFICANO (ELEFANTE AFRICANO) */
 .transficano {
-    border-color: #ffe600;
-    box-shadow: 0 0 18px #ffe600;
-    background: #2b260b;
+    border-color: #ffe600 !important;
+    box-shadow: 0 0 18px #ffe600 !important;
+    background: #2b260b !important;
 }
-.transficano strong, .transficano small { background: #2b260b; width: 100%; padding: 2px 0; }
+.transficano strong, .transficano small { background: #2b260b !important; width: 100%; padding: 2px 0; }
 
 .armadilha {
-    border: 4px solid red;
-    box-shadow: 0 0 18px red;
-    background: #2b0b0b;
+    border: 4px solid red !important;
+    box-shadow: 0 0 18px red !important;
+    background: #2b0b0b !important;
 }
-.armadilha strong, .armadilha small { background: #2b0b0b; width: 100%; padding: 2px 0; }
+.armadilha strong, .armadilha small { background: #2b0b0b !important; width: 100%; padding: 2px 0; }
 
 .comum {
     border: 4px solid #777;
@@ -195,38 +229,4 @@ button:hover {
 #resultado {
     color: #00e5ff;
     margin: 25px;
-}
-
-/* CONTADOR LATERAL FIXO À DIREITA */
-#contador-lateral {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    background: #1f233a;
-    border: 2px solid #00e5ff;
-    border-radius: 12px;
-    padding: 15px 20px;
-    width: 180px;
-    text-align: left;
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
-    z-index: 1000;
-}
-
-#contador-lateral h3 {
-    margin: 0 0 10px 0;
-    font-size: 15px;
-    color: #fffb02;
-    text-align: center;
-}
-
-#contador-lateral p {
-    margin: 5px 0;
-    font-size: 13px;
-    display: flex;
-    justify-content: space-between;
-}
-
-#contador-lateral span {
-    font-weight: bold;
-    color: #00e5ff;
 }
