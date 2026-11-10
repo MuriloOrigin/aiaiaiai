@@ -233,3 +233,65 @@ document.addEventListener("keydown", function(event) {
         }
     }
 });
+
+// Função para atualizar os valores visuais do contador lateral
+function atualizarContadorVisual(reveladas, especiais) {
+    document.getElementById("contador-abertas").textContent = `${reveladas}/7`;
+    document.getElementById("contador-especiais").textContent = especiais;
+}
+
+function abrirBooster() {
+    const area = document.getElementById("cartas");
+    area.innerHTML = "";
+
+    cartasGeradas = [];
+    jogoTravado = false;
+
+    document.getElementById("resultado").textContent = "Revele as suas 7 cartas!";
+    
+    // Reseta o contador lateral para o novo booster
+    atualizarContadorVisual(0, 0);
+
+    for (let i = 0; i < 7; i++) {
+        let carta = sortearCarta();
+        cartasGeradas.push(carta);
+
+        let div = document.createElement("div");
+        div.className = "carta";
+        div.innerHTML = `
+            <div class="verso">?</div>
+            <strong>CARTA ${i + 1}</strong>
+        `;
+
+        div.onclick = function () {
+            if (jogoTravado || div.dataset.aberta) return;
+            revelarCartaNoElemento(div, carta);
+            verificarFimDoBooster();
+        };
+
+        area.appendChild(div);
+    }
+}
+
+function verificarFimDoBooster() {
+    const divsCartas = document.querySelectorAll(".carta");
+    let reveladas = 0;
+    let especiais = 0;
+
+    divsCartas.forEach(d => {
+        if (d.dataset.aberta === "sim") {
+            reveladas++;
+            if (!d.classList.contains("comum") && !d.classList.contains("armadilha")) {
+                especiais++;
+            }
+        }
+    });
+
+    // Atualiza o contador na lateral em tempo real
+    atualizarContadorVisual(reveladas, especiais);
+
+    if (reveladas === 7 && !jogoTravado) {
+        document.getElementById("resultado").textContent =
+            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Prima espaço para abrir outro.`;
+    }
+}
