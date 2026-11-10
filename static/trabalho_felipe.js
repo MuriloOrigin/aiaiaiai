@@ -22,7 +22,7 @@ const cartas = [
     },
     {
         nome: "Muryllo Apanhando",
-        imagem: "muryllo_caindo.mp4",
+        imagem: "muryllo_caindo.mp4", // Atualizado para o vídeo .mp4
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
         chance: 1.5
@@ -237,7 +237,7 @@ function verificarFimDoBooster() {
     }
 }
 
-// Controlo via Teclado (Barra de Espaço) com funcionamento garantido
+// Controlo via Teclado (Barra de Espaço)
 document.addEventListener("keydown", function(event) {
     if (event.code === "Space" || event.key === " ") {
         event.preventDefault();
