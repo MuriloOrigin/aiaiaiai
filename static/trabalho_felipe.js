@@ -22,7 +22,7 @@ const cartas = [
     },
     {
         nome: "Muryllo Apanhando",
-        imagem: "muryllo apanhando.jpg",
+        imagem: "muryllo_caindo.mp4",
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
         chance: 1.5
