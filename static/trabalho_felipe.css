@@ -107,7 +107,7 @@ button:hover {
     text-shadow: 1px 1px 2px black;
 }
 
-/* ESTILOS E FUNDOS UNIFICADOS PARA TODAS AS CARTAS */
+/* ESTILOS E FUNDOS DAS CARTAS */
 
 .nojo {
     border-color: #8cff00;
@@ -171,13 +171,13 @@ button:hover {
 }
 .dance-potranca strong, .dance-potranca small { background: #1b0b2b; width: 100%; padding: 2px 0; }
 
-/* CLASSE DO ELEFANTE AFRICANO CORRIGIDA */
-.peso {
+/* CLASSE TRANSFICANO (ELEFANTE AFRICANO) */
+.transficano {
     border-color: #ffe600;
     box-shadow: 0 0 18px #ffe600;
     background: #2b260b;
 }
-.peso strong, .peso small { background: #2b260b; width: 100%; padding: 2px 0; }
+.transficano strong, .transficano small { background: #2b260b; width: 100%; padding: 2px 0; }
 
 .armadilha {
     border: 4px solid red;

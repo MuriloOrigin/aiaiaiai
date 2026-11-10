@@ -1,6 +1,6 @@
 const cartas = [
     {
-        nome: "Gustavo Dance Potranca",
+        nome: "Gustavo Dancepot",
         imagem: "gustavodancepot.mp4",
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
@@ -10,7 +10,7 @@ const cartas = [
         nome: "Elefante Africano",
         imagem: "elefantebe.jpg",
         raridade: "TRANSFICANO",
-        classe: "TRANSFICANO",
+        classe: "transficano",
         chance: 1.0
     },
     {
@@ -91,7 +91,6 @@ function sortearCarta() {
         }
     }
 
-    // Armadilha configurada para 5% de chance
     if (numero < 5) {
         return {
             nome: "PERDEU OTARIO!",
