@@ -80,6 +80,7 @@ const cartas = [
 
 let jogoTravado = false;
 let cartasGeradas = [];
+let colecaoGlobal = {}; // Guarda o histórico de todas as cartas apanhadas entre boosters
 
 function sortearCarta() {
     let numero = Math.random() * 100;
@@ -108,10 +109,31 @@ function sortearCarta() {
 function atualizarContadorVisual(reveladas, especiais) {
     document.getElementById("contador-abertas").textContent = `${reveladas}/7`;
     document.getElementById("contador-especiais").textContent = especiais;
+    
+    // Atualiza a lista da coleção na tela
+    const listaDiv = document.getElementById("lista-colecao");
+    listaDiv.innerHTML = "";
+
+    const chaves = Object.keys(colecaoGlobal);
+    if (chaves.length === 0) {
+        listaDiv.innerHTML = `<span style="font-size: 11px; color: #888; display: block; text-align: center;">Nenhuma carta ainda</span>`;
+        return;
+    }
+
+    for (let [nome, qtd] of Object.entries(colecaoGlobal)) {
+        let divItem = document.createElement("div");
+        divItem.className = "item-colecao";
+        divItem.innerHTML = `<span>${nome}</span> <b>x${qtd}</b>`;
+        listaDiv.appendChild(divItem);
+    }
 }
 
 function revelarCartaNoElemento(div, carta) {
     div.dataset.aberta = "sim";
+
+    // Regista a carta na coleção global (mesmo após reiniciar o booster)
+    let nomeCarta = carta.nome;
+    colecaoGlobal[nomeCarta] = (colecaoGlobal[nomeCarta] || 0) + 1;
 
     if (carta.raridade) {
         div.classList.add(carta.classe);
@@ -159,6 +181,9 @@ function revelarCartaNoElemento(div, carta) {
             <small>COMUM</small>
         `;
     }
+
+    // Atualiza o painel lateral com a nova contagem
+    verificarFimDoBooster();
 }
 
 function abrirBooster() {
@@ -169,6 +194,16 @@ function abrirBooster() {
     jogoTravado = false;
 
     document.getElementById("resultado").textContent = "Revele as suas 7 cartas!";
+    
+    // Reseta apenas as cartas abertas do booster atual (a coleção global acumula)
+    const divsCartas = document.querySelectorAll(".carta");
+    let reveladas = 0;
+    let especiais = 0;
+    divsCartas.forEach(d => {
+        if (d.dataset.aberta === "sim" && !d.classList.contains("comum") && !d.classList.contains("armadilha")) {
+            especiais++;
+        }
+    });
     atualizarContadorVisual(0, 0);
 
     for (let i = 0; i < 7; i++) {
@@ -185,7 +220,6 @@ function abrirBooster() {
         div.onclick = function () {
             if (jogoTravado || div.dataset.aberta) return;
             revelarCartaNoElemento(div, carta);
-            verificarFimDoBooster();
         };
 
         area.appendChild(div);
@@ -235,7 +269,6 @@ document.addEventListener("keydown", function(event) {
         for (let i = 0; i < divsCartas.length; i++) {
             if (!divsCartas[i].dataset.aberta) {
                 revelarCartaNoElemento(divsCartas[i], cartasGeradas[i]);
-                verificarFimDoBooster();
                 break;
             }
         }
