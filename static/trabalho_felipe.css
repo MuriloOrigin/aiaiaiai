@@ -34,12 +34,10 @@ h1 {
     transform: scale(1.05);
 }
 
-/* Cores específicas das bordas padrão */
 .comum-card { border-color: #00ff88; }
 .especial-card { border-color: #9b30ff; }
 .lendario-card { border-color: #ffae00; }
 
-/* NEON PERSONALIZADO QUANDO SELECIONADO */
 .card-loja.comum-card.selecionado {
     border-color: #00ff88 !important;
     box-shadow: 0 0 20px #00ff88 !important;
@@ -197,7 +195,7 @@ h1 {
 
 #grid-album {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 15px;
     margin-top: 20px;
     max-height: 500px;
@@ -241,19 +239,41 @@ h1 {
     border-radius: 6px;
 }
 
-.btn-vender {
+.grupo-botoes-venda {
+    display: flex;
+    gap: 5px;
+    width: 100%;
     margin-top: 8px;
-    padding: 5px 10px;
+}
+
+.btn-vender {
+    flex: 1;
+    padding: 6px 4px;
     background: #ff3030;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 11px;
+    font-size: 10px;
     cursor: pointer;
     font-weight: bold;
 }
 .btn-vender:hover {
     background: #cc2525;
+}
+
+.btn-vender-especifica-todas {
+    flex: 1;
+    padding: 6px 4px;
+    background: #ff8c00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-vender-especifica-todas:hover {
+    background: #d97700;
 }
 
 /* CARTAS ALINHADAS EM LINHA RETA */

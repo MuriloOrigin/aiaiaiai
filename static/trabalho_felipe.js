@@ -5,7 +5,7 @@ const cartas = [
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
         chanceBase: 0.45,
-        preco: 48.00
+        preco: 64.80
     },
     {
         nome: "Elefante Africano",
@@ -13,7 +13,7 @@ const cartas = [
         raridade: "TRANSFICANO",
         classe: "transficano",
         chanceBase: 1.5,
-        preco: 10.00
+        preco: 13.50
     },
     {
         nome: "Gustavo Tartarugas Ninjas",
@@ -21,7 +21,7 @@ const cartas = [
         raridade: "SECRETA",
         classe: "secreta",
         chanceBase: 0.75,
-        preco: 40.00
+        preco: 54.00
     },
     {
         nome: "Muryllo Apanhando",
@@ -29,7 +29,7 @@ const cartas = [
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
         chanceBase: 2.25,
-        preco: 20.00
+        preco: 27.00
     },
     {
         nome: "Muryllo Skibidi",
@@ -37,7 +37,7 @@ const cartas = [
         raridade: "EPICA",
         classe: "epica",
         chanceBase: 3.0,
-        preco: 10.00
+        preco: 13.50
     },
     {
         nome: "O Inicio",
@@ -45,7 +45,7 @@ const cartas = [
         raridade: "PRIMORDIAL",
         classe: "primordial",
         chanceBase: 1.2,
-        preco: 32.00
+        preco: 43.20
     },
     {
         nome: "Resenha Call",
@@ -53,7 +53,7 @@ const cartas = [
         raridade: "LENDARIA",
         classe: "lendaria",
         chanceBase: 1.5,
-        preco: 32.00
+        preco: 43.20
     },
     {
         nome: "Xorume Muryllo",
@@ -61,7 +61,7 @@ const cartas = [
         raridade: "NOJO",
         classe: "nojo",
         chanceBase: 4.5,
-        preco: 6.00
+        preco: 8.10
     },
     {
         nome: "Juliano",
@@ -69,7 +69,7 @@ const cartas = [
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
         chanceBase: 0.6,
-        preco: 40.00
+        preco: 54.00
     },
     {
         nome: "Felipe",
@@ -77,7 +77,7 @@ const cartas = [
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
         chanceBase: 0.6,
-        preco: 40.00
+        preco: 54.00
     },
     {
         nome: "Daniel",
@@ -85,7 +85,7 @@ const cartas = [
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
         chanceBase: 0.6,
-        preco: 40.00
+        preco: 54.00
     }
 ];
 
@@ -138,7 +138,7 @@ function sortearCarta(multiplicador) {
             cartaSorteada = {
                 nome: "CARTA PAIA",
                 tipo: "comum",
-                preco: 2.00,
+                preco: 2.70,
                 raridade: "COMUM",
                 classe: "comum"
             };
@@ -320,7 +320,10 @@ function abrirAlbum() {
                 ${mediaHtml}
                 <strong style="font-size: 10px; margin-top: 5px; color: ${carta.isShiny ? '#ffd700' : '#fff'};">${carta.nome}</strong>
                 <small style="color: #00e5ff;">Qtd: x${qtd}</small>
-                <button class="btn-vender" onclick="venderCarta('${carta.nome}')">Vender (R$ ${carta.preco.toFixed(2)})</button>
+                <div class="grupo-botoes-venda">
+                    <button class="btn-vender" onclick="venderCarta('${carta.nome}')">Vender 1</button>
+                    <button class="btn-vender-especifica-todas" onclick="venderTodasDaCarta('${carta.nome}')">Vender Todas</button>
+                </div>
             `;
         } else {
             itemDiv.className = "item-album bloqueado";
@@ -354,6 +357,22 @@ function venderCarta(nomeCarta) {
         dinheiro += precoVenda;
         atualizarContadorVisual(0, 0);
         abrirAlbum(); 
+    }
+}
+
+function venderTodasDaCarta(nomeCarta) {
+    let qtd = colecaoGlobal[nomeCarta] || 0;
+    if (qtd > 0) {
+        let precoVenda = 0;
+        cartas.forEach(c => {
+            if (nomeCarta === c.nome) precoVenda = c.preco;
+            if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
+        });
+
+        dinheiro += precoVenda * qtd;
+        colecaoGlobal[nomeCarta] = 0;
+        atualizarContadorVisual(0, 0);
+        abrirAlbum();
     }
 }
 
