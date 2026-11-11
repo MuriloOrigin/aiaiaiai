@@ -168,6 +168,24 @@ h1 {
     color: #fff;
 }
 
+.btn-vender-todas {
+    background: #ff3030;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 0 10px rgba(255, 48, 48, 0.4);
+    transition: background 0.3s;
+}
+
+.btn-vender-todas:hover {
+    background: #cc2525;
+}
+
 #grid-album {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

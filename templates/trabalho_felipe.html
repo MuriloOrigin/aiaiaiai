@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booster do Senac</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=11">
+    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=12">
 </head>
 
 <body>
@@ -26,6 +26,10 @@
             <span class="fechar-modal" onclick="fecharAlbum()">&times;</span>
             <h2>Álbum de Coleção</h2>
             <p style="color: #aaa; font-size: 13px;">Coleciona todas as cartas e versões Shiny para dominar o jogo!</p>
+            
+            <!-- BOTÃO DE VENDER TODAS AS CARTAS -->
+            <button onclick="venderTodasAsCartas()" class="btn-vender-todas">VENDER TODAS AS CARTAS</button>
+
             <div id="grid-album"></div>
         </div>
     </div>

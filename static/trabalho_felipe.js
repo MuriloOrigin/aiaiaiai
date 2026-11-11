@@ -357,6 +357,29 @@ function venderCarta(nomeCarta) {
     }
 }
 
+// Função para vender todas as cartas do inventário de uma só vez
+function venderTodasAsCartas() {
+    let totalGanho = 0;
+
+    for (let nomeCarta in colecaoGlobal) {
+        let qtd = colecaoGlobal[nomeCarta];
+        if (qtd > 0) {
+            let precoVenda = 0;
+            cartas.forEach(c => {
+                if (nomeCarta === c.nome) precoVenda = c.preco;
+                if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
+            });
+
+            totalGanho += precoVenda * qtd;
+            colecaoGlobal[nomeCarta] = 0; // Zera a quantidade
+        }
+    }
+
+    dinheiro += totalGanho;
+    atualizarContadorVisual(0, 0);
+    abrirAlbum();
+}
+
 window.onclick = function(event) {
     let modal = document.getElementById("modal-album");
     if (event.target === modal) {
