@@ -4,111 +4,115 @@ const cartas = [
         imagem: "gustavodancepot.mp4",
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
-        chance: 0.3,
-        preco: 12.00
+        chanceBase: 0.3,
+        preco: 24.00
     },
     {
         nome: "Elefante Africano",
         imagem: "elefantebe.jpg",
         raridade: "TRANSFICANO",
         classe: "transficano",
-        chance: 1.0,
-        preco: 2.50
+        chanceBase: 1.0,
+        preco: 5.00
     },
     {
         nome: "Gustavo Tartarugas Ninjas",
         imagem: "gustavo tartarugas ninjas.jpg",
         raridade: "SECRETA",
         classe: "secreta",
-        chance: 0.5,
-        preco: 10.00
+        chanceBase: 0.5,
+        preco: 20.00
     },
     {
         nome: "Muryllo Apanhando",
         imagem: "muryllo_caindo.mp4",
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
-        chance: 1.5,
-        preco: 5.00
+        chanceBase: 1.5,
+        preco: 10.00
     },
     {
         nome: "Muryllo Skibidi",
         imagem: "muryllo skibidi.jpg",
         raridade: "EPICA",
         classe: "epica",
-        chance: 2.0,
-        preco: 2.50
+        chanceBase: 2.0,
+        preco: 5.00
     },
     {
         nome: "O Inicio",
         imagem: "O inicio.jpg",
         raridade: "PRIMORDIAL",
         classe: "primordial",
-        chance: 0.8,
-        preco: 8.00
+        chanceBase: 0.8,
+        preco: 16.00
     },
     {
         nome: "Resenha Call",
         imagem: "resenha call.jpg",
         raridade: "LENDARIA",
         classe: "lendaria",
-        chance: 1.0,
-        preco: 8.00
+        chanceBase: 1.0,
+        preco: 16.00
     },
     {
         nome: "Xorume Muryllo",
         imagem: "xorume muryllo.jpg",
         raridade: "NOJO",
         classe: "nojo",
-        chance: 3.0,
-        preco: 1.50
+        chanceBase: 3.0,
+        preco: 3.00
     },
     {
         nome: "Juliano",
         imagem: "juliano.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chance: 0.4,
-        preco: 10.00
+        chanceBase: 0.4,
+        preco: 20.00
     },
     {
         nome: "Felipe",
         imagem: "felipe.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chance: 0.4,
-        preco: 10.00
+        chanceBase: 0.4,
+        preco: 20.00
     },
     {
         nome: "Daniel",
         imagem: "daniel.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chance: 0.4,
-        preco: 10.00
+        chanceBase: 0.4,
+        preco: 20.00
     }
 ];
 
-let dinheiro = 100.00;
+let dinheiro = 200.00;
 let jogoTravado = false;
 let cartasGeradas = [];
-let colecaoGlobal = {}; // Guarda o nome exato da chave (ex: "Gustavo Dancepot" ou "⭐ [SHINY] Gustavo Dancepot")
+let colecaoGlobal = {};
+let multiplicadorAtual = 1.0;
 
-function sortearCarta() {
+function sortearCarta(multiplicador) {
     let numero = Math.random() * 100;
     let acumulado = 0;
     let cartaSorteada = null;
 
     for (let carta of cartas) {
-        acumulado += carta.chance;
+        let chanceEfetiva = carta.chanceBase * (carta.chanceBase < 1.5 ? multiplicador : 1.0);
+        acumulado += chanceEfetiva;
+
         if (numero < acumulado) {
-            cartaSorteada = { ...carta }; // Cria uma cópia da carta
+            cartaSorteada = { ...carta };
             break;
         }
     }
 
     if (!cartaSorteada) {
-        if (numero < 5) {
+        let chanceArmadilha = 5.0 / multiplicador;
+        if (numero < 5 + chanceArmadilha) {
             cartaSorteada = {
                 nome: "PERDEU OTARIO!",
                 tipo: "armadilha",
@@ -118,20 +122,22 @@ function sortearCarta() {
             cartaSorteada = {
                 nome: "CARTA PAIA",
                 tipo: "comum",
-                preco: 0.50,
+                preco: 1.00,
                 raridade: "COMUM",
                 classe: "comum"
             };
         }
     }
 
-    // Chance de ser Shiny (ex: 10% de chance para qualquer carta ganha)
-    let chanceShiny = Math.random() * 100;
-    if (chanceShiny < 10 && !cartaSorteada.tipo) {
+    let chanceShinyBase = 2.0;
+    let chanceShinyEfetiva = chanceShinyBase * multiplicador;
+    let sorteioShiny = Math.random() * 100;
+
+    if (sorteioShiny < chanceShinyEfetiva && !cartaSorteada.tipo) {
         cartaSorteada.isShiny = true;
         cartaSorteada.nomeOriginal = cartaSorteada.nome;
         cartaSorteada.nome = "⭐ " + cartaSorteada.nomeOriginal + " (Shiny)";
-        cartaSorteada.preco = cartaSorteada.preco * 2; // Dobra o valor de venda
+        cartaSorteada.preco = cartaSorteada.preco * 2;
         if (cartaSorteada.raridade) {
             cartaSorteada.raridade = "SHINY " + cartaSorteada.raridade;
         }
@@ -194,7 +200,7 @@ function revelarCartaNoElemento(div, carta) {
 
         jogoTravado = true;
         document.getElementById("resultado").textContent = 
-            "Tirou a armadilha e perdeu! Clique espaço para abrir outro booster.";
+            "Tirou a armadilha e perdeu! Escolhe um booster na loja para tentar de novo.";
 
     } else {
         div.classList.add("comum");
@@ -208,13 +214,14 @@ function revelarCartaNoElemento(div, carta) {
     verificarFimDoBooster();
 }
 
-function abrirBooster() {
-    if (dinheiro < 5.00) {
-        document.getElementById("resultado").textContent = "Não tem dinheiro suficiente para abrir um booster (Custo: R$ 5,00)!";
+function comprarBooster(custo, multiplicador) {
+    if (dinheiro < custo) {
+        document.getElementById("resultado").textContent = `Não tens dinheiro suficiente para este booster (Custo: R$ ${custo.toFixed(2)})!`;
         return;
     }
 
-    dinheiro -= 5.00;
+    dinheiro -= custo;
+    multiplicadorAtual = multiplicador;
 
     const area = document.getElementById("cartas");
     area.innerHTML = "";
@@ -226,7 +233,7 @@ function abrirBooster() {
     atualizarContadorVisual(0, 0);
 
     for (let i = 0; i < 7; i++) {
-        let carta = sortearCarta();
+        let carta = sortearCarta(multiplicadorAtual);
         cartasGeradas.push(carta);
 
         let div = document.createElement("div");
@@ -263,22 +270,18 @@ function verificarFimDoBooster() {
 
     if (reveladas === 7 && !jogoTravado) {
         document.getElementById("resultado").textContent =
-            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Clique espaço para abrir outro booster.`;
+            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Compra outro booster na loja.`;
     }
 }
 
-// Funções do Álbum de Coleção (Mostra versão normal e versão Shiny separadamente no álbum)
 function abrirAlbum() {
     const modal = document.getElementById("modal-album");
     const grid = document.getElementById("grid-album");
     grid.innerHTML = "";
 
-    // Lista todas as cartas normais e gera também as versões Shiny correspondentes no álbum
     let listaCompletaAlbum = [];
     cartas.forEach(c => {
-        // Versão Normal
         listaCompletaAlbum.push({ ...c });
-        // Versão Shiny
         listaCompletaAlbum.push({
             ...c,
             nome: "⭐ " + c.nome + " (Shiny)",
@@ -327,7 +330,6 @@ function venderCarta(nomeCarta) {
     if (colecaoGlobal[nomeCarta] && colecaoGlobal[nomeCarta] > 0) {
         colecaoGlobal[nomeCarta]--;
         
-        // Descobre o preço da carta vendida
         let precoVenda = 0;
         cartas.forEach(c => {
             if (nomeCarta === c.nome) precoVenda = c.preco;
@@ -347,7 +349,7 @@ window.onclick = function(event) {
     }
 }
 
-// Controlo via Teclado (Barra de Espaço)
+// Atalho da Barra de Espaço (Compra o booster comum de R$ 5,00 por defeito ou revela as cartas)
 document.addEventListener("keydown", function(event) {
     if (event.code === "Space" || event.key === " ") {
         if (document.getElementById("modal-album").style.display === "block") return;
@@ -357,13 +359,13 @@ document.addEventListener("keydown", function(event) {
         const divsCartas = document.querySelectorAll(".carta");
 
         if (divsCartas.length === 0) {
-            abrirBooster();
+            comprarBooster(5, 1.0);
             return;
         }
 
         let todasAbertas = Array.from(divsCartas).every(d => d.dataset.aberta === "sim");
         if (jogoTravado || todasAbertas) {
-            abrirBooster();
+            comprarBooster(5, 1.0);
             return;
         }
 

@@ -10,6 +10,64 @@ h1 {
     margin-top: 30px;
 }
 
+/* LOJA DE BOOSTERS */
+.loja-boosters {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+}
+
+.card-loja {
+    background: #1f233a;
+    border: 2px solid #555;
+    border-radius: 12px;
+    padding: 15px;
+    width: 130px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.card-loja.destaque {
+    border-color: #9b30ff;
+    box-shadow: 0 0 15px rgba(155, 48, 255, 0.4);
+}
+
+.card-loja.supremo {
+    border-color: #ffae00;
+    box-shadow: 0 0 15px rgba(255, 174, 0, 0.4);
+}
+
+.card-loja h3 {
+    margin: 0 0 5px 0;
+    font-size: 15px;
+    color: #fff;
+}
+
+.card-loja p {
+    margin: 5px 0 10px 0;
+    font-size: 13px;
+    color: #00ff88;
+    font-weight: bold;
+}
+
+.card-loja button {
+    width: 100%;
+    padding: 8px;
+    background: #2b62d1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+}
+
+.card-loja button:hover {
+    opacity: 0.8;
+}
+
 /* CONTADOR LATERAL FIXO À DIREITA */
 #contador-lateral {
     position: fixed;
@@ -160,41 +218,6 @@ h1 {
     background: #cc2525;
 }
 
-.booster {
-    width: 180px;
-    height: 230px;
-    margin: 20px auto;
-    background: linear-gradient(135deg, #1f233a, #111422);
-    border: 3px solid #e9e3e3;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #00e5ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    font-size: 25px;
-}
-
-.booster strong {
-    color: gold;
-}
-
-button#btn-abrir {
-    padding: 15px 30px;
-    background: #2b62d1;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-button#btn-abrir:hover {
-    background: #1e4596;
-}
-
 /* CARTAS ALINHADAS EM LINHA RETA */
 #cartas {
     display: flex;
@@ -263,7 +286,7 @@ button#btn-abrir:hover {
     text-shadow: 1px 1px 2px black;
 }
 
-/* ANIMAÇÃO E ESTILO SHINY (HOLOGRÁFICO) */
+/* ANIMAÇÃO SHINY */
 @keyframes shinyGlow {
     0% { border-color: #ffd700; box-shadow: 0 0 25px #ffd700, inset 0 0 15px rgba(255,215,0,0.5); }
     50% { border-color: #ff00ff; box-shadow: 0 0 25px #ff00ff, inset 0 0 15px rgba(255,0,255,0.5); }
