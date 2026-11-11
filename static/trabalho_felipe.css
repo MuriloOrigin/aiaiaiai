@@ -215,6 +215,11 @@ h1 {
     justify-content: space-between;
 }
 
+.item-album.bloqueado-carta {
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
 .item-album.bloqueado {
     opacity: 0.4;
     border-color: #333;
@@ -241,19 +246,19 @@ h1 {
 
 .grupo-botoes-venda {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     width: 100%;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .btn-vender {
     flex: 1;
-    padding: 6px 4px;
+    padding: 5px 2px;
     background: #ff3030;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 10px;
+    border-radius: 4px;
+    font-size: 9px;
     cursor: pointer;
     font-weight: bold;
 }
@@ -263,17 +268,34 @@ h1 {
 
 .btn-vender-especifica-todas {
     flex: 1;
-    padding: 6px 4px;
+    padding: 5px 2px;
     background: #ff8c00;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 10px;
+    border-radius: 4px;
+    font-size: 9px;
     cursor: pointer;
     font-weight: bold;
 }
 .btn-vender-especifica-todas:hover {
     background: #d97700;
+}
+
+.btn-bloquear {
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+    background: #2b3252;
+    color: #fff;
+    border: 1px solid #00e5ff;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.btn-bloquear:hover {
+    background: #3b4470;
 }
 
 /* CARTAS ALINHADAS EM LINHA RETA */

@@ -89,13 +89,14 @@ const cartas = [
     }
 ];
 
-let dinheiro = 200.00;[cite: 2]
+let dinheiro = 200.00;
 let jogoTravado = false;
 let cartasGeradas = [];
 let colecaoGlobal = {};
+let cartasBloqueadas = {};
 
 let pacoteSelecionado = {
-    custo: 5.00,[cite: 2]
+    custo: 5.00,
     multiplicador: 1.0,
     nome: "Comum"
 };
@@ -195,7 +196,6 @@ function revelarCartaNoElemento(div, carta) {
                 <small>${carta.raridade}</small>
             `;
         } else {
-            // Caso seja a CARTA PAIA (sem imagem)
             div.innerHTML = `
                 <div class="verso" style="font-size: 35px;">PAIA</div>
                 <strong>${carta.nome}</strong>
@@ -226,7 +226,6 @@ function revelarCartaNoElemento(div, carta) {
             "Tirou a armadilha e perdeu! Selecione um booster para tentar de novo.";
 
     } else {
-        // CARTA PAIA (comum)
         div.classList.add("comum");
         if (carta.isShiny) div.classList.add("shiny");
         div.innerHTML = `
@@ -315,7 +314,6 @@ function abrirAlbum() {
         });
     });
 
-    // Adiciona também a Carta Paia ao álbum se necessário
     let paiaNormal = { nome: "CARTA PAIA", raridade: "PAIA", preco: 2.70, classe: "comum" };
     let paiaShiny = { nome: "⭐ CARTA PAIA (Shiny)", raridade: "SHINY PAIA", preco: 5.40, classe: "comum", isShiny: true };
     listaCompletaAlbum.push(paiaNormal, paiaShiny);
@@ -323,10 +321,12 @@ function abrirAlbum() {
     listaCompletaAlbum.forEach(carta => {
         let qtd = colecaoGlobal[carta.nome] || 0;
         let itemDiv = document.createElement("div");
+        let bloqueada = cartasBloqueadas[carta.nome] || false;
 
         if (qtd > 0) {
             itemDiv.className = carta.isShiny ? "item-album shiny-borda" : "item-album";
-            
+            if (bloqueada) itemDiv.classList.add("bloqueado-carta");
+
             let mediaHtml = "";
             if (carta.imagem && carta.imagem.endsWith('.mp4')) {
                 mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>`;
@@ -336,14 +336,21 @@ function abrirAlbum() {
                 mediaHtml = `<div class="silueta" style="font-size: 18px; color: #aaa;">PAIA</div>`;
             }
 
+            let botoesVendaHtml = bloqueada ? 
+                `<span style="color: #00e5ff; font-size: 11px; font-weight: bold; margin-top: 6px; display:block;">🔒 Bloqueada</span>` : 
+                `<div class="grupo-botoes-venda">
+                    <button class="btn-vender" onclick="venderCarta('${carta.nome}')">Vender 1</button>
+                    <button class="btn-vender-especifica-todas" onclick="venderTodasDaCarta('${carta.nome}')">Vender Todas</button>
+                </div>`;
+
+            let textoBloqueio = bloqueada ? "🔓 Desbloquear" : "🔒 Bloquear";
+
             itemDiv.innerHTML = `
                 ${mediaHtml}
                 <strong style="font-size: 10px; margin-top: 5px; color: ${carta.isShiny ? '#ffd700' : '#fff'};">${carta.nome}</strong>
                 <small style="color: #00e5ff;">Qtd: x${qtd}</small>
-                <div class="grupo-botoes-venda">
-                    <button class="btn-vender" onclick="venderCarta('${carta.nome}')">Vender 1</button>
-                    <button class="btn-vender-especifica-todas" onclick="venderTodasDaCarta('${carta.nome}')">Vender Todas</button>
-                </div>
+                ${botoesVendaHtml}
+                <button class="btn-bloquear" onclick="alternarBloqueio('${carta.nome}')">${textoBloqueio}</button>
             `;
         } else {
             itemDiv.className = "item-album bloqueado";
@@ -364,7 +371,14 @@ function fecharAlbum() {
     document.getElementById("modal-album").style.display = "none";
 }
 
+function alternarBloqueio(nomeCarta) {
+    cartasBloqueadas[nomeCarta] = !cartasBloqueadas[nomeCarta];
+    abrirAlbum();
+}
+
 function venderCarta(nomeCarta) {
+    if (cartasBloqueadas[nomeCarta]) return;
+
     if (colecaoGlobal[nomeCarta] && colecaoGlobal[nomeCarta] > 0) {
         colecaoGlobal[nomeCarta]--;
         
@@ -385,6 +399,8 @@ function venderCarta(nomeCarta) {
 }
 
 function venderTodasDaCarta(nomeCarta) {
+    if (cartasBloqueadas[nomeCarta]) return;
+
     let qtd = colecaoGlobal[nomeCarta] || 0;
     if (qtd > 0) {
         let precoVenda = 0;
@@ -408,6 +424,8 @@ function venderTodasAsCartas() {
     let totalGanho = 0;
 
     for (let nomeCarta in colecaoGlobal) {
+        if (cartasBloqueadas[nomeCarta]) continue;
+
         let qtd = colecaoGlobal[nomeCarta];
         if (qtd > 0) {
             let precoVenda = 0;
