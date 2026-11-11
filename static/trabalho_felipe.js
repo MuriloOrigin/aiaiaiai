@@ -89,13 +89,13 @@ const cartas = [
     }
 ];
 
-let dinheiro = 200.00;
+let dinheiro = 200.00;[cite: 2]
 let jogoTravado = false;
 let cartasGeradas = [];
 let colecaoGlobal = {};
 
 let pacoteSelecionado = {
-    custo: 5.00,
+    custo: 5.00,[cite: 2]
     multiplicador: 1.0,
     nome: "Comum"
 };
@@ -139,7 +139,7 @@ function sortearCarta(multiplicador) {
                 nome: "CARTA PAIA",
                 tipo: "comum",
                 preco: 2.70,
-                raridade: "COMUM",
+                raridade: "PAIA",
                 classe: "comum"
             };
         }
@@ -182,15 +182,22 @@ function revelarCartaNoElemento(div, carta) {
             div.classList.add("shiny");
         }
 
-        if (carta.imagem.endsWith('.mp4')) {
+        if (carta.imagem && carta.imagem.endsWith('.mp4')) {
             div.innerHTML = `
                 <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>
                 <strong>${carta.nome}</strong>
                 <small>${carta.raridade}</small>
             `;
-        } else {
+        } else if (carta.imagem) {
             div.innerHTML = `
                 <img src="/static/${encodeURIComponent(carta.imagem)}">
+                <strong>${carta.nome}</strong>
+                <small>${carta.raridade}</small>
+            `;
+        } else {
+            // Caso seja a CARTA PAIA (sem imagem)
+            div.innerHTML = `
+                <div class="verso" style="font-size: 35px;">PAIA</div>
                 <strong>${carta.nome}</strong>
                 <small>${carta.raridade}</small>
             `;
@@ -219,11 +226,13 @@ function revelarCartaNoElemento(div, carta) {
             "Tirou a armadilha e perdeu! Selecione um booster para tentar de novo.";
 
     } else {
+        // CARTA PAIA (comum)
         div.classList.add("comum");
         if (carta.isShiny) div.classList.add("shiny");
         div.innerHTML = `
+            <div class="verso" style="font-size: 35px;">PAIA</div>
             <strong>${carta.nome}</strong>
-            <small>COMUM</small>
+            <small>${carta.raridade}</small>
         `;
     }
 
@@ -306,15 +315,26 @@ function abrirAlbum() {
         });
     });
 
+    // Adiciona também a Carta Paia ao álbum se necessário
+    let paiaNormal = { nome: "CARTA PAIA", raridade: "PAIA", preco: 2.70, classe: "comum" };
+    let paiaShiny = { nome: "⭐ CARTA PAIA (Shiny)", raridade: "SHINY PAIA", preco: 5.40, classe: "comum", isShiny: true };
+    listaCompletaAlbum.push(paiaNormal, paiaShiny);
+
     listaCompletaAlbum.forEach(carta => {
         let qtd = colecaoGlobal[carta.nome] || 0;
         let itemDiv = document.createElement("div");
 
         if (qtd > 0) {
             itemDiv.className = carta.isShiny ? "item-album shiny-borda" : "item-album";
-            let mediaHtml = carta.imagem.endsWith('.mp4') ? 
-                `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>` :
-                `<img src="/static/${encodeURIComponent(carta.imagem)}">`;
+            
+            let mediaHtml = "";
+            if (carta.imagem && carta.imagem.endsWith('.mp4')) {
+                mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>`;
+            } else if (carta.imagem) {
+                mediaHtml = `<img src="/static/${encodeURIComponent(carta.imagem)}">`;
+            } else {
+                mediaHtml = `<div class="silueta" style="font-size: 18px; color: #aaa;">PAIA</div>`;
+            }
 
             itemDiv.innerHTML = `
                 ${mediaHtml}
@@ -349,10 +369,14 @@ function venderCarta(nomeCarta) {
         colecaoGlobal[nomeCarta]--;
         
         let precoVenda = 0;
-        cartas.forEach(c => {
-            if (nomeCarta === c.nome) precoVenda = c.preco;
-            if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
-        });
+        if (nomeCarta === "CARTA PAIA") precoVenda = 2.70;
+        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 5.40;
+        else {
+            cartas.forEach(c => {
+                if (nomeCarta === c.nome) precoVenda = c.preco;
+                if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
+            });
+        }
 
         dinheiro += precoVenda;
         atualizarContadorVisual(0, 0);
@@ -364,10 +388,14 @@ function venderTodasDaCarta(nomeCarta) {
     let qtd = colecaoGlobal[nomeCarta] || 0;
     if (qtd > 0) {
         let precoVenda = 0;
-        cartas.forEach(c => {
-            if (nomeCarta === c.nome) precoVenda = c.preco;
-            if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
-        });
+        if (nomeCarta === "CARTA PAIA") precoVenda = 2.70;
+        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 5.40;
+        else {
+            cartas.forEach(c => {
+                if (nomeCarta === c.nome) precoVenda = c.preco;
+                if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
+            });
+        }
 
         dinheiro += precoVenda * qtd;
         colecaoGlobal[nomeCarta] = 0;
@@ -383,10 +411,14 @@ function venderTodasAsCartas() {
         let qtd = colecaoGlobal[nomeCarta];
         if (qtd > 0) {
             let precoVenda = 0;
-            cartas.forEach(c => {
-                if (nomeCarta === c.nome) precoVenda = c.preco;
-                if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
-            });
+            if (nomeCarta === "CARTA PAIA") precoVenda = 2.70;
+            else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 5.40;
+            else {
+                cartas.forEach(c => {
+                    if (nomeCarta === c.nome) precoVenda = c.preco;
+                    if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
+                });
+            }
 
             totalGanho += precoVenda * qtd;
             colecaoGlobal[nomeCarta] = 0;
