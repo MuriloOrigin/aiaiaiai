@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booster do Senac</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=12">
+    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=13">
 </head>
 
 <body>
@@ -27,7 +27,6 @@
             <h2>Álbum de Coleção</h2>
             <p style="color: #aaa; font-size: 13px;">Coleciona todas as cartas e versões Shiny para dominar o jogo!</p>
             
-            <!-- BOTÃO DE VENDER TODAS AS CARTAS -->
             <button onclick="venderTodasAsCartas()" class="btn-vender-todas">VENDER TODAS AS CARTAS</button>
 
             <div id="grid-album"></div>
@@ -38,19 +37,19 @@
 
     <p>Clica num pacote para o selecionar (podes usar a barra de espaço para comprar o selecionado)!</p>
 
-    <!-- SELETOR DE BOOSTERS COM SUPORTE A SELEÇÃO -->
+    <!-- SELETOR DE BOOSTERS COM CORES PERSONALIZADAS -->
     <div class="loja-boosters">
-        <div class="card-loja selecionado" onclick="selecionarBooster(5, 1.0, 'Comum', this)">
+        <div class="card-loja comum-card selecionado" onclick="selecionarBooster(5, 1.0, 'Comum', this)">
             <h3>Comum</h3>
             <p>R$ 5,00</p>
             <button onclick="event.stopPropagation(); comprarBooster(5, 1.0)">Comprar</button>
         </div>
-        <div class="card-loja destaque" onclick="selecionarBooster(20, 1.3, 'Especial', this)">
+        <div class="card-loja especial-card" onclick="selecionarBooster(20, 1.3, 'Especial', this)">
             <h3>Especial</h3>
             <p>R$ 20,00</p>
             <button onclick="event.stopPropagation(); comprarBooster(20, 1.3)" style="background: #9b30ff;">Comprar</button>
         </div>
-        <div class="card-loja supremo" onclick="selecionarBooster(50, 1.7, 'Lendário', this)">
+        <div class="card-loja lendario-card" onclick="selecionarBooster(50, 1.7, 'Lendário', this)">
             <h3>Lendário</h3>
             <p>R$ 50,00</p>
             <button onclick="event.stopPropagation(); comprarBooster(50, 1.7)" style="background: #ffae00; color: #000;">Comprar</button>

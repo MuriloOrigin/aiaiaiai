@@ -10,7 +10,7 @@ h1 {
     margin-top: 30px;
 }
 
-/* LOJA DE BOOSTERS E SELEÇÃO */
+/* LOJA DE BOOSTERS E CORES DE NEON POR CATEGORIA */
 .loja-boosters {
     display: flex;
     justify-content: center;
@@ -26,7 +26,7 @@ h1 {
     width: 130px;
     text-align: center;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
@@ -34,19 +34,28 @@ h1 {
     transform: scale(1.05);
 }
 
-/* ESTILO QUANDO O PACOTE ESTÁ SELECIONADO */
-.card-loja.selecionado {
+/* Cores específicas das bordas padrão */
+.comum-card { border-color: #00ff88; }
+.especial-card { border-color: #9b30ff; }
+.lendario-card { border-color: #ffae00; }
+
+/* NEON PERSONALIZADO QUANDO SELECIONADO */
+.card-loja.comum-card.selecionado {
     border-color: #00ff88 !important;
     box-shadow: 0 0 20px #00ff88 !important;
-    background: #162b22;
+    background: #0b2b1d;
 }
 
-.card-loja.destaque {
-    border-color: #9b30ff;
+.card-loja.especial-card.selecionado {
+    border-color: #9b30ff !important;
+    box-shadow: 0 0 20px #9b30ff !important;
+    background: #220b2b;
 }
 
-.card-loja.supremo {
-    border-color: #ffae00;
+.card-loja.lendario-card.selecionado {
+    border-color: #ffae00 !important;
+    box-shadow: 0 0 20px #ffae00 !important;
+    background: #2b210b;
 }
 
 .card-loja h3 {
@@ -65,8 +74,8 @@ h1 {
 .card-loja button {
     width: 100%;
     padding: 8px;
-    background: #2b62d1;
-    color: white;
+    background: #00ff88;
+    color: #000;
     border: none;
     border-radius: 6px;
     font-weight: bold;

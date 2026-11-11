@@ -357,7 +357,6 @@ function venderCarta(nomeCarta) {
     }
 }
 
-// Função para vender todas as cartas do inventário de uma só vez
 function venderTodasAsCartas() {
     let totalGanho = 0;
 
@@ -371,7 +370,7 @@ function venderTodasAsCartas() {
             });
 
             totalGanho += precoVenda * qtd;
-            colecaoGlobal[nomeCarta] = 0; // Zera a quantidade
+            colecaoGlobal[nomeCarta] = 0;
         }
     }
 
