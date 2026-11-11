@@ -4,127 +4,146 @@ const cartas = [
         imagem: "gustavodancepot.mp4",
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
-        chance: 0.3
+        chance: 0.3,
+        preco: 12.00
     },
     {
         nome: "Elefante Africano",
         imagem: "elefantebe.jpg",
         raridade: "TRANSFICANO",
         classe: "transficano",
-        chance: 1.0
+        chance: 1.0,
+        preco: 2.50
     },
     {
         nome: "Gustavo Tartarugas Ninjas",
         imagem: "gustavo tartarugas ninjas.jpg",
         raridade: "SECRETA",
         classe: "secreta",
-        chance: 0.5
+        chance: 0.5,
+        preco: 10.00
     },
     {
         nome: "Muryllo Apanhando",
-        imagem: "muryllo_caindo.mp4", // Atualizado para o vídeo .mp4
+        imagem: "muryllo_caindo.mp4",
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
-        chance: 1.5
+        chance: 1.5,
+        preco: 5.00
     },
     {
         nome: "Muryllo Skibidi",
         imagem: "muryllo skibidi.jpg",
         raridade: "EPICA",
         classe: "epica",
-        chance: 2
+        chance: 2.0,
+        preco: 2.50
     },
     {
         nome: "O Inicio",
         imagem: "O inicio.jpg",
         raridade: "PRIMORDIAL",
         classe: "primordial",
-        chance: 0.8
+        chance: 0.8,
+        preco: 8.00
     },
     {
         nome: "Resenha Call",
         imagem: "resenha call.jpg",
         raridade: "LENDARIA",
         classe: "lendaria",
-        chance: 1
+        chance: 1.0,
+        preco: 8.00
     },
     {
         nome: "Xorume Muryllo",
         imagem: "xorume muryllo.jpg",
         raridade: "NOJO",
         classe: "nojo",
-        chance: 3
+        chance: 3.0,
+        preco: 1.50
     },
     {
         nome: "Juliano",
         imagem: "juliano.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chance: 0.4
+        chance: 0.4,
+        preco: 10.00
     },
     {
         nome: "Felipe",
         imagem: "felipe.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chance: 0.4
+        chance: 0.4,
+        preco: 10.00
     },
     {
         nome: "Daniel",
         imagem: "daniel.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chance: 0.4
+        chance: 0.4,
+        preco: 10.00
     }
 ];
 
+let dinheiro = 100.00;
 let jogoTravado = false;
 let cartasGeradas = [];
-let colecaoGlobal = {};
+let colecaoGlobal = {}; // Guarda o nome exato da chave (ex: "Gustavo Dancepot" ou "⭐ [SHINY] Gustavo Dancepot")
 
 function sortearCarta() {
     let numero = Math.random() * 100;
     let acumulado = 0;
+    let cartaSorteada = null;
 
     for (let carta of cartas) {
         acumulado += carta.chance;
         if (numero < acumulado) {
-            return carta;
+            cartaSorteada = { ...carta }; // Cria uma cópia da carta
+            break;
         }
     }
 
-    if (numero < 5) {
-        return {
-            nome: "PERDEU OTARIO!",
-            tipo: "armadilha"
-        };
+    if (!cartaSorteada) {
+        if (numero < 5) {
+            cartaSorteada = {
+                nome: "PERDEU OTARIO!",
+                tipo: "armadilha",
+                preco: 0
+            };
+        } else {
+            cartaSorteada = {
+                nome: "CARTA PAIA",
+                tipo: "comum",
+                preco: 0.50,
+                raridade: "COMUM",
+                classe: "comum"
+            };
+        }
     }
 
-    return {
-        nome: "CARTA PAIA",
-        tipo: "comum"
-    };
+    // Chance de ser Shiny (ex: 10% de chance para qualquer carta ganha)
+    let chanceShiny = Math.random() * 100;
+    if (chanceShiny < 10 && !cartaSorteada.tipo) {
+        cartaSorteada.isShiny = true;
+        cartaSorteada.nomeOriginal = cartaSorteada.nome;
+        cartaSorteada.nome = "⭐ " + cartaSorteada.nomeOriginal + " (Shiny)";
+        cartaSorteada.preco = cartaSorteada.preco * 2; // Dobra o valor de venda
+        if (cartaSorteada.raridade) {
+            cartaSorteada.raridade = "SHINY " + cartaSorteada.raridade;
+        }
+    }
+
+    return cartaSorteada;
 }
 
 function atualizarContadorVisual(reveladas, especiais) {
     document.getElementById("contador-abertas").textContent = `${reveladas}/7`;
     document.getElementById("contador-especiais").textContent = especiais;
-    
-    const listaDiv = document.getElementById("lista-colecao");
-    listaDiv.innerHTML = "";
-
-    const chaves = Object.keys(colecaoGlobal);
-    if (chaves.length === 0) {
-        listaDiv.innerHTML = `<span style="font-size: 11px; color: #888; display: block; text-align: center;">Nenhuma carta ainda</span>`;
-        return;
-    }
-
-    for (let [nome, qtd] of Object.entries(colecaoGlobal)) {
-        let divItem = document.createElement("div");
-        divItem.className = "item-colecao";
-        divItem.innerHTML = `<span>${nome}</span> <b>x${qtd}</b>`;
-        listaDiv.appendChild(divItem);
-    }
+    document.getElementById("saldo-jogador").textContent = `R$ ${dinheiro.toFixed(2)}`;
 }
 
 function revelarCartaNoElemento(div, carta) {
@@ -132,11 +151,14 @@ function revelarCartaNoElemento(div, carta) {
     
     div.dataset.aberta = "sim";
 
-    let nomeCarta = carta.nome;
-    colecaoGlobal[nomeCarta] = (colecaoGlobal[nomeCarta] || 0) + 1;
+    let nomeColecao = carta.nome;
+    colecaoGlobal[nomeColecao] = (colecaoGlobal[nomeColecao] || 0) + 1;
 
-    if (carta.raridade) {
+    if (carta.raridade && carta.tipo !== "armadilha") {
         div.classList.add(carta.classe);
+        if (carta.isShiny) {
+            div.classList.add("shiny");
+        }
 
         if (carta.imagem.endsWith('.mp4')) {
             div.innerHTML = `
@@ -176,8 +198,9 @@ function revelarCartaNoElemento(div, carta) {
 
     } else {
         div.classList.add("comum");
+        if (carta.isShiny) div.classList.add("shiny");
         div.innerHTML = `
-            <strong>CARTA PAIA</strong>
+            <strong>${carta.nome}</strong>
             <small>COMUM</small>
         `;
     }
@@ -186,6 +209,13 @@ function revelarCartaNoElemento(div, carta) {
 }
 
 function abrirBooster() {
+    if (dinheiro < 5.00) {
+        document.getElementById("resultado").textContent = "Não tem dinheiro suficiente para abrir um booster (Custo: R$ 5,00)!";
+        return;
+    }
+
+    dinheiro -= 5.00;
+
     const area = document.getElementById("cartas");
     area.innerHTML = "";
 
@@ -237,9 +267,91 @@ function verificarFimDoBooster() {
     }
 }
 
+// Funções do Álbum de Coleção (Mostra versão normal e versão Shiny separadamente no álbum)
+function abrirAlbum() {
+    const modal = document.getElementById("modal-album");
+    const grid = document.getElementById("grid-album");
+    grid.innerHTML = "";
+
+    // Lista todas as cartas normais e gera também as versões Shiny correspondentes no álbum
+    let listaCompletaAlbum = [];
+    cartas.forEach(c => {
+        // Versão Normal
+        listaCompletaAlbum.push({ ...c });
+        // Versão Shiny
+        listaCompletaAlbum.push({
+            ...c,
+            nome: "⭐ " + c.nome + " (Shiny)",
+            preco: c.preco * 2,
+            isShiny: true,
+            raridade: "SHINY " + c.raridade
+        });
+    });
+
+    listaCompletaAlbum.forEach(carta => {
+        let qtd = colecaoGlobal[carta.nome] || 0;
+        let itemDiv = document.createElement("div");
+
+        if (qtd > 0) {
+            itemDiv.className = carta.isShiny ? "item-album shiny-borda" : "item-album";
+            let mediaHtml = carta.imagem.endsWith('.mp4') ? 
+                `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>` :
+                `<img src="/static/${encodeURIComponent(carta.imagem)}">`;
+
+            itemDiv.innerHTML = `
+                ${mediaHtml}
+                <strong style="font-size: 10px; margin-top: 5px; color: ${carta.isShiny ? '#ffd700' : '#fff'};">${carta.nome}</strong>
+                <small style="color: #00e5ff;">Qtd: x${qtd}</small>
+                <button class="btn-vender" onclick="venderCarta('${carta.nome}')">Vender (R$ ${carta.preco.toFixed(2)})</button>
+            `;
+        } else {
+            itemDiv.className = "item-album bloqueado";
+            itemDiv.innerHTML = `
+                <div class="silueta">?</div>
+                <strong style="font-size: 10px; margin-top: 5px; color: #888;">${carta.nome}</strong>
+                <small style="color: #555;">Bloqueado</small>
+            `;
+        }
+
+        grid.appendChild(itemDiv);
+    });
+
+    modal.style.display = "block";
+}
+
+function fecharAlbum() {
+    document.getElementById("modal-album").style.display = "none";
+}
+
+function venderCarta(nomeCarta) {
+    if (colecaoGlobal[nomeCarta] && colecaoGlobal[nomeCarta] > 0) {
+        colecaoGlobal[nomeCarta]--;
+        
+        // Descobre o preço da carta vendida
+        let precoVenda = 0;
+        cartas.forEach(c => {
+            if (nomeCarta === c.nome) precoVenda = c.preco;
+            if (nomeCarta === "⭐ " + c.nome + " (Shiny)") precoVenda = c.preco * 2;
+        });
+
+        dinheiro += precoVenda;
+        atualizarContadorVisual(0, 0);
+        abrirAlbum(); 
+    }
+}
+
+window.onclick = function(event) {
+    let modal = document.getElementById("modal-album");
+    if (event.target === modal) {
+        fecharAlbum();
+    }
+}
+
 // Controlo via Teclado (Barra de Espaço)
 document.addEventListener("keydown", function(event) {
     if (event.code === "Space" || event.key === " ") {
+        if (document.getElementById("modal-album").style.display === "block") return;
+
         event.preventDefault();
 
         const divsCartas = document.querySelectorAll(".carta");

@@ -10,7 +10,7 @@ h1 {
     margin-top: 30px;
 }
 
-/* CONTADOR LATERAL FIXO À DIREITA COM SCROLL NA COLEÇÃO */
+/* CONTADOR LATERAL FIXO À DIREITA */
 #contador-lateral {
     position: fixed;
     top: 30px;
@@ -33,7 +33,7 @@ h1 {
 }
 
 #contador-lateral p {
-    margin: 5px 0;
+    margin: 8px 0;
     font-size: 13px;
     display: flex;
     justify-content: space-between;
@@ -44,35 +44,126 @@ h1 {
     color: #00e5ff;
 }
 
-#lista-colecao {
-    max-height: 180px;
+#btn-album {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background: #9b30ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+}
+
+#btn-album:hover {
+    background: #7a20cc;
+}
+
+/* MODAL DO ÁLBUM */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
     overflow-y: auto;
-    margin-top: 5px;
-    padding-right: 5px;
 }
 
-#lista-colecao::-webkit-scrollbar {
-    width: 5px;
-}
-#lista-colecao::-webkit-scrollbar-thumb {
-    background: #00e5ff;
-    border-radius: 5px;
+.modal-conteudo {
+    background: #16192b;
+    margin: 5% auto;
+    padding: 25px;
+    border: 3px solid #00e5ff;
+    width: 80%;
+    max-width: 850px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
 }
 
-.item-colecao {
+.fechar-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.fechar-modal:hover {
+    color: #fff;
+}
+
+#grid-album {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.item-album {
+    background: #1f233a;
+    border: 2px solid #555;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
+}
+
+.item-album.bloqueado {
+    opacity: 0.4;
+    border-color: #333;
+}
+
+.item-album img, .item-album video {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.item-album .silueta {
+    width: 100px;
+    height: 120px;
+    background: #0d0f1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #555;
+    border-radius: 6px;
+}
+
+.btn-vender {
+    margin-top: 8px;
+    padding: 5px 10px;
+    background: #ff3030;
+    color: white;
+    border: none;
+    border-radius: 5px;
     font-size: 11px;
-    margin: 4px 0;
-    color: #ddd;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-    padding-bottom: 2px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-vender:hover {
+    background: #cc2525;
 }
 
 .booster {
     width: 180px;
     height: 230px;
-    margin: 30px auto;
+    margin: 20px auto;
     background: linear-gradient(135deg, #1f233a, #111422);
     border: 3px solid #e9e3e3;
     border-radius: 15px;
@@ -88,7 +179,7 @@ h1 {
     color: gold;
 }
 
-button {
+button#btn-abrir {
     padding: 15px 30px;
     background: #2b62d1;
     color: white;
@@ -100,11 +191,11 @@ button {
     transition: background 0.3s;
 }
 
-button:hover {
+button#btn-abrir:hover {
     background: #1e4596;
 }
 
-/* CARTAS ALINHADAS EM LINHA RETA (SEM QUEBRAR LINHA) */
+/* CARTAS ALINHADAS EM LINHA RETA */
 #cartas {
     display: flex;
     flex-wrap: nowrap;
@@ -172,55 +263,37 @@ button:hover {
     text-shadow: 1px 1px 2px black;
 }
 
-/* ESTILOS E FUNDOS UNIFICADOS COM FORÇAGEM (!important) */
-
-.nojo {
-    border-color: #8cff00 !important;
-    box-shadow: 0 0 18px #8cff00 !important;
-    background: #18260b !important;
+/* ANIMAÇÃO E ESTILO SHINY (HOLOGRÁFICO) */
+@keyframes shinyGlow {
+    0% { border-color: #ffd700; box-shadow: 0 0 25px #ffd700, inset 0 0 15px rgba(255,215,0,0.5); }
+    50% { border-color: #ff00ff; box-shadow: 0 0 25px #ff00ff, inset 0 0 15px rgba(255,0,255,0.5); }
+    100% { border-color: #ffd700; box-shadow: 0 0 25px #ffd700, inset 0 0 15px rgba(255,215,0,0.5); }
 }
+
+.carta.shiny {
+    animation: shinyGlow 2s infinite alternate;
+}
+
+/* ESTILOS DE RARIDADE */
+.nojo { border-color: #8cff00 !important; box-shadow: 0 0 18px #8cff00 !important; background: #18260b !important; }
 .nojo strong, .nojo small { background: #18260b !important; width: 100%; padding: 2px 0; }
 
-.epica {
-    border-color: #9b30ff !important;
-    box-shadow: 0 0 18px #9b30ff !important;
-    background: #220b2b !important;
-}
+.epica { border-color: #9b30ff !important; box-shadow: 0 0 18px #9b30ff !important; background: #220b2b !important; }
 .epica strong, .epica small { background: #220b2b !important; width: 100%; padding: 2px 0; }
 
-.ultra-rara {
-    border-color: #00e5ff !important;
-    box-shadow: 0 0 18px #00e5ff !important;
-    background: #0b2226 !important;
-}
+.ultra-rara { border-color: #00e5ff !important; box-shadow: 0 0 18px #00e5ff !important; background: #0b2226 !important; }
 .ultra-rara strong, .ultra-rara small { background: #0b2226 !important; width: 100%; padding: 2px 0; }
 
-.lendaria {
-    border-color: #ffae00 !important;
-    box-shadow: 0 0 18px #ffae00 !important;
-    background: #2b210b !important;
-}
+.lendaria { border-color: #ffae00 !important; box-shadow: 0 0 18px #ffae00 !important; background: #2b210b !important; }
 .lendaria strong, .lendaria small { background: #2b210b !important; width: 100%; padding: 2px 0; }
 
-.primordial {
-    border-color: #ff3030 !important;
-    box-shadow: 0 0 18px #ff3030 !important;
-    background: #2b0b0b !important;
-}
+.primordial { border-color: #ff3030 !important; box-shadow: 0 0 18px #ff3030 !important; background: #2b0b0b !important; }
 .primordial strong, .primordial small { background: #2b0b0b !important; width: 100%; padding: 2px 0; }
 
-.secreta {
-    border-color: #ffffff !important;
-    box-shadow: 0 0 20px #ffffff !important;
-    background: #1a1a1a !important;
-}
+.secreta { border-color: #ffffff !important; box-shadow: 0 0 20px #ffffff !important; background: #1a1a1a !important; }
 .secreta strong, .secreta small { background: #1a1a1a !important; width: 100%; padding: 2px 0; }
 
-.especial-hexa {
-    border-color: #00ff88 !important;
-    box-shadow: 0 0 18px #00ff88 !important;
-    background: #0b2b1d !important;
-}
+.especial-hexa { border-color: #00ff88 !important; box-shadow: 0 0 18px #00ff88 !important; background: #0b2b1d !important; }
 .especial-hexa strong, .especial-hexa small { background: #0b2b1d !important; width: 100%; padding: 2px 0; }
 
 @keyframes rgbGlow {
@@ -230,33 +303,19 @@ button:hover {
     100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
 }
 
-.dance-potranca {
-    animation: rgbGlow 3s infinite linear;
-    background: #1b0b2b !important;
-}
+.dance-potranca { animation: rgbGlow 3s infinite linear; background: #1b0b2b !important; }
 .dance-potranca strong, .dance-potranca small { background: #1b0b2b !important; width: 100%; padding: 2px 0; }
 
-.transficano {
-    border-color: #ffe600 !important;
-    box-shadow: 0 0 18px #ffe600 !important;
-    background: #2b260b !important;
-}
+.transficano { border-color: #ffe600 !important; box-shadow: 0 0 18px #ffe600 !important; background: #2b260b !important; }
 .transficano strong, .transficano small { background: #2b260b !important; width: 100%; padding: 2px 0; }
 
-.armadilha {
-    border: 4px solid red !important;
-    box-shadow: 0 0 18px red !important;
-    background: #2b0b0b !important;
-}
+.armadilha { border: 4px solid red !important; box-shadow: 0 0 18px red !important; background: #2b0b0b !important; }
 .armadilha strong, .armadilha small { background: #2b0b0b !important; width: 100%; padding: 2px 0; }
 
-.comum {
-    border: 4px solid #777;
-    background: #1a1a1a;
-}
+.comum { border: 4px solid #777; background: #1a1a1a; }
 .comum strong, .comum small { background: #1a1a1a; width: 100%; padding: 2px 0; }
 
 #resultado {
     color: #00e5ff;
-    margin: 25px;
+    margin: 20px;
 }

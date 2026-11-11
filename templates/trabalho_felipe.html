@@ -5,28 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booster do Senac</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=4">
+    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=6">
 </head>
 
 <body>
 
-    <!-- CONTADOR LATERAL DIREITO COM COLEÇÃO -->
+    <!-- PAINEL LATERAL DIREITO (ESTATÍSTICAS E SALDO) -->
     <div id="contador-lateral">
         <h3>Estatísticas</h3>
+        <p>Dinheiro: <span id="saldo-jogador" style="color: #00ff88;">R$ 100.00</span></p>
         <p>Cartas Abertas: <span id="contador-abertas">0/7</span></p>
         <p>Especiais: <span id="contador-especiais">0</span></p>
         
-        <hr style="border: 0.5px solid #00e5ff; margin: 10px 0;">
-        
-        <h4 style="margin: 5px 0; font-size: 13px; color: #fffb02; text-align: center;">Minha Coleção</h4>
-        <div id="lista-colecao">
-            <span style="font-size: 11px; color: #888; display: block; text-align: center;">Nenhuma carta ainda</span>
+        <button onclick="abrirAlbum()" id="btn-album">VER ÁLBUM COMPLETO</button>
+    </div>
+
+    <!-- MODAL DO ÁLBUM DE COLEÇÃO -->
+    <div id="modal-album" class="modal">
+        <div class="modal-conteudo">
+            <span class="fechar-modal" onclick="fecharAlbum()">&times;</span>
+            <h2>Álbum de Coleção</h2>
+            <p style="color: #aaa; font-size: 13px;">Coleciona todas as cartas (incluindo as raras versões Shiny!) e vende para ganhar dinheiro.</p>
+            <div id="grid-album"></div>
         </div>
     </div>
 
     <h1>BOOSTER DO SENAC</h1>
 
-    <p>Abra o seu pacote e descubra quais cartas conseguiu!</p>
+    <p>Abra o seu pacote por <strong>R$ 5,00</strong> e descubra quais cartas conseguiu!</p>
 
     <div class="booster">
         <span>BOOSTER</span>
@@ -34,7 +40,7 @@
         <span>?</span>
     </div>
 
-    <button onclick="abrirBooster()">ABRIR BOOSTER</button>
+    <button onclick="abrirBooster()" id="btn-abrir">ABRIR BOOSTER (R$ 5,00)</button>
 
     <div id="cartas"></div>
 
