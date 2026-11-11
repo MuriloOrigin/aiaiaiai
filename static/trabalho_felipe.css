@@ -10,7 +10,7 @@ h1 {
     margin-top: 30px;
 }
 
-/* LOJA DE BOOSTERS */
+/* LOJA DE BOOSTERS E SELEÇÃO */
 .loja-boosters {
     display: flex;
     justify-content: center;
@@ -20,22 +20,33 @@ h1 {
 
 .card-loja {
     background: #1f233a;
-    border: 2px solid #555;
+    border: 3px solid #555;
     border-radius: 12px;
     padding: 15px;
     width: 130px;
     text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.card-loja:hover {
+    transform: scale(1.05);
+}
+
+/* ESTILO QUANDO O PACOTE ESTÁ SELECIONADO */
+.card-loja.selecionado {
+    border-color: #00ff88 !important;
+    box-shadow: 0 0 20px #00ff88 !important;
+    background: #162b22;
 }
 
 .card-loja.destaque {
     border-color: #9b30ff;
-    box-shadow: 0 0 15px rgba(155, 48, 255, 0.4);
 }
 
 .card-loja.supremo {
     border-color: #ffae00;
-    box-shadow: 0 0 15px rgba(255, 174, 0, 0.4);
 }
 
 .card-loja h3 {
@@ -61,7 +72,7 @@ h1 {
     font-weight: bold;
     cursor: pointer;
     font-size: 12px;
-    transition: background 0.3s;
+    transition: opacity 0.3s;
 }
 
 .card-loja button:hover {

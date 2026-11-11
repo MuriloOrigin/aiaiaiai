@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booster do Senac</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=11">
 </head>
 
 <body>
@@ -32,30 +32,30 @@
 
     <h1>BOOSTER DO SENAC</h1>
 
-    <p>Escolhe o teu booster na loja e tenta a tua sorte!</p>
+    <p>Clica num pacote para o selecionar (podes usar a barra de espaço para comprar o selecionado)!</p>
 
-    <!-- SELETOR DE BOOSTERS ATUALIZADO -->
+    <!-- SELETOR DE BOOSTERS COM SUPORTE A SELEÇÃO -->
     <div class="loja-boosters">
-        <div class="card-loja">
+        <div class="card-loja selecionado" onclick="selecionarBooster(5, 1.0, 'Comum', this)">
             <h3>Comum</h3>
             <p>R$ 5,00</p>
-            <button onclick="comprarBooster(5, 1.0)">Comprar</button>
+            <button onclick="event.stopPropagation(); comprarBooster(5, 1.0)">Comprar</button>
         </div>
-        <div class="card-loja destaque">
+        <div class="card-loja destaque" onclick="selecionarBooster(20, 1.3, 'Especial', this)">
             <h3>Especial</h3>
             <p>R$ 20,00</p>
-            <button onclick="comprarBooster(20, 1.3)" style="background: #9b30ff;">Comprar</button>
+            <button onclick="event.stopPropagation(); comprarBooster(20, 1.3)" style="background: #9b30ff;">Comprar</button>
         </div>
-        <div class="card-loja supremo">
+        <div class="card-loja supremo" onclick="selecionarBooster(50, 1.7, 'Lendário', this)">
             <h3>Lendário</h3>
             <p>R$ 50,00</p>
-            <button onclick="comprarBooster(50, 1.7)" style="background: #ffae00; color: #000;">Comprar</button>
+            <button onclick="event.stopPropagation(); comprarBooster(50, 1.7)" style="background: #ffae00; color: #000;">Comprar</button>
         </div>
     </div>
 
     <div id="cartas"></div>
 
-    <h2 id="resultado">Seleciona um booster para começar!</h2>
+    <h2 id="resultado">Selecione um booster ou pressione Espaço!</h2>
 
     <script src="{{ url_for('static', filename='trabalho_felipe.js') }}"></script>
 

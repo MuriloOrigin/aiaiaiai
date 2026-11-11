@@ -4,88 +4,88 @@ const cartas = [
         imagem: "gustavodancepot.mp4",
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
-        chanceBase: 0.3,
-        preco: 24.00
+        chanceBase: 0.45,
+        preco: 48.00
     },
     {
         nome: "Elefante Africano",
         imagem: "elefantebe.jpg",
         raridade: "TRANSFICANO",
         classe: "transficano",
-        chanceBase: 1.0,
-        preco: 5.00
+        chanceBase: 1.5,
+        preco: 10.00
     },
     {
         nome: "Gustavo Tartarugas Ninjas",
         imagem: "gustavo tartarugas ninjas.jpg",
         raridade: "SECRETA",
         classe: "secreta",
-        chanceBase: 0.5,
-        preco: 20.00
+        chanceBase: 0.75,
+        preco: 40.00
     },
     {
         nome: "Muryllo Apanhando",
         imagem: "muryllo_caindo.mp4",
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
-        chanceBase: 1.5,
-        preco: 10.00
+        chanceBase: 2.25,
+        preco: 20.00
     },
     {
         nome: "Muryllo Skibidi",
         imagem: "muryllo skibidi.jpg",
         raridade: "EPICA",
         classe: "epica",
-        chanceBase: 2.0,
-        preco: 5.00
+        chanceBase: 3.0,
+        preco: 10.00
     },
     {
         nome: "O Inicio",
         imagem: "O inicio.jpg",
         raridade: "PRIMORDIAL",
         classe: "primordial",
-        chanceBase: 0.8,
-        preco: 16.00
+        chanceBase: 1.2,
+        preco: 32.00
     },
     {
         nome: "Resenha Call",
         imagem: "resenha call.jpg",
         raridade: "LENDARIA",
         classe: "lendaria",
-        chanceBase: 1.0,
-        preco: 16.00
+        chanceBase: 1.5,
+        preco: 32.00
     },
     {
         nome: "Xorume Muryllo",
         imagem: "xorume muryllo.jpg",
         raridade: "NOJO",
         classe: "nojo",
-        chanceBase: 3.0,
-        preco: 3.00
+        chanceBase: 4.5,
+        preco: 6.00
     },
     {
         nome: "Juliano",
         imagem: "juliano.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.4,
-        preco: 20.00
+        chanceBase: 0.6,
+        preco: 40.00
     },
     {
         nome: "Felipe",
         imagem: "felipe.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.4,
-        preco: 20.00
+        chanceBase: 0.6,
+        preco: 40.00
     },
     {
         nome: "Daniel",
         imagem: "daniel.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.4,
-        preco: 20.00
+        chanceBase: 0.6,
+        preco: 40.00
     }
 ];
 
@@ -93,7 +93,23 @@ let dinheiro = 200.00;
 let jogoTravado = false;
 let cartasGeradas = [];
 let colecaoGlobal = {};
-let multiplicadorAtual = 1.0;
+
+let pacoteSelecionado = {
+    custo: 5.00,
+    multiplicador: 1.0,
+    nome: "Comum"
+};
+
+function selecionarBooster(custo, multiplicador, nome, elemento) {
+    pacoteSelecionado = { custo, multiplicador, nome };
+
+    document.querySelectorAll('.card-loja').forEach(card => {
+        card.classList.remove('selecionado');
+    });
+    elemento.classList.add('selecionado');
+
+    document.getElementById("resultado").textContent = `Pacote ${nome} selecionado! Pressione Espaço para comprar.`;
+}
 
 function sortearCarta(multiplicador) {
     let numero = Math.random() * 100;
@@ -101,7 +117,7 @@ function sortearCarta(multiplicador) {
     let cartaSorteada = null;
 
     for (let carta of cartas) {
-        let chanceEfetiva = carta.chanceBase * (carta.chanceBase < 1.5 ? multiplicador : 1.0);
+        let chanceEfetiva = carta.chanceBase * (carta.chanceBase < 2.0 ? multiplicador : 1.0);
         acumulado += chanceEfetiva;
 
         if (numero < acumulado) {
@@ -122,14 +138,14 @@ function sortearCarta(multiplicador) {
             cartaSorteada = {
                 nome: "CARTA PAIA",
                 tipo: "comum",
-                preco: 1.00,
+                preco: 2.00,
                 raridade: "COMUM",
                 classe: "comum"
             };
         }
     }
 
-    let chanceShinyBase = 2.0;
+    let chanceShinyBase = 3.0;
     let chanceShinyEfetiva = chanceShinyBase * multiplicador;
     let sorteioShiny = Math.random() * 100;
 
@@ -200,7 +216,7 @@ function revelarCartaNoElemento(div, carta) {
 
         jogoTravado = true;
         document.getElementById("resultado").textContent = 
-            "Tirou a armadilha e perdeu! Escolhe um booster na loja para tentar de novo.";
+            "Tirou a armadilha e perdeu! Selecione um booster para tentar de novo.";
 
     } else {
         div.classList.add("comum");
@@ -221,7 +237,6 @@ function comprarBooster(custo, multiplicador) {
     }
 
     dinheiro -= custo;
-    multiplicadorAtual = multiplicador;
 
     const area = document.getElementById("cartas");
     area.innerHTML = "";
@@ -233,7 +248,7 @@ function comprarBooster(custo, multiplicador) {
     atualizarContadorVisual(0, 0);
 
     for (let i = 0; i < 7; i++) {
-        let carta = sortearCarta(multiplicadorAtual);
+        let carta = sortearCarta(multiplicador);
         cartasGeradas.push(carta);
 
         let div = document.createElement("div");
@@ -270,7 +285,7 @@ function verificarFimDoBooster() {
 
     if (reveladas === 7 && !jogoTravado) {
         document.getElementById("resultado").textContent =
-            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Compra outro booster na loja.`;
+            `Booster finalizado! Conseguiu ${especiais} carta(s) especial(is)! Pressione Espaço para abrir outro.`;
     }
 }
 
@@ -349,7 +364,6 @@ window.onclick = function(event) {
     }
 }
 
-// Atalho da Barra de Espaço (Compra o booster comum de R$ 5,00 por defeito ou revela as cartas)
 document.addEventListener("keydown", function(event) {
     if (event.code === "Space" || event.key === " ") {
         if (document.getElementById("modal-album").style.display === "block") return;
@@ -359,13 +373,13 @@ document.addEventListener("keydown", function(event) {
         const divsCartas = document.querySelectorAll(".carta");
 
         if (divsCartas.length === 0) {
-            comprarBooster(5, 1.0);
+            comprarBooster(pacoteSelecionado.custo, pacoteSelecionado.multiplicador);
             return;
         }
 
         let todasAbertas = Array.from(divsCartas).every(d => d.dataset.aberta === "sim");
         if (jogoTravado || todasAbertas) {
-            comprarBooster(5, 1.0);
+            comprarBooster(pacoteSelecionado.custo, pacoteSelecionado.multiplicador);
             return;
         }
 
