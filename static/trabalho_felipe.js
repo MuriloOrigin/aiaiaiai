@@ -197,9 +197,11 @@ function revelarCartaNoElemento(div, carta) {
             `;
         } else {
             div.innerHTML = `
-                <div class="verso" style="font-size: 35px;">PAIA</div>
-                <strong>${carta.nome}</strong>
-                <small>${carta.raridade}</small>
+                <div class="verso" style="font-size: 32px;">PAIA</div>
+                <div>
+                    <strong>${carta.nome}</strong>
+                    <small>${carta.raridade}</small>
+                </div>
             `;
         }
 
@@ -228,10 +230,13 @@ function revelarCartaNoElemento(div, carta) {
     } else {
         div.classList.add("comum");
         if (carta.isShiny) div.classList.add("shiny");
+        // Formato original exato da carta comum, sem duplicar o texto em baixo
         div.innerHTML = `
-            <div class="verso" style="font-size: 35px;">PAIA</div>
-            <strong>${carta.nome}</strong>
-            <small>${carta.raridade}</small>
+            <div class="verso" style="font-size: 50px; margin-bottom: auto; margin-top: auto;">PAIA</div>
+            <div style="width: 100%;">
+                <strong>${carta.nome}</strong>
+                <small>${carta.raridade}</small>
+            </div>
         `;
     }
 
@@ -263,7 +268,7 @@ function comprarBooster(custo, multiplicador) {
         div.className = "carta";
         div.innerHTML = `
             <div class="verso">?</div>
-            <strong>CARTA ${i + 1}</strong>
+            <div class="texto-verso">CARTA ${i + 1}</div>
         `;
 
         div.onclick = function () {
