@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booster do Senac</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}?v=19">
+</head>
+
+<body>
+
+    <!-- PAINEL LATERAL DIREITO (ESTATÍSTICAS E SALDO) -->
+    <div id="contador-lateral">
+        <h3>Estatísticas</h3>
+        <p>Dinheiro: <span id="saldo-jogador" style="color: #00ff88;">R$ 200.00</span></p>
+        <p>Cartas Abertas: <span id="contador-abertas">0/7</span></p>
+        <p>Especiais: <span id="contador-especiais">0</span></p>
+        
+        <button onclick="abrirAlbum()" id="btn-album">VER ÁLBUM COMPLETO</button>
+    </div>
+
+    <!-- MODAL DO ÁLBUM DE COLEÇÃO -->
+    <div id="modal-album" class="modal">
+        <div class="modal-conteudo">
+            <span class="fechar-modal" onclick="fecharAlbum()">&times;</span>
+            <h2>Álbum de Coleção</h2>
+            <p style="color: #aaa; font-size: 13px;">Coleciona todas as cartas e versões Shiny para dominar o jogo!</p>
+            
+            <button onclick="venderTodasAsCartas()" class="btn-vender-todas">VENDER TODAS AS CARTAS</button>
+
+            <div id="grid-album"></div>
+        </div>
+    </div>
+
+    <h1>BOOSTER DO SENAC</h1>
+
+    <p>Clica num pacote para o selecionar (podes usar a barra de espaço para comprar o selecionado)!</p>
+
+    <!-- SELETOR DE BOOSTERS COM CORES PERSONALIZADAS -->
+    <div class="loja-boosters">
+        <div class="card-loja comum-card selecionado" onclick="selecionarBooster(5, 1.0, 'Comum', this)">
+            <h3>Comum</h3>
+            <p>R$ 5,00</p>
+            <button onclick="event.stopPropagation(); comprarBooster(5, 1.0)">Comprar</button>
+        </div>
+        <div class="card-loja especial-card" onclick="selecionarBooster(20, 1.3, 'Especial', this)">
+            <h3>Especial</h3>
+            <p>R$ 20,00</p>
+            <button onclick="event.stopPropagation(); comprarBooster(20, 1.3)" style="background: #9b30ff;">Comprar</button>
+        </div>
+        <div class="card-loja lendario-card" onclick="selecionarBooster(50, 1.7, 'Lendário', this)">
+            <h3>Lendário</h3>
+            <p>R$ 50,00</p>
+            <button onclick="event.stopPropagation(); comprarBooster(50, 1.7)" style="background: #ffae00; color: #000;">Comprar</button>
+        </div>
+    </div>
+
+    <div id="cartas"></div>
+
+    <h2 id="resultado">Selecione um booster ou pressione Espaço!</h2>
+
+    <script src="{{ url_for('static', filename='trabalho_felipe.js') }}"></script>
+
+</body>
+
+</html>

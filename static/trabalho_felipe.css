@@ -1,0 +1,424 @@
+body {
+    background: #101018;
+    color: white;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #fffb02;
+    margin-top: 30px;
+}
+
+/* LOJA DE BOOSTERS E CORES DE NEON POR CATEGORIA */
+.loja-boosters {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+}
+
+.card-loja {
+    background: #1f233a;
+    border: 3px solid #555;
+    border-radius: 12px;
+    padding: 15px;
+    width: 130px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.card-loja:hover {
+    transform: scale(1.05);
+}
+
+.comum-card { border-color: #00ff88; }
+.especial-card { border-color: #9b30ff; }
+.lendario-card { border-color: #ffae00; }
+
+.card-loja.comum-card.selecionado {
+    border-color: #00ff88 !important;
+    box-shadow: 0 0 20px #00ff88 !important;
+    background: #0b2b1d;
+}
+
+.card-loja.especial-card.selecionado {
+    border-color: #9b30ff !important;
+    box-shadow: 0 0 20px #9b30ff !important;
+    background: #220b2b;
+}
+
+.card-loja.lendario-card.selecionado {
+    border-color: #ffae00 !important;
+    box-shadow: 0 0 20px #ffae00 !important;
+    background: #2b210b;
+}
+
+.card-loja h3 {
+    margin: 0 0 5px 0;
+    font-size: 15px;
+    color: #fff;
+}
+
+.card-loja p {
+    margin: 5px 0 10px 0;
+    font-size: 13px;
+    color: #00ff88;
+    font-weight: bold;
+}
+
+.card-loja button {
+    width: 100%;
+    padding: 8px;
+    background: #00ff88;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    transition: opacity 0.3s;
+}
+
+.card-loja button:hover {
+    opacity: 0.8;
+}
+
+/* CONTADOR LATERAL FIXO À DIREITA */
+#contador-lateral {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: #1f233a;
+    border: 2px solid #00e5ff;
+    border-radius: 12px;
+    padding: 15px 20px;
+    width: 210px;
+    text-align: left;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    z-index: 1000;
+}
+
+#contador-lateral h3 {
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    color: #fffb02;
+    text-align: center;
+}
+
+#contador-lateral p {
+    margin: 8px 0;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#contador-lateral span {
+    font-weight: bold;
+    color: #00e5ff;
+}
+
+#btn-album {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background: #9b30ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+}
+
+#btn-album:hover {
+    background: #7a20cc;
+}
+
+/* MODAL DO ÁLBUM */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    overflow-y: auto;
+}
+
+.modal-conteudo {
+    background: #16192b;
+    margin: 5% auto;
+    padding: 25px;
+    border: 3px solid #00e5ff;
+    width: 80%;
+    max-width: 850px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+}
+
+.fechar-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.fechar-modal:hover {
+    color: #fff;
+}
+
+.btn-vender-todas {
+    background: #ff3030;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 0 10px rgba(255, 48, 48, 0.4);
+    transition: background 0.3s;
+}
+
+.btn-vender-todas:hover {
+    background: #cc2525;
+}
+
+#grid-album {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.item-album {
+    background: #1f233a;
+    border: 2px solid #555;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item-album.bloqueado-carta {
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
+.item-album.bloqueado {
+    opacity: 0.4;
+    border-color: #333;
+}
+
+.item-album img, .item-album video {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.item-album .silueta {
+    width: 100px;
+    height: 120px;
+    background: #0d0f1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #555;
+    border-radius: 6px;
+}
+
+.grupo-botoes-venda {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.btn-vender {
+    flex: 1;
+    padding: 5px 2px;
+    background: #ff3030;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 9px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-vender:hover {
+    background: #cc2525;
+}
+
+.btn-vender-especifica-todas {
+    flex: 1;
+    padding: 5px 2px;
+    background: #ff8c00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 9px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-vender-especifica-todas:hover {
+    background: #d97700;
+}
+
+.btn-bloquear {
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+    background: #2b3252;
+    color: #fff;
+    border: 1px solid #00e5ff;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.btn-bloquear:hover {
+    background: #3b4470;
+}
+
+/* CARTAS ALINHADAS EM LINHA RETA */
+#cartas {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px auto;
+    max-width: 95%;
+    overflow-x: auto;
+    padding-bottom: 15px;
+}
+
+.carta {
+    min-width: 160px;
+    width: 160px;
+    height: 230px;
+    background: #2b2b2b;
+    border-radius: 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    transition: transform 0.3s;
+    border: 4px solid #777;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.carta:hover {
+    transform: scale(1.05);
+}
+
+.carta img, .carta video {
+    width: 100%;
+    height: 155px;
+    object-fit: cover;
+    border-bottom: 2px solid rgba(0,0,0,0.4);
+}
+
+.verso {
+    font-size: 55px;
+    color: #00e5ff;
+    margin: auto;
+}
+
+.carta strong {
+    font-size: 13px;
+    color: #ffffff;
+    margin-top: 6px;
+    text-shadow: 1px 1px 2px black;
+    padding: 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.carta small {
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 2px;
+    text-shadow: 1px 1px 2px black;
+}
+
+/* ANIMAÇÃO SHINY */
+@keyframes shinyGlow {
+    0% { border-color: #ffd700; box-shadow: 0 0 25px #ffd700, inset 0 0 15px rgba(255,215,0,0.5); }
+    50% { border-color: #ff00ff; box-shadow: 0 0 25px #ff00ff, inset 0 0 15px rgba(255,0,255,0.5); }
+    100% { border-color: #ffd700; box-shadow: 0 0 25px #ffd700, inset 0 0 15px rgba(255,215,0,0.5); }
+}
+
+.carta.shiny {
+    animation: shinyGlow 2s infinite alternate;
+}
+
+/* ESTILOS DE RARIDADE */
+.nojo { border-color: #8cff00 !important; box-shadow: 0 0 18px #8cff00 !important; background: #18260b !important; }
+.nojo strong, .nojo small { background: #18260b !important; width: 100%; padding: 2px 0; }
+
+.epica { border-color: #9b30ff !important; box-shadow: 0 0 18px #9b30ff !important; background: #220b2b !important; }
+.epica strong, .epica small { background: #220b2b !important; width: 100%; padding: 2px 0; }
+
+.ultra-rara { border-color: #00e5ff !important; box-shadow: 0 0 18px #00e5ff !important; background: #0b2226 !important; }
+.ultra-rara strong, .ultra-rara small { background: #0b2226 !important; width: 100%; padding: 2px 0; }
+
+.lendaria { border-color: #ffae00 !important; box-shadow: 0 0 18px #ffae00 !important; background: #2b210b !important; }
+.lendaria strong, .lendaria small { background: #2b210b !important; width: 100%; padding: 2px 0; }
+
+.primordial { border-color: #ff3030 !important; box-shadow: 0 0 18px #ff3030 !important; background: #2b0b0b !important; }
+.primordial strong, .primordial small { background: #2b0b0b !important; width: 100%; padding: 2px 0; }
+
+.secreta { border-color: #ffffff !important; box-shadow: 0 0 20px #ffffff !important; background: #1a1a1a !important; }
+.secreta strong, .secreta small { background: #1a1a1a !important; width: 100%; padding: 2px 0; }
+
+.especial-hexa { border-color: #00ff88 !important; box-shadow: 0 0 18px #00ff88 !important; background: #0b2b1d !important; }
+.especial-hexa strong, .especial-hexa small { background: #0b2b1d !important; width: 100%; padding: 2px 0; }
+
+@keyframes rgbGlow {
+    0% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
+    33% { border-color: #00ff00; box-shadow: 0 0 20px #00ff00; }
+    66% { border-color: #0000ff; box-shadow: 0 0 20px #0000ff; }
+    100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
+}
+
+.dance-potranca { animation: rgbGlow 3s infinite linear; background: #1b0b2b !important; }
+.dance-potranca strong, .dance-potranca small { background: #1b0b2b !important; width: 100%; padding: 2px 0; }
+
+.transficano { border-color: #ffe600 !important; box-shadow: 0 0 18px #ffe600 !important; background: #2b260b !important; }
+.transficano strong, .transficano small { background: #2b260b !important; width: 100%; padding: 2px 0; }
+
+.armadilha { border: 4px solid red !important; box-shadow: 0 0 18px red !important; background: #2b0b0b !important; }
+.armadilha strong, .armadilha small { background: #2b0b0b !important; width: 100%; padding: 2px 0; }
+
+.comum { border: 4px solid #777; background: #1a1a1a; }
+.comum strong, .comum small { background: #1a1a1a; width: 100%; padding: 2px 0; }
+
+#resultado {
+    color: #00e5ff;
+    margin: 20px;
+}
