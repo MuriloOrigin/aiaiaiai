@@ -228,7 +228,7 @@ function sortearCarta(multiplicador) {
             cartaSorteada = {
                 nome: "CARTA PAIA",
                 tipo: "comum",
-                preco: 2.70,
+                preco: 1.00,
                 raridade: "PAIA",
                 classe: "comum"
             };
@@ -239,13 +239,16 @@ function sortearCarta(multiplicador) {
     let chanceShinyEfetiva = chanceShinyBase * multiplicador;
     let sorteioShiny = Math.random() * 100;
 
-    if (sorteioShiny < chanceShinyEfetiva && !cartaSorteada.tipo && cartaSorteada.raridade !== "PAIA") {
+    // A Carta Paia agora também pode vir Shiny valendo R$ 2,00
+    if (sorteioShiny < chanceShinyEfetiva && !cartaSorteada.tipo) {
         cartaSorteada.isShiny = true;
         cartaSorteada.nomeOriginal = cartaSorteada.nome;
         cartaSorteada.nome = "⭐ " + cartaSorteada.nomeOriginal + " (Shiny)";
         cartaSorteada.preco = cartaSorteada.preco * 2;
         if (cartaSorteada.raridade) {
             cartaSorteada.raridade = "SHINY " + cartaSorteada.raridade;
+        } else {
+            cartaSorteada.raridade = "SHINY PAIA";
         }
     }
 
@@ -266,7 +269,7 @@ function revelarCartaNoElemento(div, carta) {
     let nomeColecao = carta.nome;
     colecaoGlobal[nomeColecao] = (colecaoGlobal[nomeColecao] || 0) + 1;
 
-    if (carta.raridade && carta.tipo !== "armadilha" && carta.raridade !== "PAIA") {
+    if (carta.raridade && carta.tipo !== "armadilha" && carta.raridade !== "PAIA" && carta.raridade !== "SHINY PAIA") {
         div.classList.add(carta.classe);
         if (carta.isShiny) {
             div.classList.add("shiny");
@@ -329,6 +332,9 @@ function revelarCartaNoElemento(div, carta) {
 
     } else {
         div.classList.add("comum");
+        if (carta.isShiny) {
+            div.classList.add("shiny");
+        }
         div.innerHTML = `
             <div class="verso" style="font-size: 50px; margin-bottom: auto; margin-top: auto;">PAIA</div>
             <div style="width: 100%;">
@@ -419,8 +425,10 @@ function abrirAlbum() {
         });
     });
 
-    let paiaNormal = { nome: "CARTA PAIA", raridade: "PAIA", preco: 2.70, classe: "comum" };
+    let paiaNormal = { nome: "CARTA PAIA", raridade: "PAIA", preco: 1.00, classe: "comum" };
+    let paiaShiny = { nome: "⭐ CARTA PAIA (Shiny)", raridade: "SHINY PAIA", preco: 2.00, classe: "comum", isShiny: true };
     listaCompletaAlbum.push(paiaNormal);
+    listaCompletaAlbum.push(paiaShiny);
 
     listaCompletaAlbum.forEach(carta => {
         let qtd = colecaoGlobal[carta.nome] || 0;
@@ -490,7 +498,8 @@ function venderCarta(nomeCarta) {
         colecaoGlobal[nomeCarta]--;
         
         let precoVenda = 0;
-        if (nomeCarta === "CARTA PAIA") precoVenda = 2.70;
+        if (nomeCarta === "CARTA PAIA") precoVenda = 1.00;
+        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 2.00;
         else {
             cartas.forEach(c => {
                 if (nomeCarta === c.nome) precoVenda = c.preco;
@@ -511,7 +520,8 @@ function venderTodasDaCarta(nomeCarta) {
     let qtd = colecaoGlobal[nomeCarta] || 0;
     if (qtd > 0) {
         let precoVenda = 0;
-        if (nomeCarta === "CARTA PAIA") precoVenda = 2.70;
+        if (nomeCarta === "CARTA PAIA") precoVenda = 1.00;
+        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 2.00;
         else {
             cartas.forEach(c => {
                 if (nomeCarta === c.nome) precoVenda = c.preco;
@@ -536,7 +546,8 @@ function venderTodasAsCartas() {
         let qtd = colecaoGlobal[nomeCarta];
         if (qtd > 0) {
             let precoVenda = 0;
-            if (nomeCarta === "CARTA PAIA") precoVenda = 2.70;
+            if (nomeCarta === "CARTA PAIA") precoVenda = 1.00;
+            else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 2.00;
             else {
                 cartas.forEach(c => {
                     if (nomeCarta === c.nome) precoVenda = c.preco;
