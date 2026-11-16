@@ -163,16 +163,29 @@ const cartas = [
     }
 ];
 
-let dinheiro = 200.00;
+// Carrega os dados salvos no navegador (ou usa os valores padrão)
+let dinheiro = localStorage.getItem('felipe_dinheiro') ? parseFloat(localStorage.getItem('felipe_dinheiro')) : 200.00;
+let colecaoGlobal = localStorage.getItem('felipe_colecao') ? JSON.parse(localStorage.getItem('felipe_colecao')) : {};
+let cartasBloqueadas = localStorage.getItem('felipe_bloqueadas') ? JSON.parse(localStorage.getItem('felipe_bloqueadas')) : {};
+
 let jogoTravado = false;
 let cartasGeradas = [];
-let colecaoGlobal = {};
-let cartasBloqueadas = {};
 
 let pacoteSelecionado = {
     custo: 5.00,
     multiplicador: 1.0,
     nome: "Comum"
+};
+
+// Função para salvar o estado atual no navegador
+function salvarEstado() {
+    localStorage.setItem('felipe_dinheiro', dinheiro);
+    localStorage.setItem('felipe_colecao', JSON.stringify(colecaoGlobal));
+    localStorage.setItem('felipe_bloqueadas', JSON.stringify(cartasBloqueadas));
+}
+
+window.onload = function() {
+    atualizarContadorVisual(0, 0);
 };
 
 function selecionarBooster(custo, multiplicador, nome, elemento) {
@@ -325,6 +338,7 @@ function revelarCartaNoElemento(div, carta) {
         `;
     }
 
+    salvarEstado();
     verificarFimDoBooster();
 }
 
@@ -335,6 +349,7 @@ function comprarBooster(custo, multiplicador) {
     }
 
     dinheiro -= custo;
+    salvarEstado();
 
     const area = document.getElementById("cartas");
     area.innerHTML = "";
@@ -428,7 +443,7 @@ function abrirAlbum() {
             }
 
             let botoesVendaHtml = bloqueada ? 
-                `<span style="color: #00e5ff; font-size: 11px; font-weight: bold; margin-top: 6px; display:block;">🔒 Bloqueada</span>` : 
+                `<span style="color: #00e5ff; font-size: 11px; font-weight: bold; margin-top: 4px; display:block;">🔒 Bloqueada</span>` : 
                 `<div class="grupo-botoes-venda">
                     <button class="btn-vender" onclick="venderCarta('${carta.nome}')">Vender 1</button>
                     <button class="btn-vender-especifica-todas" onclick="venderTodasDaCarta('${carta.nome}')">Vender Todas</button>
@@ -438,8 +453,8 @@ function abrirAlbum() {
 
             itemDiv.innerHTML = `
                 ${mediaHtml}
-                <strong style="font-size: 10px; margin-top: 5px; color: ${carta.isShiny ? '#ffd700' : '#fff'};">${carta.nome}</strong>
-                <small style="color: #00e5ff;">Qtd: x${qtd}</small>
+                <strong style="font-size: 10px; margin-top: 4px; color: ${carta.isShiny ? '#ffd700' : '#fff'};">${carta.nome}</strong>
+                <small style="color: #00e5ff;">Qtd: x${qtd} | R$ ${carta.preco.toFixed(2)}</small>
                 ${botoesVendaHtml}
                 <button class="btn-bloquear" onclick="alternarBloqueio('${carta.nome}')">${textoBloqueio}</button>
             `;
@@ -447,8 +462,8 @@ function abrirAlbum() {
             itemDiv.className = "item-album bloqueado";
             itemDiv.innerHTML = `
                 <div class="silueta">?</div>
-                <strong style="font-size: 10px; margin-top: 5px; color: #888;">${carta.nome}</strong>
-                <small style="color: #555;">Bloqueado</small>
+                <strong style="font-size: 10px; margin-top: 4px; color: #888;">${carta.nome}</strong>
+                <small style="color: #555;">R$ ${carta.preco.toFixed(2)}</small>
             `;
         }
 
@@ -464,6 +479,7 @@ function fecharAlbum() {
 
 function alternarBloqueio(nomeCarta) {
     cartasBloqueadas[nomeCarta] = !cartasBloqueadas[nomeCarta];
+    salvarEstado();
     abrirAlbum();
 }
 
@@ -483,6 +499,7 @@ function venderCarta(nomeCarta) {
         }
 
         dinheiro += precoVenda;
+        salvarEstado();
         atualizarContadorVisual(0, 0);
         abrirAlbum(); 
     }
@@ -504,6 +521,7 @@ function venderTodasDaCarta(nomeCarta) {
 
         dinheiro += precoVenda * qtd;
         colecaoGlobal[nomeCarta] = 0;
+        salvarEstado();
         atualizarContadorVisual(0, 0);
         abrirAlbum();
     }
@@ -532,6 +550,7 @@ function venderTodasAsCartas() {
     }
 
     dinheiro += totalGanho;
+    salvarEstado();
     atualizarContadorVisual(0, 0);
     abrirAlbum();
 }
