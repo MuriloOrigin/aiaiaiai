@@ -87,21 +87,13 @@ const cartas = [
         chanceBase: 0.06,
         preco: 54.00
     },
-    // NOVAS CARTAS U DE UCRÂNIA
+    // CARTA U DE UCRÂNIA (Toca o áudio muryllo car cur.mp3 ao abrir)
     {
         nome: "Muryllo Pé de Mesa",
         imagem: "muryllo pé de mesa.mp4",
         raridade: "U DE UCRÂNIA",
         classe: "u-de-ucrania",
-        chanceBase: 0.001,
-        preco: 75.00
-    },
-    {
-        nome: "Muryllo Car Cur",
-        imagem: "muryllo car cur.mp3",
-        raridade: "U DE UCRÂNIA",
-        classe: "u-de-ucrania",
-        chanceBase: 0.001,
+        chanceBase: 0.002,
         preco: 75.00
     },
     // CARTAS THE LAST RESENHA
@@ -149,6 +141,7 @@ const cartas = [
         nome: "Marcos (Resenha)",
         imagem: "marcos.res.jpg",
         raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
         chanceBase: 0.002,
         preco: 60.00
     },
@@ -209,7 +202,6 @@ function sortearCarta(multiplicador) {
     }
 
     if (!cartaSorteada) {
-        // Chance armadilha mais difícil (0.1% no comum, dobrando no especial e lendario)
         let chanceArmadilha = 0.1 * multiplicador;
         if (Math.random() * 100 < chanceArmadilha) {
             cartaSorteada = {
@@ -273,13 +265,6 @@ function revelarCartaNoElemento(div, carta) {
                 <strong>${carta.nome}</strong>
                 <small>${carta.raridade}</small>
             `;
-        } else if (carta.imagem && carta.imagem.endsWith('.mp3')) {
-            div.innerHTML = `
-                <audio src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop></audio>
-                <div style="font-size: 45px; margin: auto;">🎵</div>
-                <strong>${carta.nome}</strong>
-                <small>${carta.raridade}</small>
-            `;
         } else if (carta.imagem) {
             div.innerHTML = `
                 <img src="/static/${encodeURIComponent(carta.imagem)}">
@@ -303,6 +288,9 @@ function revelarCartaNoElemento(div, carta) {
         } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
             let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
             somTartarugas.play();
+        } else if (carta.imagem === "muryllo pé de mesa.mp4") {
+            let somCarCur = new Audio('/static/muryllo car cur.mp3');
+            somCarCur.play();
         } else if (carta.classe === "the-last-resenha") {
             let somResenha = new Audio('/static/army-of-lovers-crucified.mp3');
             somResenha.play();
@@ -311,7 +299,6 @@ function revelarCartaNoElemento(div, carta) {
     } else if (carta.tipo === "armadilha") {
         div.classList.add("armadilha");
         
-        // Rouba 67% do saldo atual
         let valorRoubado = dinheiro * 0.67;
         dinheiro -= valorRoubado;
 
@@ -434,8 +421,6 @@ function abrirAlbum() {
             let mediaHtml = "";
             if (carta.imagem && carta.imagem.endsWith('.mp4')) {
                 mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>`;
-            } else if (carta.imagem && carta.imagem.endsWith('.mp3')) {
-                mediaHtml = `<div style="font-size: 35px; margin: auto;">🎵</div>`;
             } else if (carta.imagem) {
                 mediaHtml = `<img src="/static/${encodeURIComponent(carta.imagem)}">`;
             } else {
