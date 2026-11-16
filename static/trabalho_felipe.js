@@ -245,7 +245,7 @@ function sortearCarta(multiplicador) {
             cartaSorteada = {
                 nome: "CARTA PAIA",
                 tipo: "comum",
-                preco: 1.00,
+                preco: 1.50,
                 raridade: "PAIA",
                 classe: "comum"
             };
@@ -430,8 +430,8 @@ function abrirAlbum() {
         });
     });
 
-    let paiaNormal = { nome: "CARTA PAIA", raridade: "PAIA", preco: 1.00, classe: "comum" };
-    let paiaShiny = { nome: "⭐ CARTA PAIA (Shiny)", raridade: "SHINY PAIA", preco: 2.00, classe: "comum", isShiny: true };
+    let paiaNormal = { nome: "CARTA PAIA", raridade: "PAIA", preco: 1.50, classe: "comum" };
+    let paiaShiny = { nome: "⭐ CARTA PAIA (Shiny)", raridade: "SHINY PAIA", preco: 3.00, classe: "comum", isShiny: true };
     listaCompletaAlbum.push(paiaNormal);
     listaCompletaAlbum.push(paiaShiny);
 
@@ -517,8 +517,8 @@ function venderCarta(nomeCarta) {
         colecaoGlobal[nomeCarta]--;
         
         let precoVenda = 0;
-        if (nomeCarta === "CARTA PAIA") precoVenda = 1.00;
-        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 2.00;
+        if (nomeCarta === "CARTA PAIA") precoVenda = 1.50;
+        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 3.00;
         else {
             cartas.forEach(c => {
                 if (nomeCarta === c.nome) precoVenda = c.preco;
@@ -539,8 +539,8 @@ function venderTodasDaCarta(nomeCarta) {
     let qtd = colecaoGlobal[nomeCarta] || 0;
     if (qtd > 0) {
         let precoVenda = 0;
-        if (nomeCarta === "CARTA PAIA") precoVenda = 1.00;
-        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 2.00;
+        if (nomeCarta === "CARTA PAIA") precoVenda = 1.50;
+        else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 3.00;
         else {
             cartas.forEach(c => {
                 if (nomeCarta === c.nome) precoVenda = c.preco;
@@ -565,8 +565,8 @@ function venderTodasAsCartas() {
         let qtd = colecaoGlobal[nomeCarta];
         if (qtd > 0) {
             let precoVenda = 0;
-            if (nomeCarta === "CARTA PAIA") precoVenda = 1.00;
-            else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 2.00;
+            if (nomeCarta === "CARTA PAIA") precoVenda = 1.50;
+            else if (nomeCarta === "⭐ CARTA PAIA (Shiny)") precoVenda = 3.00;
             else {
                 cartas.forEach(c => {
                     if (nomeCarta === c.nome) precoVenda = c.preco;
