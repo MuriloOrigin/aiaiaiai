@@ -32,7 +32,6 @@
         <p>Especiais: <span id="contador-especiais">0</span></p>
         <p>Saldo: <span id="saldo-jogador">R$ 200.00</span></p>
         <button id="btn-album" onclick="abrirAlbum()">Abrir Álbum</button>
-        <button class="btn-vender-todas" onclick="venderTodasAsCartas()" style="width:100%; margin-top:8px;">Vender Tudo</button>
     </div>
 
     <div id="resultado">Selecione um booster e pressione Espaço para começar!</div>
@@ -44,6 +43,7 @@
         <div class="modal-conteudo">
             <span class="fechar-modal" onclick="fecharAlbum()">&times;</span>
             <h2>Álbum de Cartas</h2>
+            <button class="btn-vender-todas" onclick="venderTodasAsCartas()">Vender Tudo</button>
             <div id="grid-album"></div>
         </div>
     </div>

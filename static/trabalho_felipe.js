@@ -193,13 +193,24 @@ function sortearCarta(multiplicador) {
     }
 
     if (!cartaSorteada) {
-        cartaSorteada = {
-            nome: "CARTA PAIA",
-            tipo: "comum",
-            preco: 2.70,
-            raridade: "PAIA",
-            classe: "comum"
-        };
+        let chanceArmadilha = 0.5 * multiplicador;
+        if (Math.random() * 100 < chanceArmadilha) {
+            cartaSorteada = {
+                nome: "PERDEU OTARIO!",
+                tipo: "armadilha",
+                preco: 0,
+                raridade: "ARMADILHA",
+                classe: "armadilha"
+            };
+        } else {
+            cartaSorteada = {
+                nome: "CARTA PAIA",
+                tipo: "comum",
+                preco: 2.70,
+                raridade: "PAIA",
+                classe: "comum"
+            };
+        }
     }
 
     let chanceShinyBase = 0.15;
@@ -272,6 +283,20 @@ function revelarCartaNoElemento(div, carta) {
             let somResenha = new Audio('/static/army-of-lovers-crucified.mp3');
             somResenha.play();
         }
+
+    } else if (carta.tipo === "armadilha") {
+        div.classList.add("armadilha");
+        div.innerHTML = `
+            <strong>PERDEU!</strong>
+            <small>OTARIO!</small>
+        `;
+
+        let somPerdeu = new Audio('/static/perdeu.mp3');
+        somPerdeu.play();
+
+        jogoTravado = true;
+        document.getElementById("resultado").textContent = 
+            "Tirou a armadilha e perdeu! Selecione um booster para tentar de novo.";
 
     } else {
         div.classList.add("comum");
