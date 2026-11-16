@@ -4,7 +4,7 @@ const cartas = [
         imagem: "gustavodancepot.mp4",
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
-        chanceBase: 0.045,
+        chanceBase: 0.135,
         preco: 64.80
     },
     {
@@ -12,7 +12,7 @@ const cartas = [
         imagem: "elefantebe.jpg",
         raridade: "TRANSFICANO",
         classe: "transficano",
-        chanceBase: 0.15,
+        chanceBase: 0.45,
         preco: 13.50
     },
     {
@@ -20,7 +20,7 @@ const cartas = [
         imagem: "gustavo tartarugas ninjas.jpg",
         raridade: "SECRETA",
         classe: "secreta",
-        chanceBase: 0.075,
+        chanceBase: 0.225,
         preco: 54.00
     },
     {
@@ -28,7 +28,7 @@ const cartas = [
         imagem: "muryllo_caindo.mp4",
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
-        chanceBase: 0.225,
+        chanceBase: 0.675,
         preco: 27.00
     },
     {
@@ -36,7 +36,7 @@ const cartas = [
         imagem: "muryllo skibidi.jpg",
         raridade: "EPICA",
         classe: "epica",
-        chanceBase: 0.30,
+        chanceBase: 0.90,
         preco: 13.50
     },
     {
@@ -44,7 +44,7 @@ const cartas = [
         imagem: "O inicio.jpg",
         raridade: "PRIMORDIAL",
         classe: "primordial",
-        chanceBase: 0.12,
+        chanceBase: 0.36,
         preco: 43.20
     },
     {
@@ -52,7 +52,7 @@ const cartas = [
         imagem: "resenha call.jpg",
         raridade: "LENDARIA",
         classe: "lendaria",
-        chanceBase: 0.15,
+        chanceBase: 0.45,
         preco: 43.20
     },
     {
@@ -60,7 +60,7 @@ const cartas = [
         imagem: "xorume muryllo.jpg",
         raridade: "NOJO",
         classe: "nojo",
-        chanceBase: 0.45,
+        chanceBase: 1.35,
         preco: 8.10
     },
     {
@@ -68,7 +68,7 @@ const cartas = [
         imagem: "juliano.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.06,
+        chanceBase: 0.18,
         preco: 54.00
     },
     {
@@ -76,7 +76,7 @@ const cartas = [
         imagem: "felipe.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.06,
+        chanceBase: 0.18,
         preco: 54.00
     },
     {
@@ -84,7 +84,7 @@ const cartas = [
         imagem: "daniel.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.06,
+        chanceBase: 0.18,
         preco: 54.00
     },
     // CARTA U DE UCRÂNIA (Toca o áudio muryllo car cur.mp3 ao abrir)
@@ -93,7 +93,7 @@ const cartas = [
         imagem: "muryllo pé de mesa.mp4",
         raridade: "U DE UCRÂNIA",
         classe: "u-de-ucrania",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 75.00
     },
     // CARTAS THE LAST RESENHA
@@ -102,7 +102,7 @@ const cartas = [
         imagem: "amanda.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     },
     {
@@ -110,7 +110,7 @@ const cartas = [
         imagem: "felipe.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     },
     {
@@ -118,7 +118,7 @@ const cartas = [
         imagem: "gustavo.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     },
     {
@@ -126,7 +126,7 @@ const cartas = [
         imagem: "kayla.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     },
     {
@@ -134,7 +134,7 @@ const cartas = [
         imagem: "luis.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     },
     {
@@ -142,7 +142,7 @@ const cartas = [
         imagem: "marcos.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     },
     {
@@ -150,7 +150,7 @@ const cartas = [
         imagem: "miguel.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     },
     {
@@ -158,7 +158,7 @@ const cartas = [
         imagem: "muryllo.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.002,
+        chanceBase: 0.006,
         preco: 60.00
     }
 ];
@@ -205,7 +205,7 @@ function sortearCarta(multiplicador) {
     let cartaSorteada = null;
 
     for (let carta of cartas) {
-        let chanceEfetiva = carta.chanceBase * (carta.chanceBase < 2.0 ? multiplicador : 1.0);
+        let chanceEfetiva = carta.chanceBase * multiplicador;
         acumulado += chanceEfetiva;
 
         if (numero < acumulado) {
@@ -215,7 +215,7 @@ function sortearCarta(multiplicador) {
     }
 
     if (!cartaSorteada) {
-        let chanceArmadilha = 0.1 * multiplicador;
+        let chanceArmadilha = 0.3 * multiplicador;
         if (Math.random() * 100 < chanceArmadilha) {
             cartaSorteada = {
                 nome: "PERDEU OTARIO!",
