@@ -87,13 +87,13 @@ const cartas = [
         chanceBase: 0.6,
         preco: 54.00
     },
-    // NOVAS CARTAS: THE LAST RESENHA
+    // CARTAS THE LAST RESENHA (Ajustadas para 0.2% de chance)
     {
         nome: "Amanda (Resenha)",
         imagem: "amanda.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     },
     {
@@ -101,7 +101,7 @@ const cartas = [
         imagem: "felipe.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     },
     {
@@ -109,7 +109,7 @@ const cartas = [
         imagem: "gustavo.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     },
     {
@@ -117,7 +117,7 @@ const cartas = [
         imagem: "kayla.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     },
     {
@@ -125,7 +125,7 @@ const cartas = [
         imagem: "luis.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     },
     {
@@ -133,7 +133,7 @@ const cartas = [
         imagem: "marcos.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     },
     {
@@ -141,7 +141,7 @@ const cartas = [
         imagem: "miguel.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     },
     {
@@ -149,7 +149,7 @@ const cartas = [
         imagem: "muryllo.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.5,
+        chanceBase: 0.2,
         preco: 60.00
     }
 ];
