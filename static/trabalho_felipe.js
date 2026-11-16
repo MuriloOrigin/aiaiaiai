@@ -239,7 +239,6 @@ function sortearCarta(multiplicador) {
     let chanceShinyEfetiva = chanceShinyBase * multiplicador;
     let sorteioShiny = Math.random() * 100;
 
-    // A Carta Paia agora também pode vir Shiny valendo R$ 2,00
     if (sorteioShiny < chanceShinyEfetiva && !cartaSorteada.tipo) {
         cartaSorteada.isShiny = true;
         cartaSorteada.nomeOriginal = cartaSorteada.nome;
