@@ -319,12 +319,13 @@ function revelarCartaNoElemento(div, carta) {
     } else if (carta.tipo === "armadilha") {
         div.classList.add("armadilha");
         
-        let valorRoubado = dinheiro * 0.67;
+        let valorRoubado = 67.00;
         dinheiro -= valorRoubado;
+        if (dinheiro < 0) dinheiro = 0;
 
         div.innerHTML = `
             <strong>PERDEU!</strong>
-            <small>67% ROUBADO!</small>
+            <small>R$ 67,00 ROUBADO!</small>
         `;
 
         let somPerdeu = new Audio('/static/perdeu.mp3');
@@ -332,7 +333,7 @@ function revelarCartaNoElemento(div, carta) {
 
         jogoTravado = true;
         document.getElementById("resultado").textContent = 
-            `Tirou a armadilha! Perdeu 67% do seu saldo (R$ ${valorRoubado.toFixed(2)}). Selecione um booster para tentar de novo.`;
+            `Tirou a armadilha! Perdeu R$ 67,00 do seu saldo. Selecione um booster para tentar de novo.`;
 
     } else {
         div.classList.add("comum");
