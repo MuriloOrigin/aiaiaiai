@@ -4,7 +4,7 @@ const cartas = [
         imagem: "gustavodancepot.mp4",
         raridade: "DANCE POTRANCA",
         classe: "dance-potranca",
-        chanceBase: 0.45,
+        chanceBase: 0.045,
         preco: 64.80
     },
     {
@@ -12,7 +12,7 @@ const cartas = [
         imagem: "elefantebe.jpg",
         raridade: "TRANSFICANO",
         classe: "transficano",
-        chanceBase: 1.5,
+        chanceBase: 0.15,
         preco: 13.50
     },
     {
@@ -20,7 +20,7 @@ const cartas = [
         imagem: "gustavo tartarugas ninjas.jpg",
         raridade: "SECRETA",
         classe: "secreta",
-        chanceBase: 0.75,
+        chanceBase: 0.075,
         preco: 54.00
     },
     {
@@ -28,7 +28,7 @@ const cartas = [
         imagem: "muryllo_caindo.mp4",
         raridade: "ULTRA RARA",
         classe: "ultra-rara",
-        chanceBase: 2.25,
+        chanceBase: 0.225,
         preco: 27.00
     },
     {
@@ -36,7 +36,7 @@ const cartas = [
         imagem: "muryllo skibidi.jpg",
         raridade: "EPICA",
         classe: "epica",
-        chanceBase: 3.0,
+        chanceBase: 0.30,
         preco: 13.50
     },
     {
@@ -44,7 +44,7 @@ const cartas = [
         imagem: "O inicio.jpg",
         raridade: "PRIMORDIAL",
         classe: "primordial",
-        chanceBase: 1.2,
+        chanceBase: 0.12,
         preco: 43.20
     },
     {
@@ -52,7 +52,7 @@ const cartas = [
         imagem: "resenha call.jpg",
         raridade: "LENDARIA",
         classe: "lendaria",
-        chanceBase: 1.5,
+        chanceBase: 0.15,
         preco: 43.20
     },
     {
@@ -60,7 +60,7 @@ const cartas = [
         imagem: "xorume muryllo.jpg",
         raridade: "NOJO",
         classe: "nojo",
-        chanceBase: 4.5,
+        chanceBase: 0.45,
         preco: 8.10
     },
     {
@@ -68,7 +68,7 @@ const cartas = [
         imagem: "juliano.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.6,
+        chanceBase: 0.06,
         preco: 54.00
     },
     {
@@ -76,7 +76,7 @@ const cartas = [
         imagem: "felipe.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.6,
+        chanceBase: 0.06,
         preco: 54.00
     },
     {
@@ -84,16 +84,16 @@ const cartas = [
         imagem: "daniel.jpg",
         raridade: "ESPECIAL HEXA",
         classe: "especial-hexa",
-        chanceBase: 0.6,
+        chanceBase: 0.06,
         preco: 54.00
     },
-    // CARTAS THE LAST RESENHA (Super raras: 0.02% de chance base cada)
+    // CARTAS THE LAST RESENHA (10x mais difíceis: 0.002% de chance base cada)
     {
         nome: "Amanda (Resenha)",
         imagem: "amanda.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     },
     {
@@ -101,7 +101,7 @@ const cartas = [
         imagem: "felipe.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     },
     {
@@ -109,7 +109,7 @@ const cartas = [
         imagem: "gustavo.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     },
     {
@@ -117,7 +117,7 @@ const cartas = [
         imagem: "kayla.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     },
     {
@@ -125,7 +125,7 @@ const cartas = [
         imagem: "luis.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     },
     {
@@ -133,7 +133,7 @@ const cartas = [
         imagem: "marcos.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     },
     {
@@ -141,7 +141,7 @@ const cartas = [
         imagem: "miguel.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     },
     {
@@ -149,7 +149,7 @@ const cartas = [
         imagem: "muryllo.res.jpg",
         raridade: "THE LAST RESENHA",
         classe: "the-last-resenha",
-        chanceBase: 0.02,
+        chanceBase: 0.002,
         preco: 60.00
     }
 ];
@@ -211,7 +211,8 @@ function sortearCarta(multiplicador) {
         }
     }
 
-    let chanceShinyBase = 3.0;
+    // Shiny 20x mais difícil (base 0.15% em vez de 3.0%)
+    let chanceShinyBase = 0.15;
     let chanceShinyEfetiva = chanceShinyBase * multiplicador;
     let sorteioShiny = Math.random() * 100;
 
