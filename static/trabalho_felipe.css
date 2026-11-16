@@ -459,9 +459,6 @@ h1 {
 .carta.shiny.transficano strong, .carta.shiny.transficano small { background: rgba(0,0,0,0.4) !important; color: #000 !important; }
 
 
-.armadilha { border: 4px solid red !important; box-shadow: 0 0 18px red !important; background: #2b0b0b !important; justify-content: center !important; }
-.armadilha strong, .armadilha small { background: #2b0b0b !important; width: 100%; padding: 2px 0; }
-
 .comum { border: 4px solid #777; background: #1a1a1a; justify-content: space-between !important; }
 .comum strong, .comum small { background: #1a1a1a; width: 100%; padding: 2px 0; }
 

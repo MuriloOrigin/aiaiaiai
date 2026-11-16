@@ -87,7 +87,7 @@ const cartas = [
         chanceBase: 0.06,
         preco: 54.00
     },
-    // CARTAS THE LAST RESENHA (10x mais difíceis)
+    // CARTAS THE LAST RESENHA
     {
         nome: "Amanda (Resenha)",
         imagem: "amanda.res.jpg",
@@ -193,25 +193,15 @@ function sortearCarta(multiplicador) {
     }
 
     if (!cartaSorteada) {
-        let chanceArmadilha = 5.0 / multiplicador;
-        if (numero < 5 + chanceArmadilha) {
-            cartaSorteada = {
-                nome: "PERDEU OTARIO!",
-                tipo: "armadilha",
-                preco: 0
-            };
-        } else {
-            cartaSorteada = {
-                nome: "CARTA PAIA",
-                tipo: "comum",
-                preco: 2.70,
-                raridade: "PAIA",
-                classe: "comum"
-            };
-        }
+        cartaSorteada = {
+            nome: "CARTA PAIA",
+            tipo: "comum",
+            preco: 2.70,
+            raridade: "PAIA",
+            classe: "comum"
+        };
     }
 
-    // Shiny 20x mais difícil (base 0.15%)
     let chanceShinyBase = 0.15;
     let chanceShinyEfetiva = chanceShinyBase * multiplicador;
     let sorteioShiny = Math.random() * 100;
@@ -282,20 +272,6 @@ function revelarCartaNoElemento(div, carta) {
             let somResenha = new Audio('/static/army-of-lovers-crucified.mp3');
             somResenha.play();
         }
-
-    } else if (carta.tipo === "armadilha") {
-        div.classList.add("armadilha");
-        div.innerHTML = `
-            <strong>PERDEU!</strong>
-            <small>OTARIO!</small>
-        `;
-
-        let somPerdeu = new Audio('/static/perdeu.mp3');
-        somPerdeu.play();
-
-        jogoTravado = true;
-        document.getElementById("resultado").textContent = 
-            "Tirou a armadilha e perdeu! Selecione um booster para tentar de novo.";
 
     } else {
         div.classList.add("comum");
