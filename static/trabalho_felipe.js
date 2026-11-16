@@ -86,6 +86,71 @@ const cartas = [
         classe: "especial-hexa",
         chanceBase: 0.6,
         preco: 54.00
+    },
+    // NOVAS CARTAS: THE LAST RESENHA
+    {
+        nome: "Amanda (Resenha)",
+        imagem: "amanda.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
+    },
+    {
+        nome: "Felipe (Resenha)",
+        imagem: "felipe.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
+    },
+    {
+        nome: "Gustavo (Resenha)",
+        imagem: "gustavo.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
+    },
+    {
+        nome: "Kayla (Resenha)",
+        imagem: "kayla.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
+    },
+    {
+        nome: "Luis (Resenha)",
+        imagem: "luis.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
+    },
+    {
+        nome: "Marcos (Resenha)",
+        imagem: "marcos.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
+    },
+    {
+        nome: "Miguel (Resenha)",
+        imagem: "miguel.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
+    },
+    {
+        nome: "Muryllo (Resenha)",
+        imagem: "muryllo.res.jpg",
+        raridade: "THE LAST RESENHA",
+        classe: "the-last-resenha",
+        chanceBase: 0.5,
+        preco: 60.00
     }
 ];
 
@@ -197,18 +262,24 @@ function revelarCartaNoElemento(div, carta) {
             `;
         } else {
             div.innerHTML = `
-                <div class="verso" style="font-size: 35px;">PAIA</div>
-                <strong>${carta.nome}</strong>
-                <small>${carta.raridade}</small>
+                <div class="verso" style="font-size: 32px;">PAIA</div>
+                <div>
+                    <strong>${carta.nome}</strong>
+                    <small>${carta.raridade}</small>
+                </div>
             `;
         }
 
+        // EFEITOS SONOROS POR CARTA OU RARIDADE
         if (carta.imagem === "gustavodancepot.mp4") {
             let somDance = new Audio('/static/dancepotranca.mp3');
             somDance.play();
         } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
             let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
             somTartarugas.play();
+        } else if (carta.classe === "the-last-resenha") {
+            let somResenha = new Audio('/static/army-of-lovers-crucified.mp3');
+            somResenha.play();
         }
 
     } else if (carta.tipo === "armadilha") {
@@ -229,9 +300,11 @@ function revelarCartaNoElemento(div, carta) {
         div.classList.add("comum");
         if (carta.isShiny) div.classList.add("shiny");
         div.innerHTML = `
-            <div class="verso" style="font-size: 35px;">PAIA</div>
-            <strong>${carta.nome}</strong>
-            <small>${carta.raridade}</small>
+            <div class="verso" style="font-size: 50px; margin-bottom: auto; margin-top: auto;">PAIA</div>
+            <div style="width: 100%;">
+                <strong>${carta.nome}</strong>
+                <small>${carta.raridade}</small>
+            </div>
         `;
     }
 
@@ -263,7 +336,7 @@ function comprarBooster(custo, multiplicador) {
         div.className = "carta";
         div.innerHTML = `
             <div class="verso">?</div>
-            <strong>CARTA ${i + 1}</strong>
+            <div class="texto-verso">CARTA ${i + 1}</div>
         `;
 
         div.onclick = function () {
