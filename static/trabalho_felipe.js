@@ -399,7 +399,9 @@ function abrirAlbum() {
         let bloqueada = cartasBloqueadas[carta.nome] || false;
 
         if (qtd > 0) {
-            itemDiv.className = carta.isShiny ? "item-album shiny-borda" : "item-album";
+            itemDiv.className = "item-album";
+            if (carta.classe) itemDiv.classList.add(carta.classe);
+            if (carta.isShiny) itemDiv.classList.add("shiny");
             if (bloqueada) itemDiv.classList.add("bloqueado-carta");
 
             let mediaHtml = "";
