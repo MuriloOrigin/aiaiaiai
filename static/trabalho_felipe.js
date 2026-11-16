@@ -293,13 +293,13 @@ function revelarCartaNoElemento(div, carta) {
 
         if (carta.imagem && carta.imagem.endsWith('.mp4')) {
             div.innerHTML = `
-                <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width: 100%; height: 65%; object-fit: cover; border-radius: 4px;"></video>
+                <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width: 100%; height: 65%; object-fit: contain; background: #000; border-radius: 4px;"></video>
                 <strong style="font-size: 11px; display: block; margin-top: 4px;">${carta.nome}</strong>
                 <small style="font-size: 9px;">${carta.raridade}</small>
             `;
         } else if (carta.imagem) {
             div.innerHTML = `
-                <img src="/static/${encodeURIComponent(carta.imagem)}" style="width: 100%; height: 65%; object-fit: cover; border-radius: 4px;">
+                <img src="/static/${encodeURIComponent(carta.imagem)}" style="width: 100%; height: 65%; object-fit: contain; background: #000; border-radius: 4px;">
                 <strong style="font-size: 11px; display: block; margin-top: 4px;">${carta.nome}</strong>
                 <small style="font-size: 9px;">${carta.raridade}</small>
             `;
@@ -447,9 +447,9 @@ function abrirAlbum() {
 
             let mediaHtml = "";
             if (carta.imagem && carta.imagem.endsWith('.mp4')) {
-                mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width: 100%; height: 55px; object-fit: cover; border-radius: 4px;"></video>`;
+                mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width: 100%; height: 75px; object-fit: contain; background: #000; border-radius: 4px;"></video>`;
             } else if (carta.imagem) {
-                mediaHtml = `<img src="/static/${encodeURIComponent(carta.imagem)}" style="width: 100%; height: 55px; object-fit: cover; border-radius: 4px;">`;
+                mediaHtml = `<img src="/static/${encodeURIComponent(carta.imagem)}" style="width: 100%; height: 75px; object-fit: contain; background: #000; border-radius: 4px;">`;
             } else {
                 mediaHtml = `<div class="silueta" style="font-size: 18px; color: #aaa;">PAIA</div>`;
             }
@@ -463,7 +463,6 @@ function abrirAlbum() {
 
             let textoBloqueio = bloqueada ? "🔓 Desbloquear" : "🔒 Bloquear";
 
-            // Criamos um contentor clicável para a pré-visualização para tocar o áudio ao clicar na carta no álbum
             let previewDiv = document.createElement("div");
             previewDiv.style.cursor = "pointer";
             previewDiv.title = "Clique para tocar o áudio!";
@@ -478,7 +477,6 @@ function abrirAlbum() {
 
             itemDiv.appendChild(previewDiv);
 
-            // Adicionar restante do HTML de botões
             let containerBotoes = document.createElement("div");
             containerBotoes.innerHTML = `
                 ${botoesVendaHtml}
