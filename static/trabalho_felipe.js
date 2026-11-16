@@ -87,7 +87,7 @@ const cartas = [
         chanceBase: 0.06,
         preco: 54.00
     },
-    // CARTAS THE LAST RESENHA (10x mais difíceis: 0.002% de chance base cada)
+    // CARTAS THE LAST RESENHA (10x mais difíceis)
     {
         nome: "Amanda (Resenha)",
         imagem: "amanda.res.jpg",
@@ -211,7 +211,7 @@ function sortearCarta(multiplicador) {
         }
     }
 
-    // Shiny 20x mais difícil (base 0.15% em vez de 3.0%)
+    // Shiny 20x mais difícil (base 0.15%)
     let chanceShinyBase = 0.15;
     let chanceShinyEfetiva = chanceShinyBase * multiplicador;
     let sorteioShiny = Math.random() * 100;
@@ -271,7 +271,7 @@ function revelarCartaNoElemento(div, carta) {
             `;
         }
 
-        // EFEITOS SONOROS POR CARTA OU RARIDADE
+        // ÁUDIOS PERSONALIZADOS
         if (carta.imagem === "gustavodancepot.mp4") {
             let somDance = new Audio('/static/dancepotranca.mp3');
             somDance.play();
