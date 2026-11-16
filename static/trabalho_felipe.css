@@ -429,6 +429,20 @@ h1 {
 .transficano { border-color: #ffe600 !important; box-shadow: 0 0 18px #ffe600 !important; background: #2b260b !important; justify-content: space-between !important; }
 .transficano strong, .transficano small { background: #2b260b !important; width: 100%; padding: 2px 0; }
 
+/* RARIDADE U DE UCRÂNIA (Metade esquerda amarela #FFD700, metade direita azul #005BBB) */
+.u-de-ucrania { 
+    background: linear-gradient(to right, #FFD700 50%, #005BBB 50%) !important; 
+    border-color: #ffffff !important; 
+    box-shadow: 0 0 20px #FFD700, 0 0 20px #005BBB !important; 
+    justify-content: space-between !important; 
+}
+.u-de-ucrania strong, .u-de-ucrania small { 
+    background: rgba(0, 0, 0, 0.6) !important; 
+    color: #ffffff !important; 
+    width: 100%; 
+    padding: 2px 0; 
+}
+
 
 /* ESTILOS DE CORES INVERTIDAS PARA CARTAS SHINY (NO JOGO E NO ÁLBUM) */
 .carta.shiny.nojo, .item-album.shiny.nojo { background: #8cff00 !important; border-color: #18260b !important; }
@@ -457,6 +471,9 @@ h1 {
 
 .carta.shiny.transficano, .item-album.shiny.transficano { background: #ffe600 !important; border-color: #2b260b !important; }
 .carta.shiny.transficano strong, .carta.shiny.transficano small, .item-album.shiny.transficano strong, .item-album.shiny.transficano small { background: rgba(0,0,0,0.4) !important; color: #000 !important; }
+
+.carta.shiny.u-de-ucrania, .item-album.shiny.u-de-ucrania { background: linear-gradient(to right, #005BBB 50%, #FFD700 50%) !important; border-color: #FFD700 !important; }
+.carta.shiny.u-de-ucrania strong, .carta.shiny.u-de-ucrania small, .item-album.shiny.u-de-ucrania strong, .item-album.shiny.u-de-ucrania small { background: rgba(255, 255, 255, 0.8) !important; color: #000000 !important; }
 
 
 .armadilha { border: 4px solid red !important; box-shadow: 0 0 18px red !important; background: #2b0b0b !important; justify-content: center !important; }

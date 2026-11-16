@@ -87,6 +87,23 @@ const cartas = [
         chanceBase: 0.06,
         preco: 54.00
     },
+    // NOVAS CARTAS U DE UCRÂNIA
+    {
+        nome: "Muryllo Pé de Mesa",
+        imagem: "muryllo pé de mesa.mp4",
+        raridade: "U DE UCRÂNIA",
+        classe: "u-de-ucrania",
+        chanceBase: 0.001,
+        preco: 75.00
+    },
+    {
+        nome: "Muryllo Car Cur",
+        imagem: "muryllo car cur.mp3",
+        raridade: "U DE UCRÂNIA",
+        classe: "u-de-ucrania",
+        chanceBase: 0.001,
+        preco: 75.00
+    },
     // CARTAS THE LAST RESENHA
     {
         nome: "Amanda (Resenha)",
@@ -132,7 +149,6 @@ const cartas = [
         nome: "Marcos (Resenha)",
         imagem: "marcos.res.jpg",
         raridade: "THE LAST RESENHA",
-        classe: "the-last-resenha",
         chanceBase: 0.002,
         preco: 60.00
     },
@@ -192,9 +208,9 @@ function sortearCarta(multiplicador) {
         }
     }
 
-    let isArmadilha = false;
     if (!cartaSorteada) {
-        let chanceArmadilha = 0.5 * multiplicador;
+        // Chance armadilha mais difícil (0.1% no comum, dobrando no especial e lendario)
+        let chanceArmadilha = 0.1 * multiplicador;
         if (Math.random() * 100 < chanceArmadilha) {
             cartaSorteada = {
                 nome: "PERDEU OTARIO!",
@@ -203,7 +219,6 @@ function sortearCarta(multiplicador) {
                 raridade: "ARMADILHA",
                 classe: "armadilha"
             };
-            isArmadilha = true;
         } else {
             cartaSorteada = {
                 nome: "CARTA PAIA",
@@ -215,7 +230,6 @@ function sortearCarta(multiplicador) {
         }
     }
 
-    // A Carta Paia e a Armadilha não ganham versão Shiny
     let chanceShinyBase = 0.15;
     let chanceShinyEfetiva = chanceShinyBase * multiplicador;
     let sorteioShiny = Math.random() * 100;
@@ -259,6 +273,13 @@ function revelarCartaNoElemento(div, carta) {
                 <strong>${carta.nome}</strong>
                 <small>${carta.raridade}</small>
             `;
+        } else if (carta.imagem && carta.imagem.endsWith('.mp3')) {
+            div.innerHTML = `
+                <audio src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop></audio>
+                <div style="font-size: 45px; margin: auto;">🎵</div>
+                <strong>${carta.nome}</strong>
+                <small>${carta.raridade}</small>
+            `;
         } else if (carta.imagem) {
             div.innerHTML = `
                 <img src="/static/${encodeURIComponent(carta.imagem)}">
@@ -289,9 +310,14 @@ function revelarCartaNoElemento(div, carta) {
 
     } else if (carta.tipo === "armadilha") {
         div.classList.add("armadilha");
+        
+        // Rouba 67% do saldo atual
+        let valorRoubado = dinheiro * 0.67;
+        dinheiro -= valorRoubado;
+
         div.innerHTML = `
             <strong>PERDEU!</strong>
-            <small>OTARIO!</small>
+            <small>67% ROUBADO!</small>
         `;
 
         let somPerdeu = new Audio('/static/perdeu.mp3');
@@ -299,7 +325,7 @@ function revelarCartaNoElemento(div, carta) {
 
         jogoTravado = true;
         document.getElementById("resultado").textContent = 
-            "Tirou a armadilha e perdeu! Selecione um booster para tentar de novo.";
+            `Tirou a armadilha! Perdeu 67% do seu saldo (R$ ${valorRoubado.toFixed(2)}). Selecione um booster para tentar de novo.`;
 
     } else {
         div.classList.add("comum");
@@ -391,7 +417,6 @@ function abrirAlbum() {
         });
     });
 
-    // Apenas a Carta Paia normal (sem shiny)
     let paiaNormal = { nome: "CARTA PAIA", raridade: "PAIA", preco: 2.70, classe: "comum" };
     listaCompletaAlbum.push(paiaNormal);
 
@@ -409,6 +434,8 @@ function abrirAlbum() {
             let mediaHtml = "";
             if (carta.imagem && carta.imagem.endsWith('.mp4')) {
                 mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>`;
+            } else if (carta.imagem && carta.imagem.endsWith('.mp3')) {
+                mediaHtml = `<div style="font-size: 35px; margin: auto;">🎵</div>`;
             } else if (carta.imagem) {
                 mediaHtml = `<img src="/static/${encodeURIComponent(carta.imagem)}">`;
             } else {
