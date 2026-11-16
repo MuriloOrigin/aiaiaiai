@@ -87,7 +87,7 @@ const cartas = [
         chanceBase: 0.18,
         preco: 54.00
     },
-    // CARTA U DE UCRÂNIA (Toca o áudio muryllo car cur.mp3 ao abrir)
+    // CARTA U DE UCRÂNIA (Toca o áudio muryllo car cur.mp3)
     {
         nome: "Muryllo Pé de Mesa",
         imagem: "muryllo pé de mesa.mp4",
@@ -184,6 +184,23 @@ function salvarEstado() {
     localStorage.setItem('felipe_bloqueadas', JSON.stringify(cartasBloqueadas));
 }
 
+// Função centralizada para tocar o áudio de cartas específicas
+function tocarAudioCarta(carta) {
+    if (carta.imagem === "gustavodancepot.mp4") {
+        let somDance = new Audio('/static/dancepotranca.mp3');
+        somDance.play().catch(e => {});
+    } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
+        let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
+        somTartarugas.play().catch(e => {});
+    } else if (carta.imagem === "muryllo pé de mesa.mp4") {
+        let somCarCur = new Audio('/static/muryllo car cur.mp3');
+        somCarCur.play().catch(e => {});
+    } else if (carta.classe === "the-last-resenha") {
+        let somResenha = new Audio('/static/army-of-lovers-crucified.mp3');
+        somResenha.play().catch(e => {});
+    }
+}
+
 window.onload = function() {
     atualizarContadorVisual(0, 0);
 };
@@ -276,15 +293,15 @@ function revelarCartaNoElemento(div, carta) {
 
         if (carta.imagem && carta.imagem.endsWith('.mp4')) {
             div.innerHTML = `
-                <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>
-                <strong>${carta.nome}</strong>
-                <small>${carta.raridade}</small>
+                <video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width: 100%; height: 65%; object-fit: cover; border-radius: 4px;"></video>
+                <strong style="font-size: 11px; display: block; margin-top: 4px;">${carta.nome}</strong>
+                <small style="font-size: 9px;">${carta.raridade}</small>
             `;
         } else if (carta.imagem) {
             div.innerHTML = `
-                <img src="/static/${encodeURIComponent(carta.imagem)}">
-                <strong>${carta.nome}</strong>
-                <small>${carta.raridade}</small>
+                <img src="/static/${encodeURIComponent(carta.imagem)}" style="width: 100%; height: 65%; object-fit: cover; border-radius: 4px;">
+                <strong style="font-size: 11px; display: block; margin-top: 4px;">${carta.nome}</strong>
+                <small style="font-size: 9px;">${carta.raridade}</small>
             `;
         } else {
             div.innerHTML = `
@@ -296,20 +313,8 @@ function revelarCartaNoElemento(div, carta) {
             `;
         }
 
-        // ÁUDIOS PERSONALIZADOS
-        if (carta.imagem === "gustavodancepot.mp4") {
-            let somDance = new Audio('/static/dancepotranca.mp3');
-            somDance.play();
-        } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
-            let somTartarugas = new Audio('/static/tartarugas ninjas.mp3');
-            somTartarugas.play();
-        } else if (carta.imagem === "muryllo pé de mesa.mp4") {
-            let somCarCur = new Audio('/static/muryllo car cur.mp3');
-            somCarCur.play();
-        } else if (carta.classe === "the-last-resenha") {
-            let somResenha = new Audio('/static/army-of-lovers-crucified.mp3');
-            somResenha.play();
-        }
+        // Toca o áudio ao revelar
+        tocarAudioCarta(carta);
 
     } else if (carta.tipo === "armadilha") {
         div.classList.add("armadilha");
@@ -323,7 +328,7 @@ function revelarCartaNoElemento(div, carta) {
         `;
 
         let somPerdeu = new Audio('/static/perdeu.mp3');
-        somPerdeu.play();
+        somPerdeu.play().catch(e => {});
 
         jogoTravado = true;
         document.getElementById("resultado").textContent = 
@@ -442,9 +447,9 @@ function abrirAlbum() {
 
             let mediaHtml = "";
             if (carta.imagem && carta.imagem.endsWith('.mp4')) {
-                mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted></video>`;
+                mediaHtml = `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width: 100%; height: 55px; object-fit: cover; border-radius: 4px;"></video>`;
             } else if (carta.imagem) {
-                mediaHtml = `<img src="/static/${encodeURIComponent(carta.imagem)}">`;
+                mediaHtml = `<img src="/static/${encodeURIComponent(carta.imagem)}" style="width: 100%; height: 55px; object-fit: cover; border-radius: 4px;">`;
             } else {
                 mediaHtml = `<div class="silueta" style="font-size: 18px; color: #aaa;">PAIA</div>`;
             }
@@ -458,13 +463,29 @@ function abrirAlbum() {
 
             let textoBloqueio = bloqueada ? "🔓 Desbloquear" : "🔒 Bloquear";
 
-            itemDiv.innerHTML = `
+            // Criamos um contentor clicável para a pré-visualização para tocar o áudio ao clicar na carta no álbum
+            let previewDiv = document.createElement("div");
+            previewDiv.style.cursor = "pointer";
+            previewDiv.title = "Clique para tocar o áudio!";
+            previewDiv.innerHTML = `
                 ${mediaHtml}
-                <strong style="font-size: 10px; margin-top: 4px; color: ${carta.isShiny ? '#ffd700' : '#fff'};">${carta.nome}</strong>
-                <small style="color: #00e5ff;">Qtd: x${qtd} | R$ ${carta.preco.toFixed(2)}</small>
+                <strong style="font-size: 10px; margin-top: 4px; color: ${carta.isShiny ? '#ffd700' : '#fff'}; display: block;">${carta.nome}</strong>
+                <small style="color: #00e5ff; display: block;">Qtd: x${qtd} | R$ ${carta.preco.toFixed(2)}</small>
+            `;
+            previewDiv.onclick = function() {
+                tocarAudioCarta(carta);
+            };
+
+            itemDiv.appendChild(previewDiv);
+
+            // Adicionar restante do HTML de botões
+            let containerBotoes = document.createElement("div");
+            containerBotoes.innerHTML = `
                 ${botoesVendaHtml}
                 <button class="btn-bloquear" onclick="alternarBloqueio('${carta.nome}')">${textoBloqueio}</button>
             `;
+            itemDiv.appendChild(containerBotoes);
+
         } else {
             itemDiv.className = "item-album bloqueado";
             itemDiv.innerHTML = `
