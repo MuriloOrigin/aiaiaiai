@@ -54,7 +54,7 @@ function fazerLogin() {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.success) {
+        if (data.sucesso) {
             dinheiro = Number(data.dinheiro);
             colecaoGlobal = data.colecao || {};
             cartasBloqueadas = data.bloqueadas || {};
