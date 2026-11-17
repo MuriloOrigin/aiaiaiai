@@ -7,7 +7,7 @@
 
     <title>Card Game dos Amigos</title>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}">
 </head>
 
 <body>
@@ -84,7 +84,6 @@
             <section style="width:250px;">
 
                 <h3>Loja de Boosters</h3>
-
 
                 <div
                     class="card-loja selecionado"
@@ -245,15 +244,265 @@
                 Álbum de Coleção
             </h2>
 
-            <div id="grid-album"></div>
+            <!-- ABAS DO ÁLBUM -->
+            <div class="album-abas">
+
+                <button
+                    class="aba-album ativa"
+                    onclick="mostrarAbaAlbum('colecao')"
+                    id="aba-colecao"
+                >
+                    MINHAS CARTAS
+                </button>
+
+                <button
+                    class="aba-album"
+                    onclick="mostrarAbaAlbum('apostadas')"
+                    id="aba-apostadas"
+                >
+                    CARTAS APOSTADAS
+                </button>
+
+            </div>
+
+
+            <!-- CARTAS DA COLEÇÃO -->
+            <div id="conteudo-colecao">
+
+                <div id="grid-album"></div>
+
+            </div>
+
+
+            <!-- CARTAS QUE VENCERAM NA ROLETA -->
+            <div id="conteudo-apostadas" style="display:none;">
+
+                <div id="grid-apostadas"></div>
+
+            </div>
 
         </div>
 
     </div>
 
 
-    <!-- JAVASCRIPT -->
+    <!-- BOTÃO ADMINISTRATIVO INVISÍVEL -->
+    <button
+        id="botao-admin"
+        onclick="abrirPainelAdmin()"
+        aria-label="Painel administrativo"
+        title=""
+        style="
+            position:fixed;
+            bottom:0;
+            left:0;
+            width:22px;
+            height:22px;
+            padding:0;
+            margin:0;
+            background:transparent;
+            border:none;
+            outline:none;
+            opacity:0;
+            cursor:default;
+            z-index:9998;
+        "
+    ></button>
+
+
+    <!-- JANELA ADMINISTRATIVA -->
+    <div
+        id="modal-admin"
+        style="
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.85);
+            z-index:9999;
+            justify-content:center;
+            align-items:center;
+        "
+    >
+
+        <div style="
+            background:#222;
+            color:white;
+            padding:25px;
+            border-radius:10px;
+            width:300px;
+            max-width:85%;
+            text-align:center;
+            border:1px solid #555;
+        ">
+
+            <h2>Painel Administrativo</h2>
+
+            <p>
+                Digite a senha para reiniciar todos os jogadores.
+            </p>
+
+            <input
+                type="password"
+                id="senha-admin"
+                placeholder="Senha administrativa"
+                autocomplete="off"
+                style="
+                    width:90%;
+                    padding:10px;
+                    margin:10px 0;
+                    border-radius:5px;
+                    border:1px solid #777;
+                "
+            >
+
+            <p
+                id="mensagem-admin"
+                style="font-weight:bold;min-height:20px;"
+            ></p>
+
+            <button
+                onclick="executarResetAdmin()"
+                style="
+                    background:#d32f2f;
+                    color:white;
+                    padding:10px 15px;
+                    border:none;
+                    border-radius:5px;
+                    cursor:pointer;
+                    font-weight:bold;
+                "
+            >
+                REINICIAR TODOS
+            </button>
+
+            <br><br>
+
+            <button
+                onclick="fecharPainelAdmin()"
+                style="
+                    background:#555;
+                    color:white;
+                    padding:8px 15px;
+                    border:none;
+                    border-radius:5px;
+                    cursor:pointer;
+                "
+            >
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT ORIGINAL -->
     <script src="{{ url_for('static', filename='trabalho_felipe.js') }}"></script>
+
+
+    <!-- JAVASCRIPT DO PAINEL ADMINISTRATIVO -->
+    <script>
+
+        function abrirPainelAdmin() {
+            const modal = document.getElementById("modal-admin");
+            const senha = document.getElementById("senha-admin");
+            const mensagem = document.getElementById("mensagem-admin");
+
+            modal.style.display = "flex";
+            senha.value = "";
+            mensagem.textContent = "";
+
+            senha.focus();
+        }
+
+
+        function fecharPainelAdmin() {
+            document.getElementById("modal-admin").style.display = "none";
+        }
+
+
+        async function executarResetAdmin() {
+
+            const senha = document.getElementById("senha-admin").value;
+            const mensagem = document.getElementById("mensagem-admin");
+
+            if (!senha) {
+                mensagem.style.color = "#ff4444";
+                mensagem.textContent = "Digite a senha.";
+                return;
+            }
+
+            if (!confirm(
+                "ATENÇÃO! Isso apagará o dinheiro e as cartas de TODOS os jogadores. Deseja continuar?"
+            )) {
+                return;
+            }
+
+            mensagem.style.color = "#ffd700";
+            mensagem.textContent = "Processando...";
+
+            try {
+
+                const resposta = await fetch("/api/admin/resetar", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        senha: senha
+                    })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok || !dados.sucesso) {
+
+                    mensagem.style.color = "#ff4444";
+                    mensagem.textContent = dados.mensagem || "Não foi possível reiniciar.";
+
+                    return;
+                }
+
+                mensagem.style.color = "#4CAF50";
+                mensagem.textContent =
+                    dados.jogadores + " jogadores foram reiniciados!";
+
+                alert(
+                    "Reset realizado com sucesso!\n\n" +
+                    dados.jogadores +
+                    " jogadores agora possuem R$ 200,00 e nenhuma carta."
+                );
+
+                location.reload();
+
+            } catch (erro) {
+
+                mensagem.style.color = "#ff4444";
+                mensagem.textContent = "Erro ao conectar com o servidor.";
+
+                console.error(erro);
+
+            }
+
+        }
+
+
+        document.getElementById("senha-admin").addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+                    executarResetAdmin();
+                }
+
+                if (event.key === "Escape") {
+                    fecharPainelAdmin();
+                }
+
+            }
+        );
+
+    </script>
 
 </body>
 </html>

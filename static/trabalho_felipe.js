@@ -26,10 +26,10 @@ let dinheiro = 200.00;
 let colecaoGlobal = {};
 let cartasBloqueadas = {};
 let valoresCartas = {};
+let cartasSeparadas = {};
 
 let jogoTravado = false;
 let cartasGeradas = [];
-
 let roletaEmAndamento = false;
 
 let pacoteSelecionado = {
@@ -44,38 +44,65 @@ let pacoteSelecionado = {
 // ==============================
 
 function fazerLogin() {
-    let usuario = document.getElementById("input-usuario").value;
-    let senha = document.getElementById("input-senha").value;
+    const usuario = document.getElementById("input-usuario").value.trim();
+    const senha = document.getElementById("input-senha").value;
+    const erro = document.getElementById("erro-login");
+
+    erro.textContent = "";
+
+    if (!usuario || !senha) {
+        erro.textContent = "Preencha o nome e a senha.";
+        return;
+    }
 
     fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome: usuario, senha })
+        body: JSON.stringify({ nome: usuario, senha: senha })
     })
-    .then(res => res.json())
+    .then(async res => {
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.mensagem || "Não foi possível entrar.");
+        }
+
+        return data;
+    })
     .then(data => {
         if (data.sucesso) {
             dinheiro = Number(data.dinheiro);
             colecaoGlobal = data.colecao || {};
             cartasBloqueadas = data.bloqueadas || {};
             valoresCartas = data.valoresCartas || {};
+            cartasSeparadas = data.cartasSeparadas || {};
 
-            document.getElementById("nome-usuario-logado").textContent = usuario;
+            delete colecaoGlobal["⭐ CARTA PAIA (Shiny)"];
+            delete cartasBloqueadas["⭐ CARTA PAIA (Shiny)"];
+            delete valoresCartas["⭐ CARTA PAIA (Shiny)"];
+            delete cartasSeparadas["⭐ CARTA PAIA (Shiny)"];
+
+            salvarEstado();
+
+            document.getElementById("nome-usuario-logado").textContent =
+                data.nome || usuario;
+
             document.getElementById("tela-login").style.display = "none";
             document.getElementById("conteudo-jogo").style.display = "block";
 
             criarRoleta();
             atualizarOpcoesRoleta();
             atualizarContadorVisual(0, 0);
+            atualizarCartasSeparadas();
 
             document.getElementById("resultado").textContent =
                 "Selecione um booster e pressione Espaço para começar!";
         } else {
-            document.getElementById("erro-login").textContent = data.mensagem;
+            erro.textContent = data.mensagem || "Não foi possível entrar.";
         }
     })
-    .catch(() => {
-        document.getElementById("erro-login").textContent =
+    .catch(error => {
+        erro.textContent = error.message ||
             "Não foi possível conectar ao servidor.";
     });
 }
@@ -93,8 +120,11 @@ function salvarEstado() {
             dinheiro: dinheiro,
             colecao: colecaoGlobal,
             bloqueadas: cartasBloqueadas,
-            valoresCartas: valoresCartas
+            valoresCartas: valoresCartas,
+            cartasSeparadas: cartasSeparadas
         })
+    }).catch(error => {
+        console.error("Erro ao salvar os dados:", error);
     });
 }
 
@@ -105,7 +135,6 @@ function salvarEstado() {
 
 function obterPrecoBase(nome) {
     if (nome === "CARTA PAIA") return 1.50;
-    if (nome === "⭐ CARTA PAIA (Shiny)") return 15.00;
 
     let encontrada = cartas.find(c =>
         c.nome === nome ||
@@ -123,6 +152,25 @@ function obterMultiplicador(nome) {
 
 function obterPrecoAtual(nome) {
     return obterPrecoBase(nome) * obterMultiplicador(nome);
+}
+
+
+// ==============================
+// VERIFICAR SE PODE APOSTAR
+// ==============================
+
+function cartaPodeApostar(nome) {
+    if (!nome) return false;
+
+    const nomeNormalizado = nome.toUpperCase();
+
+    if (nomeNormalizado.includes("CARTA PAIA")) return false;
+    if (nomeNormalizado.includes("PERDEU OTARIO")) return false;
+
+    // Impede apostar novamente em qualquer carta já separada.
+    if ((Number(cartasSeparadas[nome]) || 0) > 0) return false;
+
+    return true;
 }
 
 
@@ -159,6 +207,7 @@ function selecionarBooster(custo, multiplicador, nome, elemento) {
     document.getElementById("resultado").textContent =
         `Pacote ${nome} selecionado! Pressione Espaço para comprar.`;
 }
+
 
 function sortearCarta(multiplicador) {
     let numero = Math.random() * 100;
@@ -212,22 +261,31 @@ function sortearCarta(multiplicador) {
     return cartaSorteada;
 }
 
+
 function atualizarContadorVisual(reveladas, especiais) {
-    document.getElementById("contador-abertas").textContent = `${reveladas}/7`;
+    document.getElementById("contador-abertas").textContent =
+        `${reveladas}/7`;
+
     document.getElementById("contador-especiais").textContent = especiais;
+
     document.getElementById("saldo-jogador").textContent =
         `R$ ${dinheiro.toFixed(2)}`;
 }
 
+
 function revelarCartaNoElemento(div, carta) {
     if (div.dataset.aberta === "sim") return;
+    if (jogoTravado) return;
 
     div.dataset.aberta = "sim";
 
-    colecaoGlobal[carta.nome] = (colecaoGlobal[carta.nome] || 0) + 1;
+    if (carta.tipo !== "armadilha") {
+        colecaoGlobal[carta.nome] =
+            (colecaoGlobal[carta.nome] || 0) + 1;
+    }
 
     if (carta.raridade && carta.tipo !== "armadilha" &&
-        carta.raridade !== "PAIA" && carta.raridade !== "SHINY PAIA") {
+        carta.raridade !== "PAIA") {
 
         div.classList.add(carta.classe);
 
@@ -256,21 +314,23 @@ function revelarCartaNoElemento(div, carta) {
     } else if (carta.tipo === "armadilha") {
         div.classList.add("armadilha");
 
-        dinheiro = Math.max(0, dinheiro - 67.00);
+        const valorPerdido = dinheiro * 0.10;
+        dinheiro = Math.max(0, dinheiro - valorPerdido);
 
-        div.innerHTML = `<strong>PERDEU!</strong><small>R$ 67,00 ROUBADO!</small>`;
+        div.innerHTML = `
+            <strong>PERDEU!</strong>
+            <small>R$ ${valorPerdido.toFixed(2)} ROUBADOS!</small>
+        `;
 
         new Audio('/static/perdeu.mp3').play().catch(e => {});
 
         jogoTravado = true;
 
         document.getElementById("resultado").textContent =
-            "Tirou a armadilha! Perdeu R$ 67,00 do seu saldo.";
+            `Você tirou a armadilha! Perdeu 10% do saldo (R$ ${valorPerdido.toFixed(2)}). Compre outro booster para continuar.`;
 
     } else {
         div.classList.add("comum");
-
-        if (carta.isShiny) div.classList.add("shiny");
 
         div.innerHTML = `
             <div class="verso" style="font-size:50px;margin-bottom:auto;margin-top:auto;">PAIA</div>
@@ -282,9 +342,11 @@ function revelarCartaNoElemento(div, carta) {
     }
 
     salvarEstado();
+    atualizarContadorVisual(0, 0);
     atualizarOpcoesRoleta();
     verificarFimDoBooster();
 }
+
 
 function comprarBooster(custo, multiplicador) {
     if (dinheiro < custo) {
@@ -328,6 +390,7 @@ function comprarBooster(custo, multiplicador) {
     }
 }
 
+
 function verificarFimDoBooster() {
     const divsCartas = document.querySelectorAll(".carta");
 
@@ -355,12 +418,103 @@ function verificarFimDoBooster() {
 
 
 // ==============================
+// ABAS DO ÁLBUM
+// ==============================
+
+function prepararAbasAlbum() {
+    const modalConteudo = document.querySelector("#modal-album .modal-conteudo");
+    const grid = document.getElementById("grid-album");
+
+    if (!modalConteudo || !grid) return;
+
+    if (document.getElementById("abas-album")) return;
+
+    const abas = document.createElement("div");
+
+    abas.id = "abas-album";
+    abas.style.cssText = `
+        display:flex;
+        justify-content:center;
+        gap:10px;
+        flex-wrap:wrap;
+        margin:15px 0 20px;
+    `;
+
+    abas.innerHTML = `
+        <button id="aba-minhas-cartas" type="button">MINHAS CARTAS</button>
+        <button id="aba-cartas-apostadas" type="button">CARTAS APOSTADAS</button>
+    `;
+
+    grid.insertAdjacentElement("beforebegin", abas);
+
+    const gridApostadas = document.createElement("div");
+
+    gridApostadas.id = "grid-apostadas";
+    gridApostadas.style.display = "none";
+
+    grid.insertAdjacentElement("afterend", gridApostadas);
+
+    const botoes = abas.querySelectorAll("button");
+
+    botoes.forEach(botao => {
+        botao.style.cssText = `
+            padding:10px 16px;
+            border:1px solid #00e676;
+            border-radius:7px;
+            background:#20202c;
+            color:white;
+            cursor:pointer;
+            font-weight:bold;
+        `;
+    });
+
+    document.getElementById("aba-minhas-cartas").onclick = () => {
+        mostrarAbaAlbum("colecao");
+    };
+
+    document.getElementById("aba-cartas-apostadas").onclick = () => {
+        mostrarAbaAlbum("apostadas");
+    };
+}
+
+
+function mostrarAbaAlbum(aba) {
+    const gridColecao = document.getElementById("grid-album");
+    const gridApostadas = document.getElementById("grid-apostadas");
+
+    const botaoColecao = document.getElementById("aba-minhas-cartas");
+    const botaoApostadas = document.getElementById("aba-cartas-apostadas");
+
+    if (!gridColecao || !gridApostadas) return;
+
+    if (aba === "apostadas") {
+        gridColecao.style.display = "none";
+        gridApostadas.style.display = "grid";
+
+        botaoColecao.style.background = "#20202c";
+        botaoApostadas.style.background = "#087f45";
+
+        renderizarCartasApostadas();
+    } else {
+        gridColecao.style.display = "grid";
+        gridApostadas.style.display = "none";
+
+        botaoColecao.style.background = "#087f45";
+        botaoApostadas.style.background = "#20202c";
+    }
+}
+
+
+// ==============================
 // ÁLBUM
 // ==============================
 
 function abrirAlbum() {
     const modal = document.getElementById("modal-album");
     const grid = document.getElementById("grid-album");
+
+    prepararAbasAlbum();
+    mostrarAbaAlbum("colecao");
 
     grid.innerHTML = "";
 
@@ -383,14 +537,6 @@ function abrirAlbum() {
         raridade: "PAIA",
         preco: 1.50,
         classe: "comum"
-    });
-
-    listaCompletaAlbum.push({
-        nome: "⭐ CARTA PAIA (Shiny)",
-        raridade: "SHINY PAIA",
-        preco: 15.00,
-        classe: "comum",
-        isShiny: true
     });
 
     listaCompletaAlbum.forEach(carta => {
@@ -471,9 +617,11 @@ function abrirAlbum() {
     modal.style.display = "block";
 }
 
+
 function fecharAlbum() {
     document.getElementById("modal-album").style.display = "none";
 }
+
 
 function alternarBloqueio(nome) {
     cartasBloqueadas[nome] = !cartasBloqueadas[nome];
@@ -498,6 +646,10 @@ function venderCarta(nome) {
 
     colecaoGlobal[nome]--;
 
+    if (colecaoGlobal[nome] <= 0) {
+        delete colecaoGlobal[nome];
+    }
+
     dinheiro += obterPrecoAtual(nome);
 
     salvarEstado();
@@ -505,6 +657,7 @@ function venderCarta(nome) {
     abrirAlbum();
     atualizarOpcoesRoleta();
 }
+
 
 function venderTodasDaCarta(nome) {
     let qtd = colecaoGlobal[nome] || 0;
@@ -526,17 +679,211 @@ function venderTodasDaCarta(nome) {
 
     colecaoGlobal[nome] = qtd - quantidadeParaVender;
 
+    if (colecaoGlobal[nome] <= 0) {
+        delete colecaoGlobal[nome];
+    }
+
     salvarEstado();
     atualizarContadorVisual(0, 0);
     abrirAlbum();
     atualizarOpcoesRoleta();
 }
 
+
 function venderTodasAsCartas() {
     for (let nome in colecaoGlobal) {
         if (colecaoGlobal[nome] > 0) {
             venderTodasDaCarta(nome);
         }
+    }
+}
+
+
+// ==============================
+// CARTAS SEPARADAS DA ROLETA
+// ==============================
+
+function separarCarta(nome) {
+    if (!colecaoGlobal[nome] || colecaoGlobal[nome] <= 0) {
+        return;
+    }
+
+    colecaoGlobal[nome]--;
+
+    if (colecaoGlobal[nome] <= 0) {
+        delete colecaoGlobal[nome];
+    }
+
+    cartasSeparadas[nome] = (cartasSeparadas[nome] || 0) + 1;
+}
+
+
+function atualizarCartasSeparadas() {
+    const area = document.getElementById("cartas-separadas");
+
+    if (!area) return;
+
+    area.innerHTML = "";
+
+    let encontrouCarta = false;
+
+    for (let nome in cartasSeparadas) {
+        const quantidade = Number(cartasSeparadas[nome]) || 0;
+
+        if (quantidade <= 0) continue;
+
+        encontrouCarta = true;
+
+        const nomeBase = nome
+            .replace(/^⭐ /, "")
+            .replace(/ \(Shiny\)$/, "");
+
+        const cartaOriginal = cartas.find(c => c.nome === nomeBase);
+
+        const item = document.createElement("div");
+
+        item.style.cssText = `
+            display:inline-block;
+            vertical-align:top;
+            background:#202b25;
+            border:1px solid #00e676;
+            box-shadow:0 0 10px rgba(0,230,118,0.35);
+            border-radius:8px;
+            padding:10px;
+            margin:8px;
+            color:white;
+            min-width:140px;
+            max-width:180px;
+        `;
+
+        let mediaHtml = "";
+
+        if (cartaOriginal && cartaOriginal.imagem) {
+            if (cartaOriginal.imagem.endsWith(".mp4")) {
+                mediaHtml = `
+                    <video src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
+                    autoplay loop muted
+                    style="width:100%;height:85px;object-fit:contain;background:#000;">
+                    </video>
+                `;
+            } else {
+                mediaHtml = `
+                    <img src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
+                    style="width:100%;height:85px;object-fit:contain;background:#000;">
+                `;
+            }
+        }
+
+        item.innerHTML = `
+            ${mediaHtml}
+            <strong style="display:block;margin-top:6px;">${nome}</strong>
+            <span style="display:block;color:#00e676;margin-top:5px;">
+                Quantidade: ${quantidade}
+            </span>
+            <small style="display:block;color:#aaa;margin-top:5px;">
+                Multiplicador: x${obterMultiplicador(nome)}
+            </small>
+            <small style="display:block;color:#aaa;margin-top:5px;">
+                Protegida contra novas apostas
+            </small>
+        `;
+
+        area.appendChild(item);
+    }
+
+    if (!encontrouCarta) {
+        area.innerHTML = `
+            <p style="color:#aaa;">
+                Nenhuma carta separada ainda.
+            </p>
+        `;
+    }
+
+    renderizarCartasApostadas();
+}
+
+
+// ==============================
+// CARTAS APOSTADAS NO ÁLBUM
+// ==============================
+
+function renderizarCartasApostadas() {
+    const grid = document.getElementById("grid-apostadas");
+
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    let encontrouCarta = false;
+
+    for (let nome in cartasSeparadas) {
+        const quantidade = Number(cartasSeparadas[nome]) || 0;
+
+        if (quantidade <= 0) continue;
+
+        encontrouCarta = true;
+
+        const nomeBase = nome
+            .replace(/^⭐ /, "")
+            .replace(/ \(Shiny\)$/, "");
+
+        const cartaOriginal = cartas.find(c => c.nome === nomeBase);
+
+        const item = document.createElement("div");
+
+        item.className = "item-album";
+
+        if (cartaOriginal) {
+            item.classList.add(cartaOriginal.classe);
+        }
+
+        if (nome.includes("Shiny")) {
+            item.classList.add("shiny");
+        }
+
+        let mediaHtml = "";
+
+        if (cartaOriginal && cartaOriginal.imagem) {
+            if (cartaOriginal.imagem.endsWith(".mp4")) {
+                mediaHtml = `
+                    <video src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
+                    autoplay loop muted
+                    style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;">
+                    </video>
+                `;
+            } else {
+                mediaHtml = `
+                    <img src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
+                    style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;">
+                `;
+            }
+        }
+
+        item.innerHTML = `
+            ${mediaHtml}
+            <strong style="font-size:10px;margin-top:4px;display:block;color:white;">
+                ${nome}
+            </strong>
+            <small style="color:#00e676;display:block;">
+                Quantidade: x${quantidade}
+            </small>
+            <small style="color:#00e5ff;display:block;">
+                Multiplicador: x${obterMultiplicador(nome)}
+            </small>
+            <small style="color:#aaa;display:block;">
+                Valor: R$ ${obterPrecoAtual(nome).toFixed(2)}
+            </small>
+        `;
+
+        grid.appendChild(item);
+    }
+
+    if (!encontrouCarta) {
+        grid.innerHTML = `
+            <p style="color:#aaa;grid-column:1/-1;text-align:center;">
+                Você ainda não ganhou nenhuma carta na roleta.
+            </p>
+        `;
     }
 }
 
@@ -565,7 +912,6 @@ function criarRoleta() {
 
     painel.innerHTML = `
         <h2 style="color:#fff;margin-top:0;">ROLETA DE CARTAS</h2>
-
         <p>Escolha uma carta da sua coleção para apostar.</p>
 
         <select id="carta-aposta" style="
@@ -625,6 +971,17 @@ function criarRoleta() {
             Escolha sua carta e uma cor.
         </div>
 
+        <h3 style="color:#00e676;margin-top:25px;">
+            CARTAS SEPARADAS
+        </h3>
+
+        <p style="color:#aaa;font-size:13px;">
+            Cartas que acertaram a roleta ou caíram no verde.
+            Elas não podem ser apostadas novamente.
+        </p>
+
+        <div id="cartas-separadas"></div>
+
         <p style="color:#aaa;font-size:12px;margin-bottom:0;">
             Vermelho ou preto: x2 no acerto.
             Verde: x32 no valor da carta.
@@ -646,10 +1003,13 @@ function criarRoleta() {
     document.getElementById("apostar-preto").onclick = () =>
         girarRoleta("preto");
 
-    document.getElementById("carta-aposta").onchange = atualizarPrecoAposta;
+    document.getElementById("carta-aposta").onchange =
+        atualizarPrecoAposta;
 
     atualizarOpcoesRoleta();
+    atualizarCartasSeparadas();
 }
+
 
 function atualizarOpcoesRoleta() {
     const select = document.getElementById("carta-aposta");
@@ -658,12 +1018,20 @@ function atualizarOpcoesRoleta() {
 
     const valorAnterior = select.value;
 
-    select.innerHTML = `<option value="">Selecione uma carta</option>`;
+    select.innerHTML = `
+        <option value="">Selecione uma carta</option>
+    `;
 
     for (let nome in colecaoGlobal) {
         let quantidade = colecaoGlobal[nome] || 0;
 
-        if (quantidade <= 0 || cartasBloqueadas[nome]) continue;
+        if (
+            quantidade <= 0 ||
+            cartasBloqueadas[nome] ||
+            (Number(cartasSeparadas[nome]) || 0) > 0
+        ) continue;
+
+        if (!cartaPodeApostar(nome)) continue;
 
         let opcao = document.createElement("option");
 
@@ -674,13 +1042,18 @@ function atualizarOpcoesRoleta() {
         select.appendChild(opcao);
     }
 
-    if (valorAnterior && colecaoGlobal[valorAnterior] > 0 &&
-        !cartasBloqueadas[valorAnterior]) {
+    if (
+        valorAnterior &&
+        colecaoGlobal[valorAnterior] > 0 &&
+        !cartasBloqueadas[valorAnterior] &&
+        cartaPodeApostar(valorAnterior)
+    ) {
         select.value = valorAnterior;
     }
 
     atualizarPrecoAposta();
 }
+
 
 function atualizarPrecoAposta() {
     const select = document.getElementById("carta-aposta");
@@ -703,6 +1076,7 @@ function atualizarPrecoAposta() {
     `;
 }
 
+
 function girarRoleta(corEscolhida) {
     if (roletaEmAndamento) return;
 
@@ -716,6 +1090,13 @@ function girarRoleta(corEscolhida) {
         return;
     }
 
+    if (!cartaPodeApostar(nome)) {
+        resultado.textContent =
+            "Essa carta já foi premiada ou não pode ser apostada.";
+        atualizarOpcoesRoleta();
+        return;
+    }
+
     if (!colecaoGlobal[nome] || colecaoGlobal[nome] <= 0) {
         resultado.textContent = "Você não possui mais essa carta.";
         atualizarOpcoesRoleta();
@@ -723,7 +1104,13 @@ function girarRoleta(corEscolhida) {
     }
 
     if (cartasBloqueadas[nome]) {
-        resultado.textContent = "Essa carta está bloqueada e não pode ser apostada.";
+        resultado.textContent =
+            "Essa carta está bloqueada e não pode ser apostada.";
+        return;
+    }
+
+    if (corEscolhida !== "vermelho" && corEscolhida !== "preto") {
+        resultado.textContent = "Escolha uma cor válida.";
         return;
     }
 
@@ -734,26 +1121,28 @@ function girarRoleta(corEscolhida) {
 
     resultado.textContent = "A roleta está girando...";
 
-    // Roleta com 18 casas vermelhas, 18 pretas e 1 verde.
-    const numero = Math.floor(Math.random() * 37);
+    const sorteio = Math.random() * 61;
 
     let corSorteada;
 
-    if (numero === 0) {
-        corSorteada = "verde";
-    } else if (numero % 2 === 0) {
+    if (sorteio < 30) {
+        corSorteada = "vermelho";
+    } else if (sorteio < 60) {
         corSorteada = "preto";
     } else {
-        corSorteada = "vermelho";
+        corSorteada = "verde";
     }
 
     setTimeout(() => {
+
         if (corSorteada === "verde") {
             valoresCartas[nome] = obterMultiplicador(nome) * 32;
 
+            separarCarta(nome);
+
             resultado.innerHTML = `
                 <strong style="color:#00e676;">CAIU VERDE!</strong><br>
-                Sua carta permaneceu na coleção!<br>
+                Sua carta foi para as cartas separadas!<br>
                 O valor dela agora é x${valoresCartas[nome]}.<br>
                 Novo valor: R$ ${obterPrecoAtual(nome).toFixed(2)}
             `;
@@ -761,9 +1150,12 @@ function girarRoleta(corEscolhida) {
         } else if (corSorteada === corEscolhida) {
             valoresCartas[nome] = obterMultiplicador(nome) * 2;
 
+            separarCarta(nome);
+
             resultado.innerHTML = `
                 <strong style="color:#00e676;">VOCÊ ACERTOU!</strong><br>
                 A carta dobrou de valor!<br>
+                Ela foi para as cartas separadas.<br>
                 Novo multiplicador: x${valoresCartas[nome]}<br>
                 Novo valor: R$ ${obterPrecoAtual(nome).toFixed(2)}
             `;
@@ -771,15 +1163,20 @@ function girarRoleta(corEscolhida) {
         } else {
             colecaoGlobal[nome]--;
 
+            if (colecaoGlobal[nome] <= 0) {
+                delete colecaoGlobal[nome];
+            }
+
             resultado.innerHTML = `
                 <strong style="color:#ff5252;">VOCÊ ERROU!</strong><br>
-                A carta foi removida da sua coleção.
+                Você perdeu somente uma unidade da carta.
             `;
         }
 
         salvarEstado();
         atualizarContadorVisual(0, 0);
         atualizarOpcoesRoleta();
+        atualizarCartasSeparadas();
 
         roletaEmAndamento = false;
 
@@ -813,7 +1210,7 @@ document.addEventListener("keydown", (e) => {
     ) {
         e.preventDefault();
 
-        const divs = document.querySelectorAll(".carta");
+        const divs = document.querySelectorAll("#cartas .carta");
 
         if (
             divs.length === 0 ||
