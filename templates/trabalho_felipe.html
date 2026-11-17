@@ -17,7 +17,7 @@
         <p id="erro-login" style="color: #ff4444; font-weight: bold; margin-top: 10px;"></p>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL DO JOGO (Inicialmente oculto até fazer login) -->
+    <!-- CONTEÚDO PRINCIPAL DO JOGO -->
     <div id="conteudo-jogo" style="display: none;">
         <header>
             <h1>Card Game dos Amigos 🎴</h1>
@@ -64,7 +64,6 @@
 
                 <p id="resultado" style="font-size: 16px; font-weight: bold; color: #ffd700; min-height: 24px;">Selecione um booster e pressione Espaço para começar!</p>
 
-                <!-- Grelha onde as 7 cartas do booster aparecem -->
                 <div id="cartas" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px;"></div>
             </section>
         </main>
@@ -79,7 +78,6 @@
         </div>
     </div>
 
-    <!-- Script principal do jogo -->
     <script src="{{ url_for('static', filename='trabalho_felipe.js') }}"></script>
 </body>
 </html>

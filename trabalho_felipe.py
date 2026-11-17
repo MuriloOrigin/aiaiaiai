@@ -66,7 +66,6 @@ def login():
 @app.route('/api/salvar', methods=['POST'])
 def salvar():
     dados = request.get_json()
-    # Podes adaptar caso envies o nome do utilizador no corpo do pedido JSON para atualizar a BD correspondente
     return jsonify({'sucesso': True})
 
 if __name__ == '__main__':

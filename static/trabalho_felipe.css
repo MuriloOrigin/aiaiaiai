@@ -1,5 +1,8 @@
+/* ==========================================
+   ESTILOS GERAIS E LAYOUT
+   ========================================== */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #121212;
     color: #ffffff;
     margin: 0;
@@ -7,98 +10,370 @@ body {
 }
 
 header {
-    background-color: #1f1f1f;
+    background-color: #1a1a1a;
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid #333;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #00e5ff;
+}
+
+#info-usuario {
+    font-size: 14px;
+    color: #ccc;
+}
+
+#info-usuario strong {
+    color: #ffd700;
+}
+
+/* ==========================================
+   ECRÃ DE LOGIN / REGISTO
+   ========================================== */
 .container-login {
-    width: 300px;
-    margin: 100px auto;
-    background: #1f1f1f;
-    padding: 30px;
-    border-radius: 8px;
+    width: 350px;
+    margin: 120px auto;
+    background: #1e1e1e;
+    padding: 40px;
+    border-radius: 10px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    border: 1px solid #333;
 }
 
-.card-loja {
-    background: #1f1f1f;
-    border: 2px solid #444;
-    padding: 12px;
+.container-login h2 {
+    color: #00e5ff;
     margin-bottom: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s;
 }
 
-.card-loja:hover, .card-loja.selecionado {
+.container-login p {
+    color: #aaa;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.container-login input {
+    padding: 10px 12px;
+    margin: 8px 0;
+    width: 100%;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #fff;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.container-login input:focus {
+    border-color: #00e5ff;
+    outline: none;
+}
+
+.container-login button {
+    width: 100%;
+    padding: 12px;
+    background-color: #00e5ff;
+    color: #121212;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    border-radius: 5px;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+
+.container-login button:hover {
+    background-color: #00b8cc;
+}
+
+/* ==========================================
+   LOJA DE BOOSTERS
+   ========================================== */
+.card-loja {
+    background: #1e1e1e;
+    border: 2px solid #333;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.card-loja h4 {
+    margin: 0 0 5px 0;
+    color: #ffd700;
+}
+
+.card-loja p {
+    margin: 0 0 5px 0;
+    font-size: 13px;
+    color: #ddd;
+}
+
+.card-loja small {
+    color: #888;
+}
+
+.card-loja:hover {
+    border-color: #00e5ff;
+    transform: translateY(-2px);
+}
+
+.card-loja.selecionado {
     border-color: #00e5ff;
     background: #252525;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
 }
 
+/* ==========================================
+   CARTAS E ÁREA DE JOGO
+   ========================================== */
 .carta {
-    width: 120px;
-    height: 170px;
-    background: #2a2a2a;
-    border: 2px solid #555;
-    border-radius: 8px;
+    width: 130px;
+    height: 185px;
+    background: #222;
+    border: 2px solid #444;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     cursor: pointer;
     padding: 8px;
     text-align: center;
     position: relative;
     user-select: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.carta:hover {
+    transform: scale(1.03);
 }
 
 .carta .verso {
-    font-size: 24px;
-    color: #888;
+    font-size: 32px;
+    color: #777;
+    margin: auto;
+    font-weight: bold;
 }
 
+.carta .texto-verso {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+/* ==========================================
+   CLASSES ESPECÍFICAS DE RARIDADE DAS CARTAS
+   ========================================== */
 .carta.comum {
     border-color: #795548;
-    background: #3e2723;
+    background: #2c1d18;
 }
 
+.carta.dance-potranca {
+    border-color: #ff0055;
+    background: #361223;
+    box-shadow: 0 0 12px rgba(255, 0, 85, 0.5);
+}
+
+.carta.transficano {
+    border-color: #2196F3;
+    background: #112233;
+}
+
+.carta.secreta {
+    border-color: #9c27b0;
+    background: #2a1533;
+}
+
+.carta.ultra-rara {
+    border-color: #ff9800;
+    background: #332211;
+}
+
+.carta.epica {
+    border-color: #e91e63;
+    background: #331122;
+}
+
+.carta.primordial {
+    border-color: #00bcd4;
+    background: #113338;
+}
+
+.carta.lendaria {
+    border-color: #ffeb3b;
+    background: #333011;
+}
+
+.carta.nojo {
+    border-color: #8bc34a;
+    background: #223311;
+}
+
+.carta.especial-hexa {
+    border-color: #673ab7;
+    background: #221833;
+}
+
+.carta.u-de-ucrania {
+    border-color: #ff5722;
+    background: #331a11;
+    box-shadow: 0 0 15px rgba(255, 87, 34, 0.6);
+}
+
+.carta.the-last-resenha {
+    border-color: #e040fb;
+    background: #3a123d;
+    box-shadow: 0 0 18px rgba(224, 64, 251, 0.7);
+}
+
+.carta.armadilha {
+    border-color: #f44336;
+    background: #3a1111;
+    color: #ff8888;
+}
+
+/* Efeito Shiny */
 .carta.shiny {
-    border-color: #ffd700;
-    box-shadow: 0 0 10px #ffd700;
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 15px #ffd700 !important;
+    animation: brilhaShiny 2s infinite alternate;
+}
+
+@keyframes brilhaShiny {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.2); }
+}
+
+/* ==========================================
+   ÁLBUM DE COLEÇÃO (MODAL)
+   ========================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    overflow-y: auto;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-conteudo {
+    background: #1a1a1a;
+    width: 85%;
+    max-width: 950px;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 10px;
+    color: #fff;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+    border: 1px solid #333;
+}
+
+.fechar-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s;
+}
+
+.fechar-modal:hover {
+    color: #fff;
+}
+
+#grid-album {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 18px;
+    margin-top: 15px;
 }
 
 .item-album {
-    background: #252525;
+    background: #242424;
     border: 2px solid #444;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 10px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
 }
 
 .item-album.bloqueado {
-    opacity: 0.4;
+    opacity: 0.35;
+    background: #181818;
 }
 
 .item-album.bloqueado-carta {
     border-color: #ff9800;
 }
 
+.item-album .silueta {
+    font-size: 30px;
+    color: #555;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* ==========================================
+   BOTÕES DE AÇÃO E UTILITÁRIOS
+   ========================================== */
+.grupo-botoes-venda {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+}
+
 .btn-vender, .btn-vender-especifica-todas, .btn-bloquear {
-    margin-top: 4px;
-    padding: 4px 8px;
+    padding: 5px 6px;
     font-size: 10px;
     font-weight: bold;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
     width: 100%;
+    transition: opacity 0.2s;
 }
 
-.btn-vender { background-color: #ff9800; color: #000; }
-.btn-vender-especifica-todas { background-color: #f44336; color: #fff; }
-.btn-bloquear { background-color: #9c27b0; color: #fff; }
+.btn-vender:hover, .btn-vender-especifica-todas:hover, .btn-bloquear:hover {
+    opacity: 0.85;
+}
+
+.btn-vender { 
+    background-color: #ff9800; 
+    color: #121212; 
+}
+
+.btn-vender-especifica-todas { 
+    background-color: #f44336; 
+    color: #fff; 
+}
+
+.btn-bloquear { 
+    background-color: #9c27b0; 
+    color: #fff; 
+    margin-top: 4px;
+}
