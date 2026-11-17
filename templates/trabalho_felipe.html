@@ -1,53 +1,85 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Booster do Murilo</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}">
+    <title>Card Game dos Amigos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Booster do Senac</h1>
 
-    <div class="loja-boosters">
-        <div class="card-loja comum-card selecionado" onclick="selecionarBooster(5.00, 1.0, 'Comum', this)">
-            <h3>Pacote Comum</h3>
-            <p>R$ 5,00</p>
-            <button>Selecionar</button>
-        </div>
-        <div class="card-loja especial-card" onclick="selecionarBooster(30.00, 2.0, 'Especial', this)">
-            <h3>Pacote Especial</h3>
-            <p>R$ 30,00</p>
-            <button>Selecionar</button>
-        </div>
-        <div class="card-loja lendario-card" onclick="selecionarBooster(50.00, 4.0, 'Lendário', this)">
-            <h3>Pacote Lendário</h3>
-            <p>R$ 50,00</p>
-            <button>Selecionar</button>
+    <!-- ECRÃ DE LOGIN / REGISTO -->
+    <div id="tela-login" class="container-login">
+        <h2>Entrar no Card Game 🃏</h2>
+        <p>Insira o seu utilizador e palavra-passe para carregar o seu progresso:</p>
+        <input type="text" id="input-usuario" placeholder="Nome de Utilizador" style="padding: 8px; margin: 5px; width: 200px;"><br>
+        <input type="password" id="input-senha" placeholder="Palavra-passe" style="padding: 8px; margin: 5px; width: 200px;"><br>
+        <button onclick="fazerLogin()" style="padding: 10px 20px; background-color: #00e5ff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; border-radius: 4px;">Entrar / Registar</button>
+        <p id="erro-login" style="color: #ff4444; font-weight: bold; margin-top: 10px;"></p>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL DO JOGO (Inicialmente oculto até fazer login) -->
+    <div id="conteudo-jogo" style="display: none;">
+        <header>
+            <h1>Card Game dos Amigos 🎴</h1>
+            <div id="info-usuario">
+                <span>Utilizador: <strong id="nome-usuario-logado"></strong></span> | 
+                <span>Saldo: <strong id="saldo-jogador">R$ 200.00</strong></span>
+            </div>
+        </header>
+
+        <main style="display: flex; justify-content: center; gap: 20px; padding: 20px;">
+            <!-- Painel Esquerdo: Loja e Controlos -->
+            <section style="width: 250px;">
+                <h3>Loja de Boosters</h3>
+                <div class="card-loja selecionado" onclick="selecionarBooster(5.00, 1.0, 'Comum', this)">
+                    <h4>Pacote Comum</h4>
+                    <p>Custo: R$ 5,00</p>
+                    <small>Sorte Padrão (1.0x)</small>
+                </div>
+                <div class="card-loja" onclick="selecionarBooster(15.00, 3.0, 'Especial', this)">
+                    <h4>Pacote Especial</h4>
+                    <p>Custo: R$ 15,00</p>
+                    <small>Sorte Tripla (3.0x)</small>
+                </div>
+                <div class="card-loja" onclick="selecionarBooster(30.00, 5.0, 'Lendário', this)">
+                    <h4>Pacote Lendário</h4>
+                    <p>Custo: R$ 30,00</p>
+                    <small>Sorte Máxima (5.0x)</small>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button onclick="abrirAlbum()" style="width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">📖 Abrir Álbum</button>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button onclick="venderTodasAsCartas()" style="width: 100%; padding: 10px; background-color: #d32f2f; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">💰 Vender Excedentes Gerais</button>
+                </div>
+            </section>
+
+            <!-- Painel Direito: Área de Abertura de Cartas -->
+            <section style="flex-grow: 1; text-align: center;">
+                <div id="painel-estatisticas" style="margin-bottom: 15px;">
+                    <span>Cartas Reveladas: <strong id="contador-abertas">0/7</strong></span> | 
+                    <span>Especiais: <strong id="contador-especiais">0</strong></span>
+                </div>
+
+                <p id="resultado" style="font-size: 16px; font-weight: bold; color: #ffd700; min-height: 24px;">Selecione um booster e pressione Espaço para começar!</p>
+
+                <!-- Grelha onde as 7 cartas do booster aparecem -->
+                <div id="cartas" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px;"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL DO ÁLBUM -->
+    <div id="modal-album" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); overflow-y: auto; z-index: 1000;">
+        <div class="modal-conteudo" style="background: #1e1e1e; width: 80%; max-width: 900px; margin: 40px auto; padding: 20px; border-radius: 8px; color: #fff; position: relative;">
+            <span class="fechar-modal" onclick="fecharAlbum()" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #aaa;">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 20px;">Álbum de Coleção 📘</h2>
+            <div id="grid-album" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px;"></div>
         </div>
     </div>
 
-    <div id="contador-lateral">
-        <h3>Estatísticas</h3>
-        <p>Reveladas: <span id="contador-abertas">0/7</span></p>
-        <p>Especiais: <span id="contador-especiais">0</span></p>
-        <p>Saldo: <span id="saldo-jogador">R$ 200.00</span></p>
-        <button id="btn-album" onclick="abrirAlbum()">Abrir Álbum</button>
-    </div>
-
-    <div id="resultado">Selecione um booster e pressione Espaço para começar!</div>
-
-    <div id="cartas"></div>
-
-    <!-- Modal do Álbum -->
-    <div id="modal-album" class="modal">
-        <div class="modal-conteudo">
-            <span class="fechar-modal" onclick="fecharAlbum()">&times;</span>
-            <h2>Álbum de Cartas</h2>
-            <button class="btn-vender-todas" onclick="venderTodasAsCartas()">Vender Tudo</button>
-            <div id="grid-album"></div>
-        </div>
-    </div>
-
+    <!-- Script principal do jogo -->
     <script src="{{ url_for('static', filename='trabalho_felipe.js') }}"></script>
 </body>
 </html>
