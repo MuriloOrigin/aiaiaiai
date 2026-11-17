@@ -1,83 +1,259 @@
+
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Card Game dos Amigos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='trabalho_felipe.css') }}">
 </head>
+
 <body>
 
-    <!-- ECRÃ DE LOGIN / REGISTO -->
+    <!-- TELA DE LOGIN / REGISTRO -->
     <div id="tela-login" class="container-login">
-        <h2>Entrar no Card Game 🃏</h2>
-        <p>Insira o seu utilizador e palavra-passe para carregar o seu progresso:</p>
-        <input type="text" id="input-usuario" placeholder="Nome de Utilizador"><br>
-        <input type="password" id="input-senha" placeholder="Palavra-passe"><br>
-        <button onclick="fazerLogin()">Entrar / Registar</button>
-        <p id="erro-login" style="color: #ff4444; font-weight: bold; margin-top: 10px;"></p>
+
+        <h2>Entrar no Card Game</h2>
+
+        <p>
+            Insira o seu utilizador e palavra-passe para carregar o seu progresso:
+        </p>
+
+        <input
+            type="text"
+            id="input-usuario"
+            placeholder="Nome de Utilizador"
+        >
+        <br>
+
+        <input
+            type="password"
+            id="input-senha"
+            placeholder="Palavra-passe"
+        >
+        <br>
+
+        <button onclick="fazerLogin()">
+            Entrar / Registar
+        </button>
+
+        <p
+            id="erro-login"
+            style="color:#ff4444;font-weight:bold;margin-top:10px;"
+        ></p>
+
     </div>
+
 
     <!-- CONTEÚDO PRINCIPAL DO JOGO -->
-    <div id="conteudo-jogo" style="display: none;">
+    <div id="conteudo-jogo" style="display:none;">
+
         <header>
-            <h1>Card Game dos Amigos 🎴</h1>
+
+            <h1>Card Game dos Amigos</h1>
+
             <div id="info-usuario">
-                <span>Utilizador: <strong id="nome-usuario-logado"></strong></span> | 
-                <span>Saldo: <strong id="saldo-jogador">R$ 200.00</strong></span>
+
+                <span>
+                    Utilizador:
+                    <strong id="nome-usuario-logado"></strong>
+                </span>
+
+                |
+
+                <span>
+                    Saldo:
+                    <strong id="saldo-jogador">R$ 200.00</strong>
+                </span>
+
             </div>
+
         </header>
 
-        <main style="display: flex; justify-content: center; gap: 20px; padding: 20px;">
-            <!-- Painel Esquerdo: Loja e Controlos -->
-            <section style="width: 250px;">
+
+        <main style="
+            display:flex;
+            justify-content:center;
+            gap:20px;
+            padding:20px;
+        ">
+
+            <!-- PAINEL ESQUERDO: LOJA E CONTROLES -->
+            <section style="width:250px;">
+
                 <h3>Loja de Boosters</h3>
-                <div class="card-loja selecionado" onclick="selecionarBooster(5.00, 1.0, 'Comum', this)">
+
+
+                <div
+                    class="card-loja selecionado"
+                    onclick="selecionarBooster(5.00, 1.0, 'Comum', this)"
+                >
+
                     <h4>Pacote Comum</h4>
+
                     <p>Custo: R$ 5,00</p>
+
                     <small>Sorte Padrão (1.0x)</small>
+
                 </div>
-                <div class="card-loja" onclick="selecionarBooster(15.00, 3.0, 'Especial', this)">
+
+
+                <div
+                    class="card-loja"
+                    onclick="selecionarBooster(15.00, 3.0, 'Especial', this)"
+                >
+
                     <h4>Pacote Especial</h4>
+
                     <p>Custo: R$ 15,00</p>
+
                     <small>Sorte Tripla (3.0x)</small>
+
                 </div>
-                <div class="card-loja" onclick="selecionarBooster(30.00, 5.0, 'Lendário', this)">
+
+
+                <div
+                    class="card-loja"
+                    onclick="selecionarBooster(30.00, 5.0, 'Lendário', this)"
+                >
+
                     <h4>Pacote Lendário</h4>
+
                     <p>Custo: R$ 30,00</p>
+
                     <small>Sorte Máxima (5.0x)</small>
+
                 </div>
 
-                <div style="margin-top: 20px;">
-                    <button onclick="abrirAlbum()" style="width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">📖 Abrir Álbum</button>
+
+                <!-- BOTÃO DO ÁLBUM -->
+                <div style="margin-top:20px;">
+
+                    <button
+                        onclick="abrirAlbum()"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            background-color:#4CAF50;
+                            color:white;
+                            border:none;
+                            font-weight:bold;
+                            border-radius:4px;
+                            cursor:pointer;
+                        "
+                    >
+                        Abrir Álbum
+                    </button>
+
                 </div>
-                <div style="margin-top: 10px;">
-                    <button onclick="venderTodasAsCartas()" style="width: 100%; padding: 10px; background-color: #d32f2f; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">💰 Vender Excedentes Gerais</button>
+
+
+                <!-- BOTÃO DE VENDAS -->
+                <div style="margin-top:10px;">
+
+                    <button
+                        onclick="venderTodasAsCartas()"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            background-color:#d32f2f;
+                            color:white;
+                            border:none;
+                            font-weight:bold;
+                            border-radius:4px;
+                            cursor:pointer;
+                        "
+                    >
+                        Vender Excedentes Gerais
+                    </button>
+
                 </div>
+
             </section>
 
-            <!-- Painel Direito: Área de Abertura de Cartas -->
-            <section style="flex-grow: 1; text-align: center;">
-                <div id="painel-estatisticas" style="margin-bottom: 15px;">
-                    <span>Cartas Reveladas: <strong id="contador-abertas">0/7</strong></span> | 
-                    <span>Especiais: <strong id="contador-especiais">0</strong></span>
+
+            <!-- PAINEL DIREITO: ABERTURA DE CARTAS -->
+            <section style="flex-grow:1;text-align:center;">
+
+                <div
+                    id="painel-estatisticas"
+                    style="margin-bottom:15px;"
+                >
+
+                    <span>
+                        Cartas Reveladas:
+                        <strong id="contador-abertas">0/7</strong>
+                    </span>
+
+                    |
+
+                    <span>
+                        Especiais:
+                        <strong id="contador-especiais">0</strong>
+                    </span>
+
                 </div>
 
-                <p id="resultado" style="font-size: 16px; font-weight: bold; color: #ffd700; min-height: 24px;">Selecione um booster e pressione Espaço para começar!</p>
 
-                <div id="cartas" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px;"></div>
+                <p
+                    id="resultado"
+                    style="
+                        font-size:16px;
+                        font-weight:bold;
+                        color:#ffd700;
+                        min-height:24px;
+                    "
+                >
+                    Selecione um booster e pressione Espaço para começar!
+                </p>
+
+
+                <!-- CARTAS DO BOOSTER -->
+                <div
+                    id="cartas"
+                    style="
+                        display:flex;
+                        flex-wrap:wrap;
+                        justify-content:center;
+                        gap:10px;
+                        margin-top:20px;
+                    "
+                ></div>
+
             </section>
+
         </main>
+
     </div>
+
 
     <!-- MODAL DO ÁLBUM -->
     <div id="modal-album" class="modal">
+
         <div class="modal-conteudo">
-            <span class="fechar-modal" onclick="fecharAlbum()">&times;</span>
-            <h2 style="text-align: center; margin-bottom: 20px;">Álbum de Coleção 📘</h2>
+
+            <span
+                class="fechar-modal"
+                onclick="fecharAlbum()"
+            >
+                &times;
+            </span>
+
+            <h2 style="text-align:center;margin-bottom:20px;">
+                Álbum de Coleção
+            </h2>
+
             <div id="grid-album"></div>
+
         </div>
+
     </div>
 
+
+    <!-- JAVASCRIPT -->
     <script src="{{ url_for('static', filename='trabalho_felipe.js') }}"></script>
+
 </body>
 </html>
