@@ -55,9 +55,9 @@ function fazerLogin() {
         return;
     }
 
-    fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nome: usuario, senha: senha })
     })
     .then(async res => {
@@ -81,6 +81,23 @@ function fazerLogin() {
             delete cartasBloqueadas["⭐ CARTA PAIA (Shiny)"];
             delete valoresCartas["⭐ CARTA PAIA (Shiny)"];
             delete cartasSeparadas["⭐ CARTA PAIA (Shiny)"];
+
+            // Corrige multiplicadores antigos acumulados.
+            for (const nomeCarta of Object.keys(valoresCartas)) {
+                if (nomeCarta.toUpperCase().includes("CARTA PAIA")) {
+                    delete valoresCartas[nomeCarta];
+                } else {
+                    const antigo = Number(valoresCartas[nomeCarta]);
+
+                    if (antigo > 32) {
+                        valoresCartas[nomeCarta] = 32;
+                    } else if (antigo > 2 && antigo < 32) {
+                        valoresCartas[nomeCarta] = 2;
+                    } else if (antigo !== 2 && antigo !== 32) {
+                        delete valoresCartas[nomeCarta];
+                    }
+                }
+            }
 
             salvarEstado();
 
@@ -113,9 +130,9 @@ function fazerLogin() {
 // ==============================
 
 function salvarEstado() {
-    fetch('/api/salvar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    fetch("/api/salvar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             dinheiro: dinheiro,
             colecao: colecaoGlobal,
@@ -147,7 +164,11 @@ function obterPrecoBase(nome) {
 }
 
 function obterMultiplicador(nome) {
-    return Number(valoresCartas[nome]) || 1;
+    if (nome.toUpperCase().includes("CARTA PAIA")) return 1;
+
+    const valor = Number(valoresCartas[nome]);
+
+    return valor === 2 || valor === 32 ? valor : 1;
 }
 
 function obterPrecoAtual(nome) {
@@ -164,11 +185,17 @@ function cartaPodeApostar(nome) {
 
     const nomeNormalizado = nome.toUpperCase();
 
+    // Impede apostar a CARTA PAIA.
     if (nomeNormalizado.includes("CARTA PAIA")) return false;
+
+    // Impede apostar a armadilha.
     if (nomeNormalizado.includes("PERDEU OTARIO")) return false;
 
-    // Impede apostar novamente em qualquer carta já separada.
+    // Impede apostar novamente uma carta já premiada.
     if ((Number(cartasSeparadas[nome]) || 0) > 0) return false;
+
+    // Impede apostar cartas que já possuem multiplicador.
+    if (obterMultiplicador(nome) > 1) return false;
 
     return true;
 }
@@ -180,13 +207,13 @@ function cartaPodeApostar(nome) {
 
 function tocarAudioCarta(carta) {
     if (carta.imagem === "gustavodancepot.mp4") {
-        new Audio('/static/dancepotranca.mp3').play().catch(e => {});
+        new Audio("/static/dancepotranca.mp3").play().catch(e => {});
     } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
-        new Audio('/static/tartarugas ninjas.mp3').play().catch(e => {});
+        new Audio("/static/tartarugas ninjas.mp3").play().catch(e => {});
     } else if (carta.imagem === "muryllo pé de mesa.mp4") {
-        new Audio('/static/muryllo car cur.mp3').play().catch(e => {});
+        new Audio("/static/muryllo car cur.mp3").play().catch(e => {});
     } else if (carta.classe === "the-last-resenha") {
-        new Audio('/static/army-of-lovers-crucified.mp3').play().catch(e => {});
+        new Audio("/static/army-of-lovers-crucified.mp3").play().catch(e => {});
     }
 }
 
@@ -198,16 +225,15 @@ function tocarAudioCarta(carta) {
 function selecionarBooster(custo, multiplicador, nome, elemento) {
     pacoteSelecionado = { custo, multiplicador, nome };
 
-    document.querySelectorAll('.card-loja').forEach(card =>
-        card.classList.remove('selecionado')
+    document.querySelectorAll(".card-loja").forEach(card =>
+        card.classList.remove("selecionado")
     );
 
-    elemento.classList.add('selecionado');
+    elemento.classList.add("selecionado");
 
     document.getElementById("resultado").textContent =
         `Pacote ${nome} selecionado! Pressione Espaço para comprar.`;
 }
-
 
 function sortearCarta(multiplicador) {
     let numero = Math.random() * 100;
@@ -261,7 +287,6 @@ function sortearCarta(multiplicador) {
     return cartaSorteada;
 }
 
-
 function atualizarContadorVisual(reveladas, especiais) {
     document.getElementById("contador-abertas").textContent =
         `${reveladas}/7`;
@@ -271,7 +296,6 @@ function atualizarContadorVisual(reveladas, especiais) {
     document.getElementById("saldo-jogador").textContent =
         `R$ ${dinheiro.toFixed(2)}`;
 }
-
 
 function revelarCartaNoElemento(div, carta) {
     if (div.dataset.aberta === "sim") return;
@@ -284,14 +308,16 @@ function revelarCartaNoElemento(div, carta) {
             (colecaoGlobal[carta.nome] || 0) + 1;
     }
 
-    if (carta.raridade && carta.tipo !== "armadilha" &&
-        carta.raridade !== "PAIA") {
-
+    if (
+        carta.raridade &&
+        carta.tipo !== "armadilha" &&
+        carta.raridade !== "PAIA"
+    ) {
         div.classList.add(carta.classe);
 
         if (carta.isShiny) div.classList.add("shiny");
 
-        if (carta.imagem && carta.imagem.endsWith('.mp4')) {
+        if (carta.imagem && carta.imagem.endsWith(".mp4")) {
             div.innerHTML = `
                 <video src="/static/${encodeURIComponent(carta.imagem)}"
                 autoplay loop muted
@@ -322,7 +348,7 @@ function revelarCartaNoElemento(div, carta) {
             <small>R$ ${valorPerdido.toFixed(2)} ROUBADOS!</small>
         `;
 
-        new Audio('/static/perdeu.mp3').play().catch(e => {});
+        new Audio("/static/perdeu.mp3").play().catch(e => {});
 
         jogoTravado = true;
 
@@ -347,7 +373,6 @@ function revelarCartaNoElemento(div, carta) {
     verificarFimDoBooster();
 }
 
-
 function comprarBooster(custo, multiplicador) {
     if (dinheiro < custo) {
         document.getElementById("resultado").textContent =
@@ -371,11 +396,13 @@ function comprarBooster(custo, multiplicador) {
 
     for (let i = 0; i < 7; i++) {
         let carta = sortearCarta(multiplicador);
+
         cartasGeradas.push(carta);
 
         let div = document.createElement("div");
 
         div.className = "carta";
+
         div.innerHTML = `
             <div class="verso">?</div>
             <div class="texto-verso">CARTA ${i + 1}</div>
@@ -390,7 +417,6 @@ function comprarBooster(custo, multiplicador) {
     }
 }
 
-
 function verificarFimDoBooster() {
     const divsCartas = document.querySelectorAll(".carta");
 
@@ -401,8 +427,10 @@ function verificarFimDoBooster() {
         if (d.dataset.aberta === "sim") {
             reveladas++;
 
-            if (!d.classList.contains("comum") &&
-                !d.classList.contains("armadilha")) {
+            if (
+                !d.classList.contains("comum") &&
+                !d.classList.contains("armadilha")
+            ) {
                 especiais++;
             }
         }
@@ -426,7 +454,6 @@ function prepararAbasAlbum() {
     const grid = document.getElementById("grid-album");
 
     if (!modalConteudo || !grid) return;
-
     if (document.getElementById("abas-album")) return;
 
     const abas = document.createElement("div");
@@ -476,7 +503,6 @@ function prepararAbasAlbum() {
         mostrarAbaAlbum("apostadas");
     };
 }
-
 
 function mostrarAbaAlbum(aba) {
     const gridColecao = document.getElementById("grid-album");
@@ -541,9 +567,7 @@ function abrirAlbum() {
 
     listaCompletaAlbum.forEach(carta => {
         let qtd = colecaoGlobal[carta.nome] || 0;
-
         let itemDiv = document.createElement("div");
-
         let bloqueada = cartasBloqueadas[carta.nome] || false;
         let precoAtual = obterPrecoAtual(carta.nome);
 
@@ -554,7 +578,7 @@ function abrirAlbum() {
             if (carta.isShiny) itemDiv.classList.add("shiny");
             if (bloqueada) itemDiv.classList.add("bloqueado-carta");
 
-            let mediaHtml = carta.imagem && carta.imagem.endsWith('.mp4')
+            let mediaHtml = carta.imagem && carta.imagem.endsWith(".mp4")
                 ? `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;"></video>`
                 : (carta.imagem
                     ? `<img src="/static/${encodeURIComponent(carta.imagem)}" style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;">`
@@ -566,7 +590,7 @@ function abrirAlbum() {
 
             previewDiv.innerHTML = `
                 ${mediaHtml}
-                <strong style="font-size:10px;margin-top:4px;color:${carta.isShiny ? '#ffd700' : '#fff'};display:block;">
+                <strong style="font-size:10px;margin-top:4px;color:${carta.isShiny ? "#ffd700" : "#fff"};display:block;">
                     ${carta.nome}
                 </strong>
                 <small style="color:#00e5ff;display:block;">
@@ -580,7 +604,6 @@ function abrirAlbum() {
             itemDiv.appendChild(previewDiv);
 
             let botoesDiv = document.createElement("div");
-
             let textoBtnTodas = bloqueada ? "Vender Excedentes" : "Vender Todas";
 
             botoesDiv.innerHTML = `
@@ -617,11 +640,9 @@ function abrirAlbum() {
     modal.style.display = "block";
 }
 
-
 function fecharAlbum() {
     document.getElementById("modal-album").style.display = "none";
 }
-
 
 function alternarBloqueio(nome) {
     cartasBloqueadas[nome] = !cartasBloqueadas[nome];
@@ -658,7 +679,6 @@ function venderCarta(nome) {
     atualizarOpcoesRoleta();
 }
 
-
 function venderTodasDaCarta(nome) {
     let qtd = colecaoGlobal[nome] || 0;
 
@@ -689,7 +709,6 @@ function venderTodasDaCarta(nome) {
     atualizarOpcoesRoleta();
 }
 
-
 function venderTodasAsCartas() {
     for (let nome in colecaoGlobal) {
         if (colecaoGlobal[nome] > 0) {
@@ -716,7 +735,6 @@ function separarCarta(nome) {
 
     cartasSeparadas[nome] = (cartasSeparadas[nome] || 0) + 1;
 }
-
 
 function atualizarCartasSeparadas() {
     const area = document.getElementById("cartas-separadas");
@@ -900,18 +918,19 @@ function criarRoleta() {
     painel.id = "painel-roleta";
 
     painel.style.cssText = `
-        background: #171722;
-        border: 2px solid #444;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 25px auto;
-        max-width: 650px;
-        color: white;
-        text-align: center;
+        background:#171722;
+        border:2px solid #444;
+        border-radius:12px;
+        padding:20px;
+        margin:25px auto;
+        max-width:650px;
+        color:white;
+        text-align:center;
     `;
 
     painel.innerHTML = `
         <h2 style="color:#fff;margin-top:0;">ROLETA DE CARTAS</h2>
+
         <p>Escolha uma carta da sua coleção para apostar.</p>
 
         <select id="carta-aposta" style="
@@ -1011,6 +1030,10 @@ function criarRoleta() {
 }
 
 
+// ==============================
+// ATUALIZAR CARTAS DA ROLETA
+// ==============================
+
 function atualizarOpcoesRoleta() {
     const select = document.getElementById("carta-aposta");
 
@@ -1029,13 +1052,16 @@ function atualizarOpcoesRoleta() {
             quantidade <= 0 ||
             cartasBloqueadas[nome] ||
             (Number(cartasSeparadas[nome]) || 0) > 0
-        ) continue;
+        ) {
+            continue;
+        }
 
         if (!cartaPodeApostar(nome)) continue;
 
         let opcao = document.createElement("option");
 
         opcao.value = nome;
+
         opcao.textContent =
             `${nome} | Qtd: ${quantidade} | R$ ${obterPrecoAtual(nome).toFixed(2)}`;
 
@@ -1053,7 +1079,6 @@ function atualizarOpcoesRoleta() {
 
     atualizarPrecoAposta();
 }
-
 
 function atualizarPrecoAposta() {
     const select = document.getElementById("carta-aposta");
@@ -1077,6 +1102,10 @@ function atualizarPrecoAposta() {
 }
 
 
+// ==============================
+// GIRAR ROLETA
+// ==============================
+
 function girarRoleta(corEscolhida) {
     if (roletaEmAndamento) return;
 
@@ -1093,12 +1122,14 @@ function girarRoleta(corEscolhida) {
     if (!cartaPodeApostar(nome)) {
         resultado.textContent =
             "Essa carta já foi premiada ou não pode ser apostada.";
+
         atualizarOpcoesRoleta();
         return;
     }
 
     if (!colecaoGlobal[nome] || colecaoGlobal[nome] <= 0) {
         resultado.textContent = "Você não possui mais essa carta.";
+
         atualizarOpcoesRoleta();
         return;
     }
@@ -1118,11 +1149,11 @@ function girarRoleta(corEscolhida) {
 
     document.getElementById("apostar-vermelho").disabled = true;
     document.getElementById("apostar-preto").disabled = true;
+    select.disabled = true;
 
     resultado.textContent = "A roleta está girando...";
 
     const sorteio = Math.random() * 61;
-
     let corSorteada;
 
     if (sorteio < 30) {
@@ -1134,21 +1165,24 @@ function girarRoleta(corEscolhida) {
     }
 
     setTimeout(() => {
-
         if (corSorteada === "verde") {
-            valoresCartas[nome] = obterMultiplicador(nome) * 32;
+
+            // Multiplicador fixo, sem acumular.
+            valoresCartas[nome] = 32;
 
             separarCarta(nome);
 
             resultado.innerHTML = `
                 <strong style="color:#00e676;">CAIU VERDE!</strong><br>
                 Sua carta foi para as cartas separadas!<br>
-                O valor dela agora é x${valoresCartas[nome]}.<br>
+                O valor dela agora é x32.<br>
                 Novo valor: R$ ${obterPrecoAtual(nome).toFixed(2)}
             `;
 
         } else if (corSorteada === corEscolhida) {
-            valoresCartas[nome] = obterMultiplicador(nome) * 2;
+
+            // Multiplicador fixo, sem acumular.
+            valoresCartas[nome] = 2;
 
             separarCarta(nome);
 
@@ -1156,7 +1190,7 @@ function girarRoleta(corEscolhida) {
                 <strong style="color:#00e676;">VOCÊ ACERTOU!</strong><br>
                 A carta dobrou de valor!<br>
                 Ela foi para as cartas separadas.<br>
-                Novo multiplicador: x${valoresCartas[nome]}<br>
+                Novo multiplicador: x2<br>
                 Novo valor: R$ ${obterPrecoAtual(nome).toFixed(2)}
             `;
 
@@ -1182,6 +1216,7 @@ function girarRoleta(corEscolhida) {
 
         document.getElementById("apostar-vermelho").disabled = false;
         document.getElementById("apostar-preto").disabled = false;
+        select.disabled = false;
 
     }, 1500);
 }
