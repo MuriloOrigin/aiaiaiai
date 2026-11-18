@@ -396,7 +396,6 @@ function comprarBooster(custo, multiplicador) {
 
     for (let i = 0; i < 7; i++) {
         let carta = sortearCarta(multiplicador);
-
         cartasGeradas.push(carta);
 
         let div = document.createElement("div");
@@ -446,87 +445,43 @@ function verificarFimDoBooster() {
 
 
 // ==============================
-// ABAS DO ÁLBUM
+// ABAS DO ÁLBUM - SEM DUPLICAÇÃO
 // ==============================
 
 function prepararAbasAlbum() {
-    const modalConteudo = document.querySelector("#modal-album .modal-conteudo");
-    const grid = document.getElementById("grid-album");
-
-    if (!modalConteudo || !grid) return;
-    if (document.getElementById("abas-album")) return;
-
-    const abas = document.createElement("div");
-
-    abas.id = "abas-album";
-    abas.style.cssText = `
-        display:flex;
-        justify-content:center;
-        gap:10px;
-        flex-wrap:wrap;
-        margin:15px 0 20px;
-    `;
-
-    abas.innerHTML = `
-        <button id="aba-minhas-cartas" type="button">MINHAS CARTAS</button>
-        <button id="aba-cartas-apostadas" type="button">CARTAS APOSTADAS</button>
-    `;
-
-    grid.insertAdjacentElement("beforebegin", abas);
-
-    const gridApostadas = document.createElement("div");
-
-    gridApostadas.id = "grid-apostadas";
-    gridApostadas.style.display = "none";
-
-    grid.insertAdjacentElement("afterend", gridApostadas);
-
-    const botoes = abas.querySelectorAll("button");
-
-    botoes.forEach(botao => {
-        botao.style.cssText = `
-            padding:10px 16px;
-            border:1px solid #00e676;
-            border-radius:7px;
-            background:#20202c;
-            color:white;
-            cursor:pointer;
-            font-weight:bold;
-        `;
-    });
-
-    document.getElementById("aba-minhas-cartas").onclick = () => {
-        mostrarAbaAlbum("colecao");
-    };
-
-    document.getElementById("aba-cartas-apostadas").onclick = () => {
-        mostrarAbaAlbum("apostadas");
-    };
+    // As abas já existem no HTML.
+    // Não cria novos botões.
 }
 
 function mostrarAbaAlbum(aba) {
-    const gridColecao = document.getElementById("grid-album");
-    const gridApostadas = document.getElementById("grid-apostadas");
+    const conteudoColecao =
+        document.getElementById("conteudo-colecao");
 
-    const botaoColecao = document.getElementById("aba-minhas-cartas");
-    const botaoApostadas = document.getElementById("aba-cartas-apostadas");
+    const conteudoApostadas =
+        document.getElementById("conteudo-apostadas");
 
-    if (!gridColecao || !gridApostadas) return;
+    const botaoColecao =
+        document.getElementById("aba-colecao");
+
+    const botaoApostadas =
+        document.getElementById("aba-apostadas");
+
+    if (!conteudoColecao || !conteudoApostadas) return;
 
     if (aba === "apostadas") {
-        gridColecao.style.display = "none";
-        gridApostadas.style.display = "grid";
+        conteudoColecao.style.display = "none";
+        conteudoApostadas.style.display = "block";
 
-        botaoColecao.style.background = "#20202c";
-        botaoApostadas.style.background = "#087f45";
+        if (botaoColecao) botaoColecao.classList.remove("ativa");
+        if (botaoApostadas) botaoApostadas.classList.add("ativa");
 
         renderizarCartasApostadas();
     } else {
-        gridColecao.style.display = "grid";
-        gridApostadas.style.display = "none";
+        conteudoColecao.style.display = "block";
+        conteudoApostadas.style.display = "none";
 
-        botaoColecao.style.background = "#087f45";
-        botaoApostadas.style.background = "#20202c";
+        if (botaoColecao) botaoColecao.classList.add("ativa");
+        if (botaoApostadas) botaoApostadas.classList.remove("ativa");
     }
 }
 
@@ -585,7 +540,6 @@ function abrirAlbum() {
                     : `<div class="silueta" style="font-size:18px;color:#aaa;">PAIA</div>`);
 
             let previewDiv = document.createElement("div");
-
             previewDiv.style.cursor = "pointer";
 
             previewDiv.innerHTML = `
@@ -621,7 +575,6 @@ function abrirAlbum() {
             `;
 
             itemDiv.appendChild(botoesDiv);
-
         } else {
             itemDiv.className = "item-album bloqueado";
 
@@ -696,7 +649,6 @@ function venderTodasDaCarta(nome) {
     }
 
     dinheiro += obterPrecoAtual(nome) * quantidadeParaVender;
-
     colecaoGlobal[nome] = qtd - quantidadeParaVender;
 
     if (colecaoGlobal[nome] <= 0) {
@@ -706,6 +658,32 @@ function venderTodasDaCarta(nome) {
     salvarEstado();
     atualizarContadorVisual(0, 0);
     abrirAlbum();
+    atualizarOpcoesRoleta();
+}
+
+
+// ==============================
+// VENDER CARTAS PREMIADAS COM X2
+// ==============================
+
+function venderCartaApostada(nome) {
+    const quantidade = Number(cartasSeparadas[nome]) || 0;
+
+    // Apenas cartas que ganharam x2 podem ser vendidas.
+    if (quantidade <= 0 || obterMultiplicador(nome) !== 2) return;
+
+    cartasSeparadas[nome] = quantidade - 1;
+
+    if (cartasSeparadas[nome] <= 0) {
+        delete cartasSeparadas[nome];
+    }
+
+    // Mantém o multiplicador salvo para impedir novas apostas.
+    dinheiro += obterPrecoBase(nome) * 2;
+
+    salvarEstado();
+    atualizarContadorVisual(0, 0);
+    atualizarCartasSeparadas();
     atualizarOpcoesRoleta();
 }
 
@@ -848,7 +826,6 @@ function renderizarCartasApostadas() {
         const cartaOriginal = cartas.find(c => c.nome === nomeBase);
 
         const item = document.createElement("div");
-
         item.className = "item-album";
 
         if (cartaOriginal) {
@@ -893,6 +870,31 @@ function renderizarCartasApostadas() {
             </small>
         `;
 
+        // Botão aparece somente nas cartas x2.
+        if (obterMultiplicador(nome) === 2) {
+            const botaoVender = document.createElement("button");
+
+            botaoVender.className = "btn-vender";
+
+            botaoVender.style.cssText = `
+                width:100%;
+                padding:8px;
+                margin-top:10px;
+                border-radius:5px;
+                cursor:pointer;
+                font-weight:bold;
+            `;
+
+            botaoVender.textContent =
+                `Vender 1 - R$ ${(obterPrecoBase(nome) * 2).toFixed(2)}`;
+
+            botaoVender.onclick = () => {
+                venderCartaApostada(nome);
+            };
+
+            item.appendChild(botaoVender);
+        }
+
         grid.appendChild(item);
     }
 
@@ -914,7 +916,6 @@ function criarRoleta() {
     if (document.getElementById("painel-roleta")) return;
 
     const painel = document.createElement("section");
-
     painel.id = "painel-roleta";
 
     painel.style.cssText = `
@@ -1111,7 +1112,6 @@ function girarRoleta(corEscolhida) {
 
     const select = document.getElementById("carta-aposta");
     const resultado = document.getElementById("resultado-roleta");
-
     const nome = select.value;
 
     if (!nome) {
@@ -1166,10 +1166,8 @@ function girarRoleta(corEscolhida) {
 
     setTimeout(() => {
         if (corSorteada === "verde") {
-
             // Multiplicador fixo, sem acumular.
             valoresCartas[nome] = 32;
-
             separarCarta(nome);
 
             resultado.innerHTML = `
@@ -1178,12 +1176,9 @@ function girarRoleta(corEscolhida) {
                 O valor dela agora é x32.<br>
                 Novo valor: R$ ${obterPrecoAtual(nome).toFixed(2)}
             `;
-
         } else if (corSorteada === corEscolhida) {
-
             // Multiplicador fixo, sem acumular.
             valoresCartas[nome] = 2;
-
             separarCarta(nome);
 
             resultado.innerHTML = `
@@ -1193,7 +1188,6 @@ function girarRoleta(corEscolhida) {
                 Novo multiplicador: x2<br>
                 Novo valor: R$ ${obterPrecoAtual(nome).toFixed(2)}
             `;
-
         } else {
             colecaoGlobal[nome]--;
 
@@ -1256,7 +1250,6 @@ document.addEventListener("keydown", (e) => {
                 pacoteSelecionado.custo,
                 pacoteSelecionado.multiplicador
             );
-
             return;
         }
 
