@@ -279,9 +279,9 @@ body {
    ============================== */
 
 :is(.carta, .item-album).secreta {
-    --cor-raridade: #FF1493;
-    --fundo-raridade: #350B22;
-    --brilho-raridade: rgba(255,20,147,0.8);
+    --cor-raridade: #FFFFFF;
+    --fundo-raridade: #000000;
+    --brilho-raridade: rgba(255,255,255,0.95);
 }
 
 /* ==============================
