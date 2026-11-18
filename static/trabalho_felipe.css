@@ -1,6 +1,12 @@
-/* ==============================
+
+/* ==========================================
    ESTILOS GERAIS DA APLICAÇÃO
-   ============================== */
+   ========================================== */
+
+* {
+    box-sizing: border-box;
+}
+
 body {
     background-color: #121218;
     color: #ffffff;
@@ -9,9 +15,10 @@ body {
     padding: 0;
 }
 
-/* ==============================
+/* ==========================================
    TELA DE LOGIN
-   ============================== */
+   ========================================== */
+
 .container-login {
     max-width: 400px;
     margin: 100px auto;
@@ -48,9 +55,10 @@ body {
     background-color: #45a049;
 }
 
-/* ==============================
-   LOJA E CARTAS NO JOGO
-   ============================== */
+/* ==========================================
+   LOJA DE BOOSTERS
+   ========================================== */
+
 .card-loja {
     background: #1e1e2f;
     border: 2px solid #444;
@@ -63,160 +71,579 @@ body {
 
 .card-loja:hover {
     border-color: #666;
+    transform: translateY(-2px);
 }
 
 .card-loja.selecionado {
     border-color: #00e5ff;
     background: #25253d;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
 }
 
+/* ==========================================
+   ÁREA DE CARTAS DO BOOSTER
+   ========================================== */
+
+#cartas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* ==========================================
+   MODELO PRINCIPAL DAS CARTAS
+   ========================================== */
+
 .carta {
-    width: 140px;
-    height: 200px;
-    background: #1e1e2f;
-    border: 2px solid #555;
-    border-radius: 10px;
+    --cor-raridade: #777777;
+    --fundo-raridade: #1a1a1a;
+    --brilho-raridade: rgba(150,150,150,0.4);
+
+    width: 150px;
+    height: 225px;
+
+    background: var(--fundo-raridade);
+    border: 3px solid var(--cor-raridade);
+    border-radius: 15px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
+
+    padding: 9px;
     cursor: pointer;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    transition: transform 0.2s;
+
     position: relative;
+    isolation: isolate;
     overflow: hidden;
+
+    box-shadow:
+        0 0 10px var(--brilho-raridade),
+        0 0 18px var(--brilho-raridade);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    user-select: none;
 }
 
 .carta:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.02);
 }
 
+/* ==========================================
+   IMAGENS E VÍDEOS
+   ========================================== */
+
+.carta img,
+.carta video {
+    display: block;
+
+    width: 100% !important;
+    height: 135px !important;
+
+    max-width: 100%;
+    object-fit: contain !important;
+
+    background: #111111;
+    border-radius: 9px;
+
+    margin-bottom: 6px;
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   NOME DAS CARTAS
+   ========================================== */
+
+.carta strong {
+    display: block;
+    width: 100%;
+
+    font-size: 12px !important;
+    font-weight: bold;
+    line-height: 1.3;
+
+    color: #ffffff;
+    text-align: center;
+
+    margin-top: 4px;
+    margin-bottom: 6px;
+
+    overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   TEXTO DA RARIDADE
+   ========================================== */
+
+.carta small {
+    display: block;
+    width: 100%;
+
+    font-size: 10px !important;
+    font-weight: bold;
+    line-height: 1.3;
+
+    color: #ffffff;
+
+    text-align: center;
+    text-transform: uppercase;
+
+    margin-top: auto;
+    margin-bottom: 4px;
+
+    overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   VERSO DA CARTA
+   ========================================== */
+
 .verso {
-    font-size: 24px;
-    color: #888;
+    font-size: 35px;
+    font-weight: bold;
+    color: #00e5ff;
     margin: auto;
 }
 
-/* ==============================
-   CORES E ESTILOS POR RARIDADE
-   ============================== */
-.comum {
-    border-color: #777;
-    background: #2a2a2a;
+.texto-verso {
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 6px;
 }
+
+/* ==========================================
+   CARTA PAIA - CINZA
+   ========================================== */
+
+.comum {
+    --cor-raridade: #777777;
+    --fundo-raridade: #1b1b1b;
+    --brilho-raridade: rgba(160,160,160,0.35);
+}
+
+.carta.comum .verso {
+    color: #00e5ff;
+}
+
+/* ==========================================
+   TRANSFICANO - AMARELO NEON
+   ========================================== */
 
 .transficano {
-    border-color: #4CAF50;
-    background: #1b3b1a;
+    --cor-raridade: #FFE600;
+    --fundo-raridade: #2B2600;
+    --brilho-raridade: rgba(255,230,0,0.8);
 }
+
+/* ==========================================
+   ÉPICA - ROXO NEON
+   ========================================== */
 
 .epica {
-    border-color: #9c27b0;
-    background: #3a1542;
+    --cor-raridade: #A020F0;
+    --fundo-raridade: #250D30;
+    --brilho-raridade: rgba(160,32,240,0.8);
 }
+
+/* ==========================================
+   ULTRA RARA - CIANO NEON
+   ========================================== */
 
 .ultra-rara {
-    border-color: #ff9800;
-    background: #4a2c00;
+    --cor-raridade: #00E5FF;
+    --fundo-raridade: #08272D;
+    --brilho-raridade: rgba(0,229,255,0.8);
 }
+
+/* ==========================================
+   LENDÁRIA - LARANJA NEON
+   ========================================== */
 
 .lendaria {
-    border-color: #ffd700;
-    background: #423800;
+    --cor-raridade: #FFB300;
+    --fundo-raridade: #302000;
+    --brilho-raridade: rgba(255,179,0,0.85);
 }
+
+/* ==========================================
+   SECRETA - ROSA NEON
+   ========================================== */
 
 .secreta {
-    border-color: #e91e63;
-    background: #4a0d24;
+    --cor-raridade: #FF1493;
+    --fundo-raridade: #350B22;
+    --brilho-raridade: rgba(255,20,147,0.8);
 }
+
+/* ==========================================
+   PRIMORDIAL - TURQUESA
+   ========================================== */
 
 .primordial {
-    border-color: #00bcd4;
-    background: #00363d;
+    --cor-raridade: #00FFD5;
+    --fundo-raridade: #09312C;
+    --brilho-raridade: rgba(0,255,213,0.8);
 }
+
+/* ==========================================
+   NOJO - VERDE LIMÃO NEON
+   ========================================== */
 
 .nojo {
-    border-color: #795548;
-    background: #3b241c;
+    --cor-raridade: #7FFF00;
+    --fundo-raridade: #1D2C00;
+    --brilho-raridade: rgba(127,255,0,0.85);
 }
+
+/* ==========================================
+   ESPECIAL HEXA - VERDE NEON
+   IGUAL À FOTO DO FELIPE SHINY
+   ========================================== */
 
 .especial-hexa {
-    border-color: #3f51b5;
-    background: #171c42;
+    --cor-raridade: #00FF88;
+    --fundo-raridade: #003B26;
+    --brilho-raridade: rgba(0,255,136,0.9);
 }
+
+/* ==========================================
+   U DE UCRÂNIA - AZUL CLARO
+   ========================================== */
 
 .u-de-ucrania {
-    border-color: #00bfff;
-    background: #002244;
-    box-shadow: 0 0 15px rgba(0, 191, 255, 0.8);
+    --cor-raridade: #00BFFF;
+    --fundo-raridade: #002244;
+    --brilho-raridade: rgba(0,191,255,0.85);
 }
+
+/* ==========================================
+   THE LAST RESENHA - AZUL NEON
+   IGUAL À FOTO DA KAYLA
+   ========================================== */
 
 .the-last-resenha {
-    border-color: #ff1493;
-    background: #4a0025;
-    box-shadow: 0 0 15px rgba(255, 20, 147, 0.7);
+    --cor-raridade: #2F7FFF;
+    --fundo-raridade: #0C1C38;
+    --brilho-raridade: rgba(47,127,255,0.9);
 }
+
+/* ==========================================
+   ARMADILHA - VERMELHO
+   ========================================== */
 
 .armadilha {
-    border-color: #f44336;
-    background: #421111;
+    --cor-raridade: #F44336;
+    --fundo-raridade: #421111;
+    --brilho-raridade: rgba(244,67,54,0.85);
 }
 
-/* ==============================
-   EFEITO RGB ANIMADO (GUSTAVO DANCEPOT)
-   ============================== */
-@keyframes rgb-animado {
-    0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
-    33% { border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
-    66% { border-color: #0000ff; box-shadow: 0 0 15px #0000ff; }
-    100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+/* ==========================================
+   CORES APLICADAS ÀS CARTAS REVELADAS
+   ========================================== */
+
+.carta.comum,
+.carta.transficano,
+.carta.epica,
+.carta.ultra-rara,
+.carta.lendaria,
+.carta.secreta,
+.carta.primordial,
+.carta.nojo,
+.carta.especial-hexa,
+.carta.u-de-ucrania,
+.carta.the-last-resenha,
+.carta.armadilha {
+    background: var(--fundo-raridade);
+
+    border-color: var(--cor-raridade);
+
+    box-shadow:
+        0 0 10px var(--brilho-raridade),
+        0 0 20px var(--brilho-raridade);
 }
+
+/* ==========================================
+   GUSTAVO DANCEPOT - RGB ANIMADO
+   ========================================== */
 
 .dance-potranca {
-    background: #2a0033;
-    animation: rgb-animado 3s infinite linear;
+    --cor-raridade: #FF00FF;
+    --fundo-raridade: #290C35;
+    --brilho-raridade: rgba(255,0,255,0.75);
+
+    background: var(--fundo-raridade);
+    animation: rgb-animado 3s linear infinite;
 }
 
-/* ==============================
-   EFEITO SHINY (Mantém o fundo da raridade + brilho dourado)
-   ============================== */
-.shiny {
-    border-color: #ffd700 !important;
-    box-shadow: 0 0 18px #ffd700 !important;
+@keyframes rgb-animado {
+    0% {
+        border-color: #FF0000;
+        box-shadow: 0 0 18px #FF0000;
+    }
+
+    25% {
+        border-color: #FFFF00;
+        box-shadow: 0 0 18px #FFFF00;
+    }
+
+    50% {
+        border-color: #00FF00;
+        box-shadow: 0 0 18px #00FF00;
+    }
+
+    75% {
+        border-color: #0088FF;
+        box-shadow: 0 0 18px #0088FF;
+    }
+
+    100% {
+        border-color: #FF0000;
+        box-shadow: 0 0 18px #FF0000;
+    }
 }
 
-/* ==============================
-   MODAL DO ÁLBUM (DISPOSIÇÃO LADO A LADO)
-   ============================== */
+/* ==========================================
+   TODAS AS CARTAS SHINY
+   MESMO ESTILO DA FOTO
+   ========================================== */
+
+.carta.shiny,
+.item-album.shiny {
+    position: relative;
+    isolation: isolate;
+
+    overflow: hidden;
+
+    border: 4px solid var(--cor-raridade, #FFD700) !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--cor-raridade, #FFD700) 0%,
+            var(--fundo-raridade, #222222) 100%
+        ) !important;
+
+    box-shadow:
+        0 0 12px var(--brilho-raridade),
+        0 0 24px var(--brilho-raridade),
+        0 0 34px var(--brilho-raridade) !important;
+}
+
+/* ==========================================
+   EFEITO DE BRILHO SHINY
+   ========================================== */
+
+.carta.shiny::before,
+.item-album.shiny::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.22) 0%,
+        rgba(255,255,255,0.02) 35%,
+        rgba(255,255,255,0.12) 65%,
+        rgba(255,255,255,0.02) 100%
+    );
+
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==========================================
+   LUZ PASSANDO PELA SHINY
+   ========================================== */
+
+.carta.shiny::after,
+.item-album.shiny::after {
+    content: "";
+
+    position: absolute;
+    top: -25%;
+    left: -75%;
+
+    width: 45%;
+    height: 160%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.40),
+        transparent
+    );
+
+    transform: rotate(20deg);
+
+    animation: brilho-shiny-passando 3s linear infinite;
+
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes brilho-shiny-passando {
+    0% {
+        left: -75%;
+    }
+
+    100% {
+        left: 145%;
+    }
+}
+
+/* ==========================================
+   CONTEÚDO ACIMA DO BRILHO
+   ========================================== */
+
+.carta.shiny > *,
+.item-album.shiny > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* ==========================================
+   IMAGEM DAS SHINYS
+   ========================================== */
+
+.carta.shiny img,
+.carta.shiny video,
+.item-album.shiny img,
+.item-album.shiny video {
+    border: 2px solid rgba(255,255,255,0.40);
+
+    border-radius: 9px;
+
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+/* ==========================================
+   FAIXAS DE NOME DAS SHINYS
+   ========================================== */
+
+.carta.shiny strong,
+.item-album.shiny strong {
+    background: rgba(0,0,0,0.45);
+
+    color: #FFFFFF !important;
+
+    padding: 5px 6px;
+    border-radius: 4px;
+
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* ==========================================
+   FAIXAS DE RARIDADE DAS SHINYS
+   ========================================== */
+
+.carta.shiny small,
+.item-album.shiny small {
+    background: rgba(0,0,0,0.45);
+
+    color: #FFFFFF !important;
+
+    padding: 4px 5px;
+    border-radius: 4px;
+
+    font-weight: bold;
+}
+
+/* ==========================================
+   ESPECIAL HEXA SHINY
+   VERDE FORTE IGUAL À FOTO
+   ========================================== */
+
+.carta.shiny.especial-hexa,
+.item-album.shiny.especial-hexa {
+    background: linear-gradient(
+        180deg,
+        #00FF88 0%,
+        #00E579 45%,
+        #00BA63 100%
+    ) !important;
+
+    border-color: #00FF88 !important;
+
+    box-shadow:
+        0 0 12px rgba(0,255,136,0.8),
+        0 0 25px rgba(0,255,136,0.9),
+        0 0 40px rgba(0,255,136,0.6) !important;
+}
+
+.carta.shiny.especial-hexa strong,
+.item-album.shiny.especial-hexa strong {
+    background: #009F59;
+    color: #FFFFFF !important;
+}
+
+.carta.shiny.especial-hexa small,
+.item-album.shiny.especial-hexa small {
+    background: #00884C;
+    color: #FFFFFF !important;
+}
+
+/* ==========================================
+   DANCEPOT SHINY
+   MANTÉM O EFEITO RGB
+   ========================================== */
+
+.carta.shiny.dance-potranca,
+.item-album.shiny.dance-potranca {
+    animation: rgb-animado 3s linear infinite;
+}
+
+/* ==========================================
+   MODAL DO ÁLBUM
+   ========================================== */
+
 .modal {
     display: none;
+
     position: fixed;
     z-index: 1000;
+
     left: 0;
     top: 0;
+
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.8);
+
+    background-color: rgba(0,0,0,0.85);
+
     overflow-y: auto;
 }
 
 .modal-conteudo {
     background-color: #1a1a24;
+
     margin: 4% auto;
     padding: 25px;
+
     width: 90%;
     max-width: 1100px;
+
     border-radius: 12px;
     border: 1px solid #444;
 }
 
 .fechar-modal {
     color: #aaa;
+
     float: right;
+
     font-size: 28px;
     font-weight: bold;
+
     cursor: pointer;
 }
 
@@ -224,62 +651,346 @@ body {
     color: #fff;
 }
 
-#grid-album {
+/* ==========================================
+   GRID DO ÁLBUM
+   ========================================== */
+
+#grid-album,
+#grid-apostadas {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(160px, 1fr));
+
+    gap: 18px;
+
     justify-content: center;
+
     margin-top: 20px;
+
     max-height: 70vh;
     overflow-y: auto;
-    padding: 10px;
+
+    padding: 15px;
 }
 
+/* ==========================================
+   CARTAS DO ÁLBUM
+   ========================================== */
+
 .item-album {
-    background: #1e1e2f;
-    border: 2px solid #555;
-    border-radius: 8px;
+    --cor-raridade: #777;
+    --fundo-raridade: #1e1e2f;
+    --brilho-raridade: rgba(0,0,0,0.3);
+
+    background: var(--fundo-raridade);
+
+    border: 3px solid var(--cor-raridade);
+    border-radius: 14px;
+
     padding: 10px;
+
     text-align: center;
+
     display: flex;
     flex-direction: column;
+
     justify-content: space-between;
-    min-height: 210px;
+    align-items: stretch;
+
+    min-height: 235px;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    box-shadow:
+        0 0 15px var(--brilho-raridade);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
+.item-album:hover {
+    transform: translateY(-4px);
+}
+
+/* ==========================================
+   CORES NO ÁLBUM
+   ========================================== */
+
+#grid-album .item-album:not(.bloqueado),
+#grid-apostadas .item-album {
+    background: var(--fundo-raridade, #1e1e2f);
+
+    border-color: var(--cor-raridade, #777);
+
+    box-shadow:
+        0 0 10px var(--brilho-raridade),
+        0 0 20px var(--brilho-raridade);
+}
+
+/* ==========================================
+   IMAGENS DO ÁLBUM
+   ========================================== */
+
+.item-album img,
+.item-album video {
+    display: block;
+
+    width: 100% !important;
+    height: 110px !important;
+
+    object-fit: contain !important;
+
+    background: #101010;
+
+    border-radius: 8px;
+
+    margin-bottom: 8px;
+}
+
+/* ==========================================
+   TEXTOS DO ÁLBUM
+   ========================================== */
+
+.item-album strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 11px !important;
+    font-weight: bold;
+
+    line-height: 1.4;
+
+    margin-top: 5px;
+
+    overflow-wrap: anywhere;
+}
+
+.item-album small {
+    display: block;
+
+    font-size: 10px;
+    line-height: 1.5;
+
+    margin-top: 5px;
+}
+
+/* ==========================================
+   CARTAS NÃO ENCONTRADAS
+   ========================================== */
 
 .item-album.bloqueado {
     opacity: 0.4;
+
     border-style: dashed;
+    border-color: #555 !important;
+
+    background: #1e1e2f !important;
+
+    box-shadow: none !important;
 }
+
+.item-album.bloqueado:hover {
+    transform: none;
+}
+
+/* ==========================================
+   SILHUETA
+   ========================================== */
 
 .silueta {
     font-size: 30px;
+
     color: #555;
+
     margin: 20px 0;
 }
 
-/* Botões do Álbum */
+/* ==========================================
+   CARTAS APOSTADAS NA ROLETA
+   ========================================== */
+
+#grid-apostadas .item-album {
+    min-height: 250px;
+}
+
+#grid-apostadas .item-album small {
+    margin-top: 7px;
+}
+
+/* ==========================================
+   ABAS DO ÁLBUM
+   ========================================== */
+
+.album-abas {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin: 15px 0 20px;
+}
+
+.aba-album {
+    padding: 10px 16px;
+
+    background: #20202c;
+    color: #ffffff;
+
+    border: 1px solid #00e676;
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+}
+
+.aba-album:hover {
+    background: #294034;
+}
+
+.aba-album.ativa {
+    background: #087f45;
+}
+
+/* ==========================================
+   BOTÕES DE VENDA DO ÁLBUM
+   ========================================== */
+
 .grupo-botoes-venda {
     display: flex;
+
     gap: 4px;
+
     margin-top: 8px;
 }
 
-.btn-vender, .btn-vender-especifica-todas, .btn-bloquear {
+.btn-vender,
+.btn-vender-especifica-todas,
+.btn-bloquear {
     padding: 5px;
+
     font-size: 9px;
+
     border: none;
     border-radius: 4px;
+
     cursor: pointer;
+
     font-weight: bold;
+
     color: white;
 }
 
-.btn-vender { background-color: #2196F3; flex: 1; }
-.btn-vender-especifica-todas { background-color: #ff9800; flex: 1; }
-.btn-bloquear { background-color: #9e9e9e; width: 100%; margin-top: 4px; }
+.btn-vender {
+    background-color: #2196F3;
+    flex: 1;
+}
+
+.btn-vender-especifica-todas {
+    background-color: #ff9800;
+    flex: 1;
+}
+
+.btn-bloquear {
+    background-color: #9e9e9e;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.btn-vender:hover,
+.btn-vender-especifica-todas:hover,
+.btn-bloquear:hover {
+    filter: brightness(1.15);
+}
+
+/* ==========================================
+   CARTAS BLOQUEADAS PARA VENDA
+   ========================================== */
 
 .bloqueado-carta {
     border-style: double !important;
     border-color: #ff5722 !important;
+}
+
+/* ==========================================
+   RESPONSIVIDADE
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .container-login {
+        margin: 50px 15px;
+    }
+
+    #cartas {
+        gap: 10px;
+    }
+
+    .carta {
+        width: 140px;
+        height: 215px;
+        padding: 8px;
+    }
+
+    .carta img,
+    .carta video {
+        height: 120px !important;
+    }
+
+    .carta strong {
+        font-size: 11px !important;
+    }
+
+    .carta small {
+        font-size: 9px !important;
+    }
+
+    #grid-album,
+    #grid-apostadas {
+        grid-template-columns:
+            repeat(auto-fill, minmax(135px, 1fr));
+
+        gap: 12px;
+        padding: 8px;
+    }
+
+    .item-album {
+        min-height: 220px;
+        padding: 8px;
+    }
+
+    .modal-conteudo {
+        width: 95%;
+        padding: 15px;
+    }
+}
+
+/* ==========================================
+   ACESSIBILIDADE
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .carta,
+    .item-album {
+        transition: none;
+    }
+
+    .dance-potranca,
+    .carta.shiny,
+    .item-album.shiny,
+    .carta.shiny::after,
+    .item-album.shiny::after {
+        animation: none !important;
+    }
 }
