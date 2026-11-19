@@ -28,6 +28,86 @@ let cartasBloqueadas = {};
 let valoresCartas = {};
 let cartasSeparadas = {};
 
+// Controle de salvamento; pedidos são enviados um de cada vez.
+let revisaoDados = 0;
+let usuarioConectado = false;
+let salvamentoEmAndamento = false;
+let salvamentoPendente = false;
+let timerSalvamento = null;
+let tentativasSalvamento = 0;
+let conflitoSalvamento = false;
+
+// O navegador guarda esses elementos e o HTTP cache guarda seus arquivos.
+const audioEmMemoria = new Map();
+
+const observadorVideo = typeof IntersectionObserver !== "undefined"
+    ? new IntersectionObserver(entradas => {
+        entradas.forEach(entrada => {
+            const video = entrada.target;
+
+            if (entrada.isIntersecting) {
+                if (!video.src && video.dataset.src) {
+                    video.src = video.dataset.src;
+                }
+                video.play().catch(() => {});
+            } else {
+                video.pause();
+            }
+        });
+    }, { rootMargin: "100px 0px" }) : null;
+
+function urlMidia(nome) {
+    const versao = window.ASSET_VERSION || "1";
+    return `/static/${encodeURIComponent(nome)}?v=${encodeURIComponent(versao)}`;
+}
+
+function tocarAudioEmCache(arquivo) {
+    if (!audioEmMemoria.has(arquivo)) {
+        const audio = new Audio(urlMidia(arquivo));
+        audio.preload = "auto";
+        audioEmMemoria.set(arquivo, audio);
+    }
+
+    const audio = audioEmMemoria.get(arquivo);
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+}
+
+function observarVideos(container) {
+    if (!container) return;
+
+    container.querySelectorAll("video[data-src]").forEach(video => {
+        if (video.dataset.observado === "sim") return;
+
+        video.dataset.observado = "sim";
+
+        if (observadorVideo) {
+            observadorVideo.observe(video);
+        } else {
+            video.src = video.dataset.src;
+            video.play().catch(() => {});
+        }
+    });
+}
+
+function desobservarVideos(container) {
+    if (!container || !observadorVideo) return;
+
+    container.querySelectorAll("video[data-src]").forEach(video => {
+        observadorVideo.unobserve(video);
+        video.pause();
+    });
+}
+
+function mostrarStatusSalvo(mensagem, erro = false) {
+    const status = document.getElementById("status-salvamento");
+
+    if (!status) return;
+
+    status.textContent = mensagem;
+    status.style.color = erro ? "#ff6666" : "#a8e6b0";
+}
+
 let jogoTravado = false;
 let cartasGeradas = [];
 let roletaEmAndamento = false;
@@ -37,7 +117,6 @@ let pacoteSelecionado = {
     multiplicador: 1.0,
     nome: "Comum"
 };
-
 
 // ==============================
 // LOGIN
@@ -72,6 +151,14 @@ function fazerLogin() {
     .then(data => {
         if (data.sucesso) {
             dinheiro = Number(data.dinheiro);
+            revisaoDados = Number(data.revisao) || 0;
+            usuarioConectado = true;
+            conflitoSalvamento = false;
+            salvamentoPendente = false;
+            tentativasSalvamento = 0;
+
+            mostrarStatusSalvo("Progresso carregado");
+
             colecaoGlobal = data.colecao || {};
             cartasBloqueadas = data.bloqueadas || {};
             valoresCartas = data.valoresCartas || {};
@@ -124,27 +211,115 @@ function fazerLogin() {
     });
 }
 
-
 // ==============================
 // SALVAR ESTADO
 // ==============================
 
-function salvarEstado() {
-    fetch("/api/salvar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            dinheiro: dinheiro,
-            colecao: colecaoGlobal,
-            bloqueadas: cartasBloqueadas,
-            valoresCartas: valoresCartas,
-            cartasSeparadas: cartasSeparadas
-        })
-    }).catch(error => {
-        console.error("Erro ao salvar os dados:", error);
-    });
+function dadosParaSalvar() {
+    return {
+        revisao: revisaoDados,
+        dinheiro: dinheiro,
+        colecao: colecaoGlobal,
+        bloqueadas: cartasBloqueadas,
+        valoresCartas: valoresCartas,
+        cartasSeparadas: cartasSeparadas
+    };
 }
 
+function agendarSalvamento(atraso = 220) {
+    clearTimeout(timerSalvamento);
+    timerSalvamento = setTimeout(enviarSalvamento, atraso);
+}
+
+function salvarEstado() {
+    if (!usuarioConectado || conflitoSalvamento) return;
+
+    salvamentoPendente = true;
+    mostrarStatusSalvo("Salvando...");
+    agendarSalvamento();
+}
+
+async function enviarSalvamento() {
+    if (!usuarioConectado || conflitoSalvamento ||
+        salvamentoEmAndamento || !salvamentoPendente) return;
+
+    salvamentoEmAndamento = true;
+    salvamentoPendente = false;
+
+    // O snapshot não muda enquanto esta requisição está em andamento.
+    const corpo = JSON.stringify(dadosParaSalvar());
+
+    try {
+        const resposta = await fetch("/api/salvar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: corpo,
+            cache: "no-store"
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.status === 409 || dados.conflito) {
+            conflitoSalvamento = true;
+            salvamentoPendente = false;
+
+            mostrarStatusSalvo(
+                "Outra sessão alterou sua conta. Entre novamente.",
+                true
+            );
+
+            alert(
+                "Sua conta foi atualizada em outro dispositivo ou aba. " +
+                "Recarregue a página e entre novamente para evitar perder o progresso."
+            );
+            return;
+        }
+
+        if (!resposta.ok || !dados.sucesso) {
+            throw new Error(dados.mensagem || "Erro ao salvar o progresso.");
+        }
+
+        revisaoDados = Number(dados.revisao);
+        tentativasSalvamento = 0;
+
+        if (!salvamentoPendente) {
+            mostrarStatusSalvo("Progresso salvo");
+        }
+    } catch (erro) {
+        console.error("Erro ao salvar:", erro);
+
+        salvamentoPendente = true;
+        tentativasSalvamento++;
+
+        mostrarStatusSalvo(
+            "Não foi possível salvar. Verifique a conexão.",
+            true
+        );
+    } finally {
+        salvamentoEmAndamento = false;
+
+        if (
+            salvamentoPendente &&
+            !conflitoSalvamento &&
+            tentativasSalvamento <= 3
+        ) {
+            agendarSalvamento(
+                tentativasSalvamento
+                    ? 1000 * tentativasSalvamento
+                    : 150
+            );
+        }
+    }
+}
+
+// Se a internet voltar, tenta enviar o estado pendente.
+window.addEventListener("online", () => {
+    tentativasSalvamento = 0;
+
+    if (salvamentoPendente) {
+        agendarSalvamento(100);
+    }
+});
 
 // ==============================
 // VALOR DAS CARTAS
@@ -175,7 +350,6 @@ function obterPrecoAtual(nome) {
     return obterPrecoBase(nome) * obterMultiplicador(nome);
 }
 
-
 // ==============================
 // VERIFICAR SE PODE APOSTAR
 // ==============================
@@ -200,23 +374,27 @@ function cartaPodeApostar(nome) {
     return true;
 }
 
-
 // ==============================
-// ÁUDIO
+// ÁUDIO - ESPECIAL HEXA ATUALIZADO
 // ==============================
 
 function tocarAudioCarta(carta) {
-    if (carta.imagem === "gustavodancepot.mp4") {
-        new Audio("/static/dancepotranca.mp3").play().catch(e => {});
+    if (carta.classe === "especial-hexa") {
+        tocarAudioEmCache("brasil sil sil.mp3");
+
+    } else if (carta.imagem === "gustavodancepot.mp4") {
+        tocarAudioEmCache("dancepotranca.mp3");
+
     } else if (carta.imagem === "gustavo tartarugas ninjas.jpg") {
-        new Audio("/static/tartarugas ninjas.mp3").play().catch(e => {});
+        tocarAudioEmCache("tartarugas ninjas.mp3");
+
     } else if (carta.imagem === "muryllo pé de mesa.mp4") {
-        new Audio("/static/muryllo car cur.mp3").play().catch(e => {});
+        tocarAudioEmCache("muryllo car cur.mp3");
+
     } else if (carta.classe === "the-last-resenha") {
-        new Audio("/static/army-of-lovers-crucified.mp3").play().catch(e => {});
+        tocarAudioEmCache("army-of-lovers-crucified.mp3");
     }
 }
-
 
 // ==============================
 // BOOSTERS
@@ -319,7 +497,7 @@ function revelarCartaNoElemento(div, carta) {
 
         if (carta.imagem && carta.imagem.endsWith(".mp4")) {
             div.innerHTML = `
-                <video src="/static/${encodeURIComponent(carta.imagem)}"
+                <video src="${urlMidia(carta.imagem)}"
                 autoplay loop muted
                 style="width:100%;height:65%;object-fit:contain;background:#000;border-radius:4px;">
                 </video>
@@ -328,7 +506,7 @@ function revelarCartaNoElemento(div, carta) {
             `;
         } else if (carta.imagem) {
             div.innerHTML = `
-                <img src="/static/${encodeURIComponent(carta.imagem)}"
+                <img loading="lazy" decoding="async" src="${urlMidia(carta.imagem)}"
                 style="width:100%;height:65%;object-fit:contain;background:#000;border-radius:4px;">
                 <strong style="font-size:11px;display:block;margin-top:4px;">${carta.nome}</strong>
                 <small style="font-size:9px;">${carta.raridade}</small>
@@ -348,8 +526,7 @@ function revelarCartaNoElemento(div, carta) {
             <small>R$ ${valorPerdido.toFixed(2)} ROUBADOS!</small>
         `;
 
-        new Audio("/static/perdeu.mp3").play().catch(e => {});
-
+        tocarAudioEmCache("perdeu.mp3");
         jogoTravado = true;
 
         document.getElementById("resultado").textContent =
@@ -443,7 +620,6 @@ function verificarFimDoBooster() {
     }
 }
 
-
 // ==============================
 // ABAS DO ÁLBUM - SEM DUPLICAÇÃO
 // ==============================
@@ -476,6 +652,7 @@ function mostrarAbaAlbum(aba) {
         if (botaoApostadas) botaoApostadas.classList.add("ativa");
 
         renderizarCartasApostadas();
+        observarVideos(conteudoApostadas);
     } else {
         conteudoColecao.style.display = "block";
         conteudoApostadas.style.display = "none";
@@ -484,7 +661,6 @@ function mostrarAbaAlbum(aba) {
         if (botaoApostadas) botaoApostadas.classList.remove("ativa");
     }
 }
-
 
 // ==============================
 // ÁLBUM
@@ -497,6 +673,7 @@ function abrirAlbum() {
     prepararAbasAlbum();
     mostrarAbaAlbum("colecao");
 
+    desobservarVideos(grid);
     grid.innerHTML = "";
 
     let listaCompletaAlbum = [];
@@ -534,9 +711,9 @@ function abrirAlbum() {
             if (bloqueada) itemDiv.classList.add("bloqueado-carta");
 
             let mediaHtml = carta.imagem && carta.imagem.endsWith(".mp4")
-                ? `<video src="/static/${encodeURIComponent(carta.imagem)}" autoplay loop muted style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;"></video>`
+                ? `<video data-src="${urlMidia(carta.imagem)}" preload="none" loop muted playsinline style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;"></video>`
                 : (carta.imagem
-                    ? `<img src="/static/${encodeURIComponent(carta.imagem)}" style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;">`
+                    ? `<img loading="lazy" decoding="async" src="${urlMidia(carta.imagem)}" style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;">`
                     : `<div class="silueta" style="font-size:18px;color:#aaa;">PAIA</div>`);
 
             let previewDiv = document.createElement("div");
@@ -554,7 +731,6 @@ function abrirAlbum() {
             `;
 
             previewDiv.onclick = () => tocarAudioCarta(carta);
-
             itemDiv.appendChild(previewDiv);
 
             let botoesDiv = document.createElement("div");
@@ -591,6 +767,7 @@ function abrirAlbum() {
     });
 
     modal.style.display = "block";
+    observarVideos(grid);
 }
 
 function fecharAlbum() {
@@ -604,7 +781,6 @@ function alternarBloqueio(nome) {
     abrirAlbum();
     atualizarOpcoesRoleta();
 }
-
 
 // ==============================
 // VENDAS
@@ -661,7 +837,6 @@ function venderTodasDaCarta(nome) {
     atualizarOpcoesRoleta();
 }
 
-
 // ==============================
 // VENDER CARTAS PREMIADAS COM X2
 // ==============================
@@ -687,14 +862,52 @@ function venderCartaApostada(nome) {
     atualizarOpcoesRoleta();
 }
 
+// ==============================
+// VENDER EXCEDENTES GERAIS - SEM ABRIR ÁLBUM
+// ==============================
+
 function venderTodasAsCartas() {
-    for (let nome in colecaoGlobal) {
-        if (colecaoGlobal[nome] > 0) {
-            venderTodasDaCarta(nome);
+    let totalVendido = 0;
+    let dinheiroRecebido = 0;
+
+    for (const nome of Object.keys(colecaoGlobal)) {
+        const quantidade = Number(colecaoGlobal[nome]) || 0;
+
+        if (quantidade <= 0) continue;
+
+        // Mantém uma cópia de cada carta bloqueada.
+        const quantidadeParaVender = cartasBloqueadas[nome]
+            ? quantidade - 1
+            : quantidade;
+
+        if (quantidadeParaVender <= 0) continue;
+
+        const valorVenda = obterPrecoAtual(nome) * quantidadeParaVender;
+
+        dinheiro += valorVenda;
+        dinheiroRecebido += valorVenda;
+        totalVendido += quantidadeParaVender;
+
+        colecaoGlobal[nome] = quantidade - quantidadeParaVender;
+
+        if (colecaoGlobal[nome] <= 0) {
+            delete colecaoGlobal[nome];
         }
     }
-}
 
+    if (totalVendido === 0) {
+        alert("Você não possui cartas disponíveis para vender.");
+        return;
+    }
+
+    // Salva tudo em uma única atualização, sem abrir o álbum.
+    salvarEstado();
+    atualizarContadorVisual(0, 0);
+    atualizarOpcoesRoleta();
+
+    document.getElementById("resultado").textContent =
+        `Você vendeu ${totalVendido} carta(s) por R$ ${dinheiroRecebido.toFixed(2)}!`;
+}
 
 // ==============================
 // CARTAS SEPARADAS DA ROLETA
@@ -719,6 +932,7 @@ function atualizarCartasSeparadas() {
 
     if (!area) return;
 
+    desobservarVideos(area);
     area.innerHTML = "";
 
     let encontrouCarta = false;
@@ -735,7 +949,6 @@ function atualizarCartasSeparadas() {
             .replace(/ \(Shiny\)$/, "");
 
         const cartaOriginal = cartas.find(c => c.nome === nomeBase);
-
         const item = document.createElement("div");
 
         item.style.cssText = `
@@ -757,14 +970,14 @@ function atualizarCartasSeparadas() {
         if (cartaOriginal && cartaOriginal.imagem) {
             if (cartaOriginal.imagem.endsWith(".mp4")) {
                 mediaHtml = `
-                    <video src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
-                    autoplay loop muted
+                    <video data-src="${urlMidia(cartaOriginal.imagem)}" preload="none"
+                    loop muted playsinline
                     style="width:100%;height:85px;object-fit:contain;background:#000;">
                     </video>
                 `;
             } else {
                 mediaHtml = `
-                    <img src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
+                    <img loading="lazy" decoding="async" src="${urlMidia(cartaOriginal.imagem)}"
                     style="width:100%;height:85px;object-fit:contain;background:#000;">
                 `;
             }
@@ -795,9 +1008,9 @@ function atualizarCartasSeparadas() {
         `;
     }
 
+    observarVideos(area);
     renderizarCartasApostadas();
 }
-
 
 // ==============================
 // CARTAS APOSTADAS NO ÁLBUM
@@ -808,6 +1021,7 @@ function renderizarCartasApostadas() {
 
     if (!grid) return;
 
+    desobservarVideos(grid);
     grid.innerHTML = "";
 
     let encontrouCarta = false;
@@ -824,8 +1038,8 @@ function renderizarCartasApostadas() {
             .replace(/ \(Shiny\)$/, "");
 
         const cartaOriginal = cartas.find(c => c.nome === nomeBase);
-
         const item = document.createElement("div");
+
         item.className = "item-album";
 
         if (cartaOriginal) {
@@ -841,14 +1055,14 @@ function renderizarCartasApostadas() {
         if (cartaOriginal && cartaOriginal.imagem) {
             if (cartaOriginal.imagem.endsWith(".mp4")) {
                 mediaHtml = `
-                    <video src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
-                    autoplay loop muted
+                    <video data-src="${urlMidia(cartaOriginal.imagem)}" preload="none"
+                    loop muted playsinline
                     style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;">
                     </video>
                 `;
             } else {
                 mediaHtml = `
-                    <img src="/static/${encodeURIComponent(cartaOriginal.imagem)}"
+                    <img loading="lazy" decoding="async" src="${urlMidia(cartaOriginal.imagem)}"
                     style="width:100%;height:75px;object-fit:contain;background:#000;border-radius:4px;">
                 `;
             }
@@ -906,7 +1120,6 @@ function renderizarCartasApostadas() {
         `;
     }
 }
-
 
 // ==============================
 // ROLETA
@@ -1030,7 +1243,6 @@ function criarRoleta() {
     atualizarCartasSeparadas();
 }
 
-
 // ==============================
 // ATUALIZAR CARTAS DA ROLETA
 // ==============================
@@ -1101,7 +1313,6 @@ function atualizarPrecoAposta() {
         Multiplicador: x${obterMultiplicador(nome)}
     `;
 }
-
 
 // ==============================
 // GIRAR ROLETA
@@ -1215,7 +1426,6 @@ function girarRoleta(corEscolhida) {
     }, 1500);
 }
 
-
 // ==============================
 // CLIQUE FORA DO ÁLBUM
 // ==============================
@@ -1225,7 +1435,6 @@ window.onclick = (e) => {
         fecharAlbum();
     }
 };
-
 
 // ==============================
 // TECLADO
